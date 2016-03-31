@@ -1,7 +1,5 @@
 package com.creations.meister.jungleexplorer;
 
-import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
