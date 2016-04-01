@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <lb.library.PinnedHeaderListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@null"
+        android:dividerHeight="0px"
+        android:fadeScrollbars="false"
+        android:fastScrollEnabled="true"
+        android:listSelector="@drawable/listview_selector"
+        android:scrollingCache="false"
+        tools:listitem="@layout/listview_item"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/animalFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add_animal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/fab_margin"
+        app:elevation="4dp"
+        app:backgroundTint="@color/colorAnimal"
+        android:tint="#ffffff" />
+
+    <TextView android:id="@id/android:empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No animals saved."
+        android:gravity="center"
+        android:textSize="24dp"
+        android:textAlignment="center"/>
+</RelativeLayout>

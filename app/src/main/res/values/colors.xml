@@ -4,6 +4,12 @@
     <color name="colorPrimaryDark">#43A047</color>
     <color name="colorAccent">#FF4081</color>
 
+    <!-- used for bottom panel and floating buttons -->
+    <color name="colorGroup">#8BC34A</color>
+    <color name="colorAnimal">#009688</color>
+    <color name="colorFav">#F44336</color>
+    <color name="colorExpert">#2196F3</color>
+
     <!-- used as background colors for contacts that don't have photos -->
     <integer-array name="contacts_text_background_colors">
         <item>0xFF9C27B0</item>

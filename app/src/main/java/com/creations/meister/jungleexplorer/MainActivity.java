@@ -2,35 +2,52 @@ package com.creations.meister.jungleexplorer;
 
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 
 public class MainActivity extends AppCompatActivity {
+
     private BottomBar mBottomBar;
     private TextView mMessageView;
+    private FragmentManager mFragmentManager;
+
+    private AnimalList animalListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mMessageView = (TextView) findViewById(R.id.messageView);
-
+        mFragmentManager = this.getSupportFragmentManager();
         mBottomBar = BottomBar.attach(this, savedInstanceState);
 
         mBottomBar.setItemsFromMenu(R.menu.bottombar_menu, new OnMenuTabClickListener() {
             @Override
             public void onMenuTabSelected(@IdRes int menuItemId) {
-                mMessageView.setText(getMessage(menuItemId, false));
+                switch (menuItemId) {
+                    case R.id.bb_menu_animal_group:
+
+                        break;
+                    case R.id.bb_menu_animals:
+                        animalListFragment = new AnimalList();
+                        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+                        transaction.replace(R.id.contentFragment, animalListFragment);
+                        transaction.commit();
+                        break;
+                    case R.id.bb_menu_experts:
+
+                        break;
+                }
             }
 
             @Override
             public void onMenuTabReSelected(@IdRes int menuItemId) {
-                Toast.makeText(getApplicationContext(), getMessage(menuItemId, true), Toast.LENGTH_SHORT).show();
+                // TODO do nothing here.
             }
         });
 
@@ -39,28 +56,6 @@ public class MainActivity extends AppCompatActivity {
         mBottomBar.mapColorForTab(2, "#F44336");
         mBottomBar.mapColorForTab(3, "#2196F3");
 
-    }
-
-    private String getMessage(int menuItemId, boolean isReselection) {
-        String message = "Content for ";
-
-        switch (menuItemId) {
-            case R.id.bb_menu_animal_group:
-                message += "groups";
-                break;
-            case R.id.bb_menu_animals:
-                message += "animals";
-                break;
-            case R.id.bb_menu_experts:
-                message += "experts";
-                break;
-        }
-
-        if (isReselection) {
-            message += " WAS RESELECTED! YAY!";
-        }
-
-        return message;
     }
 
     @Override

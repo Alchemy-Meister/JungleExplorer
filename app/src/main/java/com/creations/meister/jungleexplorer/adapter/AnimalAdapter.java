@@ -20,7 +20,7 @@ public class AnimalAdapter extends SearchablePinnedHeaderListViewAdapter<Animal>
 
     public AnimalAdapter(final ArrayList<Animal> animal)
     {
-//        setData(contacts);
+//      setData(contacts);
         //PHOTO_TEXT_BACKGROUND_COLORS=getResources().getIntArray(R.array.contacts_text_background_colors);
         //CONTACT_PHOTO_IMAGE_SIZE=getResources().getDimensionPixelSize(
         //        R.dimen.list_item__contact_imageview_size);
