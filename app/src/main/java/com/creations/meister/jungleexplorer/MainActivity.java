@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mMessageView;
     private FragmentManager mFragmentManager;
 
+    private GroupList groupListFragment;
     private AnimalList animalListFragment;
 
     @Override
@@ -29,20 +31,22 @@ public class MainActivity extends AppCompatActivity {
         mBottomBar.setItemsFromMenu(R.menu.bottombar_menu, new OnMenuTabClickListener() {
             @Override
             public void onMenuTabSelected(@IdRes int menuItemId) {
+                ListFragment selectedFragment = null;
                 switch (menuItemId) {
                     case R.id.bb_menu_animal_group:
-
+                        selectedFragment = new GroupList();
                         break;
                     case R.id.bb_menu_animals:
-                        animalListFragment = new AnimalList();
-                        FragmentTransaction transaction = mFragmentManager.beginTransaction();
-                        transaction.replace(R.id.contentFragment, animalListFragment);
-                        transaction.commit();
-                        break;
-                    case R.id.bb_menu_experts:
+                        selectedFragment = new AnimalList();
 
                         break;
+                    case R.id.bb_menu_experts:
+                        selectedFragment = new ExpertList();
+                        break;
                 }
+                FragmentTransaction transaction = mFragmentManager.beginTransaction();
+                transaction.replace(R.id.contentFragment, selectedFragment);
+                transaction.commit();
             }
 
             @Override

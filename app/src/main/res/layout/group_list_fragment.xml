@@ -19,21 +19,21 @@
         tools:listitem="@layout/listview_item"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/animalFAB"
+        android:id="@+id/groupFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add_animal"
+        android:src="@drawable/ic_add_group"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="@dimen/fab_margin"
         app:elevation="4dp"
-        app:backgroundTint="@color/colorAnimal"
+        app:backgroundTint="@color/colorGroup"
         android:tint="#ffffff" />
 
     <TextView android:id="@id/android:empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/no_animals"
+        android:text="@string/no_groups"
         android:gravity="center"
         android:textSize="24dp"
         android:textAlignment="center"/>

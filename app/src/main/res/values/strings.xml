@@ -5,4 +5,9 @@
     <string name="animals">Animals</string>
     <string name="experts">Experts</string>
     <string name="favorites">Favorites</string>
+
+    <string name="no_animals">No animals saved.</string>
+    <string name="no_groups">No groups saved.</string>
+    <string name="no_experts">No experts saved.</string>
+    <string name="no_fav">No favorite animals saved.</string>
 </resources>
