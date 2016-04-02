@@ -1,4 +1,4 @@
-package com.creations.meister.jungleexplorer;
+package com.creations.meister.jungleexplorer.activities;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -15,6 +15,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.creations.meister.jungleexplorer.AnimalList;
+import com.creations.meister.jungleexplorer.ExpertList;
+import com.creations.meister.jungleexplorer.GroupList;
+import com.creations.meister.jungleexplorer.R;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 

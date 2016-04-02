@@ -1,13 +1,9 @@
 package com.creations.meister.jungleexplorer;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
@@ -18,10 +14,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import com.creations.meister.jungleexplorer.activities.ContactList;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.domain.Domain;
 import com.creations.meister.jungleexplorer.domain.Expert;
-import com.creations.meister.jungleexplorer.utils.ContactsQuery;
 
 import java.util.ArrayList;
 import java.util.Collections;

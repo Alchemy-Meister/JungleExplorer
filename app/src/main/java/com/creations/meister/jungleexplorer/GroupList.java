@@ -8,15 +8,13 @@ import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import com.creations.meister.jungleexplorer.activities.NewAnimal;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
-import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.domain.Domain;
 
 import java.util.ArrayList;

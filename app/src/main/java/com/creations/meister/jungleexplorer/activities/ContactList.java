@@ -1,4 +1,4 @@
-package com.creations.meister.jungleexplorer;
+package com.creations.meister.jungleexplorer.activities;
 
 import android.Manifest;
 import android.app.Activity;
@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.domain.Domain;
 import com.creations.meister.jungleexplorer.domain.Expert;
@@ -35,7 +37,6 @@ import com.creations.meister.jungleexplorer.utils.ContactsQuery;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Random;
 
 import lb.library.PinnedHeaderListView;
 
@@ -75,6 +76,10 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         super.onCreate(savedInstanceState);
 
         this.setContentView(R.layout.contact_list_frament);
+
+        ActionBar actionBar = this.getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(R.string.contacts);
 
         this.initializeContacts();
 
@@ -134,6 +139,30 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
     }
 
+    private void initializeAdapter() {
+        Collections.sort(contacts, new Comparator<Domain>() {
+
+            @Override
+            public int compare(Domain lhs, Domain rhs) {
+                char lhsFirstLetter = TextUtils.isEmpty(lhs.getName()) ? ' ' : lhs.getName().charAt(0);
+                char rhsFirstLetter = TextUtils.isEmpty(rhs.getName()) ? ' ' : rhs.getName().charAt(0);
+                int firstLetterComparison = Character.toUpperCase(lhsFirstLetter) - Character.toUpperCase(rhsFirstLetter);
+                if (firstLetterComparison == 0)
+                    return lhs.getName().compareTo(rhs.getName());
+                return firstLetterComparison;
+            }
+        });
+
+        mAdapter = new DomainAdapter(this, contacts);
+        int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
+                this, android.R.attr.colorBackground));
+        mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
+        mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
+
+        mListView.setAdapter(mAdapter);
+        mListView.setOnScrollListener(mAdapter);
+    }
+
     private void showMessageOKCancel(String message) {
         new AlertDialog.Builder(ContactList.this)
                 .setMessage(message)
@@ -155,6 +184,14 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(myAppSettings);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
+            this.finish();
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 
     @Override
@@ -200,29 +237,5 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
             result.add(expert);
         }
         return result;
-    }
-
-    private void initializeAdapter() {
-        Collections.sort(contacts, new Comparator<Domain>() {
-
-            @Override
-            public int compare(Domain lhs, Domain rhs) {
-                char lhsFirstLetter = TextUtils.isEmpty(lhs.getName()) ? ' ' : lhs.getName().charAt(0);
-                char rhsFirstLetter = TextUtils.isEmpty(rhs.getName()) ? ' ' : rhs.getName().charAt(0);
-                int firstLetterComparison = Character.toUpperCase(lhsFirstLetter) - Character.toUpperCase(rhsFirstLetter);
-                if (firstLetterComparison == 0)
-                    return lhs.getName().compareTo(rhs.getName());
-                return firstLetterComparison;
-            }
-        });
-
-        mAdapter = new DomainAdapter(this, contacts);
-        int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
-                this, android.R.attr.colorBackground));
-        mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
-        mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
-
-        mListView.setAdapter(mAdapter);
-        mListView.setOnScrollListener(mAdapter);
     }
 }

@@ -5,6 +5,9 @@
     <string name="animals">Animals</string>
     <string name="experts">Experts</string>
     <string name="favorites">Favorites</string>
+    <string name="contacts">Contacts</string>
+
+    <string name="add_animal">Add Animal</string>
 
     <string name="no_animals">No animals saved</string>
     <string name="no_groups">No groups saved</string>
