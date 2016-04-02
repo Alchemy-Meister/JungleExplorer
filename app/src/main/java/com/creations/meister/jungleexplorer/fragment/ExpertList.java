@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.activity.ContactList;
+import com.creations.meister.jungleexplorer.activity.MainActivity;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.domain.Domain;
 import com.creations.meister.jungleexplorer.domain.Expert;
@@ -90,6 +92,12 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
             }
         });
 
+        SearchView sv = ((MainActivity) this.getActivity()).getSearchView();
+
+        if(sv != null) {
+            this.mAdapter.getFilter().filter(sv.getQuery());
+            this.mAdapter.setHeaderViewVisible(TextUtils.isEmpty(sv.getQuery()));
+        }
     }
 
     public static int getResIdFromAttribute(final Activity activity,final int attr)
@@ -142,5 +150,9 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
             result.add(animal);
         }
         return result;
+    }
+
+    public DomainAdapter getAdapter() {
+        return this.mAdapter;
     }
 }

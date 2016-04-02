@@ -2,18 +2,18 @@ package com.creations.meister.jungleexplorer.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.creations.meister.jungleexplorer.fragment.AnimalList;
 import com.creations.meister.jungleexplorer.fragment.ExpertList;
@@ -28,6 +28,11 @@ public class MainActivity extends AppCompatActivity {
     private BottomBar mBottomBar;
     private FragmentManager mFragmentManager;
 
+    private GroupList mGroupList;
+    private AnimalList mAnimalList;
+    private FavoriteList mFavoriteList;
+    private ExpertList mExpertList;
+
     private SearchView searchView;
 
     @Override
@@ -38,26 +43,30 @@ public class MainActivity extends AppCompatActivity {
         mFragmentManager = this.getSupportFragmentManager();
         mBottomBar = BottomBar.attach(this, savedInstanceState);
 
+        mGroupList = new GroupList();
+        mAnimalList = new AnimalList();
+        mFavoriteList = new FavoriteList();
+        mExpertList = new ExpertList();
+
         mBottomBar.setItemsFromMenu(R.menu.bottombar_menu, new OnMenuTabClickListener() {
             @Override
             public void onMenuTabSelected(@IdRes int menuItemId) {
-                ListFragment selectedFragment = null;
+                FragmentTransaction transaction = mFragmentManager.beginTransaction();
                 switch (menuItemId) {
                     case R.id.bb_menu_animal_group:
-                        selectedFragment = new GroupList();
+                        transaction.replace(R.id.contentFragment, mGroupList, "GROUP");
                         break;
                     case R.id.bb_menu_animals:
-                        selectedFragment = new AnimalList();
+                        transaction.replace(R.id.contentFragment, mAnimalList, "ANIMAL");
                         break;
                     case R.id.bb_menu_favorites:
-                        selectedFragment = new FavoriteList();
+                        transaction.replace(R.id.contentFragment, mFavoriteList, "FAV");
                         break;
                     case R.id.bb_menu_experts:
-                        selectedFragment = new ExpertList();
+                        transaction.replace(R.id.contentFragment, mExpertList, "EXPERT");
                         break;
                 }
-                FragmentTransaction transaction = mFragmentManager.beginTransaction();
-                transaction.replace(R.id.contentFragment, selectedFragment);
+
                 transaction.commit();
             }
 
@@ -86,16 +95,39 @@ public class MainActivity extends AppCompatActivity {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filterFragment(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterFragment(newText);
+                return true;
+            }
+        });
+
         return true;
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
+    private void filterFragment(String query) {
+        Fragment myFragment = mFragmentManager.findFragmentById(R.id.contentFragment);
+        if(myFragment instanceof GroupList) {
+            ((GroupList) myFragment).getAdapter().getFilter().filter(query);
+            ((GroupList) myFragment).getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
+        } else if(myFragment instanceof AnimalList) {
+            ((AnimalList) myFragment).getAdapter().getFilter().filter(query);
+            ((AnimalList) myFragment).getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
+        } else if(myFragment instanceof FavoriteList) {
+            ((FavoriteList) myFragment).getAdapter().getFilter().filter(query);
+            ((FavoriteList) myFragment).getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
+        } else if(myFragment instanceof ExpertList) {
+            ((ExpertList) myFragment).getAdapter().getFilter().filter(query);
+            ((ExpertList) myFragment).getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
         }
     }
-
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -104,5 +136,9 @@ public class MainActivity extends AppCompatActivity {
         // Necessary to restore the BottomBar's state, otherwise we would
         // lose the current tab on orientation change.
         mBottomBar.onSaveInstanceState(outState);
+    }
+
+    public SearchView getSearchView() {
+        return this.searchView;
     }
 }

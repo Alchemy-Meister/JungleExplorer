@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
+import com.creations.meister.jungleexplorer.activity.MainActivity;
 import com.creations.meister.jungleexplorer.activity.NewAnimal;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.domain.Domain;
@@ -87,6 +89,13 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
                 startActivityForResult(menuIntent, 0);
             }
         });
+
+        SearchView sv = ((MainActivity) this.getActivity()).getSearchView();
+
+        if(sv != null) {
+            this.mAdapter.getFilter().filter(sv.getQuery());
+            this.mAdapter.setHeaderViewVisible(TextUtils.isEmpty(sv.getQuery()));
+        }
     }
 
     public static int getResIdFromAttribute(final Activity activity,final int attr)
@@ -131,5 +140,9 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
             result.add(animal);
         }
         return result;
+    }
+
+    public DomainAdapter getAdapter() {
+        return this.mAdapter;
     }
 }

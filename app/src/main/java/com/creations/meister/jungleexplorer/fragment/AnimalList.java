@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
+import com.creations.meister.jungleexplorer.activity.MainActivity;
 import com.creations.meister.jungleexplorer.activity.NewAnimal;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.domain.Domain;
@@ -33,9 +35,9 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
     private PinnedHeaderListView mListView;
     private FloatingActionButton fabAddAnimal;
     private LayoutInflater mInflater;
+    private NewAnimal newAnimal;
 
     private DomainAdapter mAdapter;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,7 +52,6 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // TODO set list adapter.
         final ArrayList<Domain> animals = getAnimals();
         Collections.sort(animals, new Comparator<Domain>() {
 
@@ -70,7 +71,7 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
         mListView.setPinnedHeaderView(mInflater.inflate(
                 R.layout.pinned_header_listview_side_header, mListView, false));
 
-        mAdapter=new DomainAdapter(this.getContext(), animals);
+        mAdapter = new DomainAdapter(this.getContext(), animals);
         int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
                 this.getActivity(),android.R.attr.colorBackground));
         mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
@@ -84,10 +85,18 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
         this.fabAddAnimal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                newAnimal = new NewAnimal();
                 Intent menuIntent = new Intent(AnimalList.this.getContext(), NewAnimal.class);
                 startActivityForResult(menuIntent, 0);
             }
         });
+
+        SearchView sv = ((MainActivity) this.getActivity()).getSearchView();
+
+        if(sv != null) {
+            this.mAdapter.getFilter().filter(sv.getQuery());
+            this.mAdapter.setHeaderViewVisible(TextUtils.isEmpty(sv.getQuery()));
+        }
 
     }
 
@@ -133,5 +142,9 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
             result.add(animal);
         }
         return result;
+    }
+
+    public DomainAdapter getAdapter() {
+        return this.mAdapter;
     }
 }

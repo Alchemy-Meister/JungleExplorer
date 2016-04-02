@@ -15,11 +15,13 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,22 +55,53 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     private PinnedHeaderListView mListView;
     private DomainAdapter mAdapter;
     private SearchView searchView;
+    private Menu mMenu;
 
     private ArrayList<Domain> contacts;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.mMenu = menu;
+
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.search_menu, menu);
 
-        MenuItem searchItem = menu.findItem(R.id.searchView);
+        final MenuItem searchItem = menu.findItem(R.id.searchView);
         searchView = (SearchView) searchItem.getActionView();
         searchView.setQueryHint(getResources().getString(R.string.hint));
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        return true;
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // this is your adapter that will be filtered
+                mAdapter.getFilter().filter(newText);
+                mAdapter.setHeaderViewVisible(TextUtils.isEmpty(newText));
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // this is your adapter that will be filtered
+                mAdapter.getFilter().filter(query);
+                mAdapter.setHeaderViewVisible(TextUtils.isEmpty(query));
+                return true;
+            }
+        });
+
+        if (!TextUtils.isEmpty(searchView.getQuery())) {
+            searchView.post(new Runnable() {
+                @Override
+                public void run() {
+                    MenuItemCompat.expandActionView(searchItem);
+                    searchView.setQuery(searchView.getQuery(), true);
+                }
+            });
+        }
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -93,6 +126,16 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
         if(contacts != null) {
             this.initializeAdapter();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            searchView.setQuery(query, false);
+            this.onCreateOptionsMenu(mMenu);
         }
     }
 

@@ -3,6 +3,7 @@ package com.creations.meister.jungleexplorer.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
+import com.creations.meister.jungleexplorer.activity.MainActivity;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.domain.Domain;
 
@@ -75,6 +77,13 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(mAdapter);
         mListView.setEnableHeaderTransparencyChanges(false);
+
+        SearchView sv = ((MainActivity) this.getActivity()).getSearchView();
+
+        if(sv != null) {
+            this.mAdapter.getFilter().filter(sv.getQuery());
+            this.mAdapter.setHeaderViewVisible(TextUtils.isEmpty(sv.getQuery()));
+        }
     }
 
     public static int getResIdFromAttribute(final Activity activity,final int attr)
@@ -119,5 +128,9 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
             result.add(animal);
         }
         return result;
+    }
+
+    public DomainAdapter getAdapter() {
+        return this.mAdapter;
     }
 }
