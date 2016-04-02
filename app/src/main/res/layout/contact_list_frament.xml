@@ -1,0 +1,29 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <lb.library.PinnedHeaderListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@null"
+        android:dividerHeight="0px"
+        android:fadeScrollbars="false"
+        android:fastScrollEnabled="true"
+        android:listSelector="@drawable/listview_selector"
+        android:scrollingCache="false"
+        tools:listitem="@layout/listview_item"/>
+
+    <TextView
+        android:id="@+id/emptyText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/no_contacts"
+        android:gravity="center"
+        android:textSize="24dp"
+        android:textAlignment="center"
+        android:visibility="gone" />
+</RelativeLayout>

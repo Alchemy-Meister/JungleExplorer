@@ -27,7 +27,7 @@
         android:paddingRight="6dp"
         android:paddingTop="6dp">
 
-        <com.creations.meister.jungleexplorer.utils.CircularAnimalView
+        <com.creations.meister.jungleexplorer.utils.CircularView
             android:id="@+id/listview_item__friendPhotoImageView"
             android:layout_width="@dimen/list_item__contact_imageview_size"
             android:layout_height="@dimen/list_item__contact_imageview_size"

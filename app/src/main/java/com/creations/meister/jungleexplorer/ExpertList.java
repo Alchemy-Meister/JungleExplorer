@@ -1,17 +1,27 @@
 package com.creations.meister.jungleexplorer;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.creations.meister.jungleexplorer.domain.Animal;
+import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
+import com.creations.meister.jungleexplorer.domain.Domain;
+import com.creations.meister.jungleexplorer.domain.Expert;
+import com.creations.meister.jungleexplorer.utils.ContactsQuery;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +38,9 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
     private PinnedHeaderListView mListView;
     private FloatingActionButton fabAddExpert;
     private LayoutInflater mInflater;
-    private NewAnimal newAnimal;
+    private ContactList contactList;
+
+    private DomainAdapter mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,11 +56,11 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
         super.onActivityCreated(savedInstanceState);
 
         // TODO set list adapter.
-        final ArrayList<Animal> animals = getAnimals();
-        Collections.sort(animals, new Comparator<Animal>() {
+        final ArrayList<Domain> animals = getExperts();
+        Collections.sort(animals, new Comparator<Domain>() {
 
             @Override
-            public int compare(Animal lhs, Animal rhs) {
+            public int compare(Domain lhs, Domain rhs) {
                 char lhsFirstLetter = TextUtils.isEmpty(lhs.getName()) ? ' ' : lhs.getName().charAt(0);
                 char rhsFirstLetter = TextUtils.isEmpty(rhs.getName()) ? ' ' : rhs.getName().charAt(0);
                 int firstLetterComparison = Character.toUpperCase(lhsFirstLetter) - Character.toUpperCase(rhsFirstLetter);
@@ -60,18 +72,37 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
 
         this.mListView = ((PinnedHeaderListView)this.getListView());
         this.mListView.setOnItemClickListener(this);
-        mListView.setPinnedHeaderView(mInflater.inflate(R.layout.pinned_header_listview_side_header, mListView, false));
+        mListView.setPinnedHeaderView(mInflater.inflate(
+                R.layout.pinned_header_listview_side_header, mListView, false));
+
+        mAdapter = new DomainAdapter(this.getContext(), animals);
+        int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
+                this.getActivity(),android.R.attr.colorBackground));
+        mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
+        mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
+
+        mListView.setAdapter(mAdapter);
+        mListView.setOnScrollListener(mAdapter);
+        mListView.setEnableHeaderTransparencyChanges(false);
 
         this.fabAddExpert = (FloatingActionButton) this.getView().findViewById(R.id.expertFAB);
         this.fabAddExpert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                newAnimal = new NewAnimal();
-                Intent menuIntent = new Intent(ExpertList.this.getContext(), NewAnimal.class);
+                Intent menuIntent = new Intent(ExpertList.this.getContext(), ContactList.class);
                 startActivityForResult(menuIntent, 0);
             }
         });
 
+    }
+
+    public static int getResIdFromAttribute(final Activity activity,final int attr)
+    {
+        if(attr==0)
+            return 0;
+        final TypedValue typedValue=new TypedValue();
+        activity.getTheme().resolveAttribute(attr, typedValue, true);
+        return typedValue.resourceId;
     }
 
     @Override
@@ -79,14 +110,22 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
         Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
     }
 
-    private ArrayList<Animal> getAnimals()
+    private boolean checkContactsReadPermission()
     {
-        ArrayList<Animal> result=new ArrayList<>();
+        String permission="android.permission.READ_CONTACTS";
+        int res = this.getContext().checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
+    }
+
+    private ArrayList<Domain> getExperts()
+    {
+        ArrayList<Domain> result=new ArrayList<>();
+
         Random r=new Random();
         StringBuilder sb=new StringBuilder();
         for(int i=0;i<1000;++i)
         {
-            Animal animal= new Animal();
+            Expert animal = new Expert();
             sb.delete(0,sb.length());
             int strLength=r.nextInt(10)+1;
             for(int j=0;j<strLength;++j)

@@ -21,7 +21,7 @@ import android.widget.ViewSwitcher;
 
 import com.creations.meister.jungleexplorer.R;
 
-public class CircularAnimalView extends ViewSwitcher {
+public class CircularView extends ViewSwitcher {
     //  private static final int DEFAULT_CONTENT_SIZE_IN_DP=20;
     private ImageView mImageView;
     private TextView mTextView;
@@ -30,12 +30,12 @@ public class CircularAnimalView extends ViewSwitcher {
     private int mBackgroundColor = 0, mImageResId = 0;
     private int mContentSize;
 
-    public CircularAnimalView(final Context context) {
+    public CircularView(final Context context) {
         this(context, null);
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    public CircularAnimalView(final Context context, final AttributeSet attrs) {
+    public CircularView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
 
         this.addView(this.mImageView = new ImageView(context),

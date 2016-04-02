@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract.Contacts;
 
-public interface AnimalQuery {
+public interface ContactsQuery {
 
     // An identifier for the loader
     final static int QUERY_ID = 1;

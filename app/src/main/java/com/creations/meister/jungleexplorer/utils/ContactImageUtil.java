@@ -16,9 +16,9 @@ import java.io.IOException;
 
 import com.creations.meister.jungleexplorer.BuildConfig;
 
-public class AnimalImageUtil {
+public class ContactImageUtil {
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    public static Bitmap loadAnimalPhoto(Context context, Uri animalUri, int imageSize) {
+    public static Bitmap loadContactPhoto(Context context, Uri contactUri, int imageSize) {
         // Instantiates a ContentResolver for retrieving the Uri of the image
         final ContentResolver contentResolver = context.getContentResolver();
 
@@ -30,9 +30,9 @@ public class AnimalImageUtil {
             // is available from Photo.DISPLAY_PHOTO.
             try {
                 // Constructs the content Uri for the image
-                Uri displayImageUri = Uri.withAppendedPath(animalUri, ContactsContract.Contacts.Photo.DISPLAY_PHOTO);
+                Uri displayImageUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.DISPLAY_PHOTO);
 
-                // Retrieves an AssetFileDescriptor from the Animals Provider, using the
+                // Retrieves an AssetFileDescriptor from the Contacts Provider, using the
                 // constructed Uri
                 afd = contentResolver.openAssetFileDescriptor(displayImageUri, "r");
                 // If the file exists
@@ -45,9 +45,9 @@ public class AnimalImageUtil {
                 // Catches file not found exceptions
                 if (BuildConfig.DEBUG) {
                     // Log debug message, this is not an error message as this exception is thrown
-                    // when a animal is legitimately missing a animal photo (which will be quite
-                    // frequently in a long animals list).
-//        Log.d(TAG,"Animal photo not found for animal "+animalUri.toString()
+                    // when a contact is legitimately missing a contact photo (which will be quite
+                    // frequently in a long contacts list).
+//        Log.d(TAG,"Contact photo not found for contact "+contactUri.toString()
 //            +": "+e.toString());
                 }
             } finally {
@@ -68,11 +68,11 @@ public class AnimalImageUtil {
         // If the platform version is less than Android 4.0 (API Level 14), use the only available
         // image URI, which points to a normal-sized image.
         try {
-            // Constructs the image Uri from the animal Uri and the directory twig from the
-            // Animals.Photo table
-            Uri imageUri = Uri.withAppendedPath(animalUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+            // Constructs the image Uri from the contact Uri and the directory twig from the
+            // Contacts.Photo table
+            Uri imageUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
 
-            // Retrieves an AssetFileDescriptor from the Animals Provider, using the constructed
+            // Retrieves an AssetFileDescriptor from the Contacts Provider, using the constructed
             // Uri
             afd = contentResolver.openAssetFileDescriptor(imageUri, "r");
 
@@ -86,7 +86,7 @@ public class AnimalImageUtil {
         } catch (FileNotFoundException e) {
             // Catches file not found exceptions
             if (BuildConfig.DEBUG) {
-//        Log.d(TAG,"Animal photo not found for animal "+animalUri.toString()
+//        Log.d(TAG,"Contact photo not found for contact "+contactUri.toString()
 //            +": "+e.toString());
             }
         } finally {
@@ -108,21 +108,21 @@ public class AnimalImageUtil {
     }
 
     /**
-     * Decodes and scales a animal's image from a file pointed to by a Uri in the animal's data,
+     * Decodes and scales a contact's image from a file pointed to by a Uri in the contact's data,
      * and returns the result as a Bitmap. The column that contains the Uri varies according to the
      * platform version.
      *
-     * @param photoData For platforms prior to Android 3.0, provide the Animal._ID column value.
-     *                  For Android 3.0 and later, provide the Animal.PHOTO_THUMBNAIL_URI value.
+     * @param photoData For platforms prior to Android 3.0, provide the Contact._ID column value.
+     *                  For Android 3.0 and later, provide the Contact.PHOTO_THUMBNAIL_URI value.
      * @param imageSize The desired target width and height of the output image in pixels.
-     * @return A Bitmap containing the animal's image, resized to fit the provided image size. If
+     * @return A Bitmap containing the contact's image, resized to fit the provided image size. If
      * no thumbnail exists, returns null.
      */
-    public static Bitmap loadAnimalPhotoThumbnail(Context context, String photoData, int imageSize) {
+    public static Bitmap loadContactPhotoThumbnail(Context context, String photoData, int imageSize) {
         // Instantiates an AssetFileDescriptor. Given a content Uri pointing to an image file, the
         // ContentResolver can return an AssetFileDescriptor for the file.
         AssetFileDescriptor afd = null;
-        // This "try" block catches an Exception if the file descriptor returned from the Animals
+        // This "try" block catches an Exception if the file descriptor returned from the Contacts
         // Provider doesn't point to an existing file.
         try {
             Uri thumbUri;
@@ -131,13 +131,13 @@ public class AnimalImageUtil {
                 thumbUri = Uri.parse(photoData);
             else {
                 // For versions prior to Android 3.0, appends the string argument to the content
-                // Uri for the Animals table.
-                final Uri animalUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, photoData);
-                // Appends the content Uri for the Animals.Photo table to the previously
-                // constructed animal Uri to yield a content URI for the thumbnail image
-                thumbUri = Uri.withAppendedPath(animalUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+                // Uri for the Contacts table.
+                final Uri contactUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, photoData);
+                // Appends the content Uri for the Contacts.Photo table to the previously
+                // constructed contact Uri to yield a content URI for the thumbnail image
+                thumbUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
             }
-            // Retrieves a file descriptor from the Animals Provider. To learn more about this
+            // Retrieves a file descriptor from the Contacts Provider. To learn more about this
             // feature, read the reference documentation for
             // ContentResolver#openAssetFileDescriptor.
             afd = context.getContentResolver().openAssetFileDescriptor(thumbUri, "r");
@@ -158,7 +158,7 @@ public class AnimalImageUtil {
             // FileNotFoundException.
 //      if(BuildConfig.DEBUG)
 //        {
-//        Log.d(TAG,"Animal photo thumbnail not found for animal "+photoData
+//        Log.d(TAG,"Contact photo thumbnail not found for contact "+photoData
 //            +": "+e.toString());
 //        }
         } finally {

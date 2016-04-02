@@ -1,17 +1,23 @@
 package com.creations.meister.jungleexplorer;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.domain.Animal;
+import com.creations.meister.jungleexplorer.domain.Domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +36,8 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
     private LayoutInflater mInflater;
     private NewAnimal newAnimal;
 
+    private DomainAdapter mAdapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.group_list_fragment, container, false);
@@ -44,11 +52,11 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
         super.onActivityCreated(savedInstanceState);
 
         // TODO set list adapter.
-        final ArrayList<Animal> animals = getAnimals();
-        Collections.sort(animals, new Comparator<Animal>() {
+        final ArrayList<Domain> animals = getAnimals();
+        Collections.sort(animals, new Comparator<Domain>() {
 
             @Override
-            public int compare(Animal lhs, Animal rhs) {
+            public int compare(Domain lhs, Domain rhs) {
                 char lhsFirstLetter = TextUtils.isEmpty(lhs.getName()) ? ' ' : lhs.getName().charAt(0);
                 char rhsFirstLetter = TextUtils.isEmpty(rhs.getName()) ? ' ' : rhs.getName().charAt(0);
                 int firstLetterComparison = Character.toUpperCase(lhsFirstLetter) - Character.toUpperCase(rhsFirstLetter);
@@ -60,7 +68,18 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
 
         this.mListView = ((PinnedHeaderListView)this.getListView());
         this.mListView.setOnItemClickListener(this);
-        mListView.setPinnedHeaderView(mInflater.inflate(R.layout.pinned_header_listview_side_header, mListView, false));
+        mListView.setPinnedHeaderView(mInflater.inflate(
+                R.layout.pinned_header_listview_side_header, mListView, false));
+
+        mAdapter=new DomainAdapter(this.getContext(), animals);
+        int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
+                this.getActivity(),android.R.attr.colorBackground));
+        mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
+        mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
+
+        mListView.setAdapter(mAdapter);
+        mListView.setOnScrollListener(mAdapter);
+        mListView.setEnableHeaderTransparencyChanges(false);
 
         this.fabAddGroup = (FloatingActionButton) this.getView().findViewById(R.id.groupFAB);
         this.fabAddGroup.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +90,15 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
                 startActivityForResult(menuIntent, 0);
             }
         });
+    }
 
+    public static int getResIdFromAttribute(final Activity activity,final int attr)
+    {
+        if(attr==0)
+            return 0;
+        final TypedValue typedValue=new TypedValue();
+        activity.getTheme().resolveAttribute(attr, typedValue, true);
+        return typedValue.resourceId;
     }
 
     @Override
@@ -79,14 +106,14 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
         Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
     }
 
-    private ArrayList<Animal> getAnimals()
+    private ArrayList<Domain> getAnimals()
     {
-        ArrayList<Animal> result=new ArrayList<>();
+        ArrayList<Domain> result=new ArrayList<>();
         Random r=new Random();
         StringBuilder sb=new StringBuilder();
         for(int i=0;i<1000;++i)
         {
-            Animal animal= new Animal();
+            Domain animal = new Domain();
             sb.delete(0,sb.length());
             int strLength=r.nextInt(10)+1;
             for(int j=0;j<strLength;++j)
