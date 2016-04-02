@@ -1,4 +1,4 @@
-package com.creations.meister.jungleexplorer;
+package com.creations.meister.jungleexplorer.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,7 +13,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.creations.meister.jungleexplorer.activities.NewAnimal;
+import com.creations.meister.jungleexplorer.R;
+import com.creations.meister.jungleexplorer.activity.NewAnimal;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.domain.Domain;
 
@@ -25,20 +26,20 @@ import java.util.Random;
 import lb.library.PinnedHeaderListView;
 
 /**
- * Created by meister on 4/1/16.
+ * Created by meister on 3/27/16.
  */
-public class GroupList extends ListFragment implements AdapterView.OnItemClickListener {
+public class AnimalList extends ListFragment implements AdapterView.OnItemClickListener {
 
     private PinnedHeaderListView mListView;
-    private FloatingActionButton fabAddGroup;
+    private FloatingActionButton fabAddAnimal;
     private LayoutInflater mInflater;
-    private NewAnimal newAnimal;
 
     private DomainAdapter mAdapter;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.group_list_fragment, container, false);
+        View view = inflater.inflate(R.layout.animal_list_fragment, container, false);
 
         mInflater = inflater;
 
@@ -79,15 +80,15 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
         mListView.setOnScrollListener(mAdapter);
         mListView.setEnableHeaderTransparencyChanges(false);
 
-        this.fabAddGroup = (FloatingActionButton) this.getView().findViewById(R.id.groupFAB);
-        this.fabAddGroup.setOnClickListener(new View.OnClickListener() {
+        this.fabAddAnimal = (FloatingActionButton) this.getView().findViewById(R.id.animalFAB);
+        this.fabAddAnimal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                newAnimal = new NewAnimal();
-                Intent menuIntent = new Intent(GroupList.this.getContext(), NewAnimal.class);
+                Intent menuIntent = new Intent(AnimalList.this.getContext(), NewAnimal.class);
                 startActivityForResult(menuIntent, 0);
             }
         });
+
     }
 
     public static int getResIdFromAttribute(final Activity activity,final int attr)

@@ -1,4 +1,4 @@
-package com.creations.meister.jungleexplorer.activities;
+package com.creations.meister.jungleexplorer.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -15,9 +15,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.creations.meister.jungleexplorer.AnimalList;
-import com.creations.meister.jungleexplorer.ExpertList;
-import com.creations.meister.jungleexplorer.GroupList;
+import com.creations.meister.jungleexplorer.fragment.AnimalList;
+import com.creations.meister.jungleexplorer.fragment.ExpertList;
+import com.creations.meister.jungleexplorer.fragment.FavoriteList;
+import com.creations.meister.jungleexplorer.fragment.GroupList;
 import com.creations.meister.jungleexplorer.R;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
@@ -25,13 +26,9 @@ import com.roughike.bottombar.OnMenuTabClickListener;
 public class MainActivity extends AppCompatActivity {
 
     private BottomBar mBottomBar;
-    private TextView mMessageView;
     private FragmentManager mFragmentManager;
 
     private SearchView searchView;
-
-    private GroupList groupListFragment;
-    private AnimalList animalListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +48,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.bb_menu_animals:
                         selectedFragment = new AnimalList();
-
+                        break;
+                    case R.id.bb_menu_favorites:
+                        selectedFragment = new FavoriteList();
                         break;
                     case R.id.bb_menu_experts:
                         selectedFragment = new ExpertList();

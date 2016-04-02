@@ -5,7 +5,7 @@
     tools:context=".activity.MainActivity">
 
     <lb.library.PinnedHeaderListView
-        android:id="@+id/list"
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:cacheColorHint="@android:color/transparent"
@@ -17,13 +17,11 @@
         android:scrollingCache="false"
         tools:listitem="@layout/listview_item"/>
 
-    <TextView
-        android:id="@+id/emptyText"
+    <TextView android:id="@id/android:empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/no_contacts"
+        android:text="@string/no_fav"
         android:gravity="center"
         android:textSize="24dp"
-        android:textAlignment="center"
-        android:visibility="gone" />
+        android:textAlignment="center"/>
 </RelativeLayout>

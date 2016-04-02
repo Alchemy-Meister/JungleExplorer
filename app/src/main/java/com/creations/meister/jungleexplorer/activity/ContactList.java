@@ -1,4 +1,4 @@
-package com.creations.meister.jungleexplorer.activities;
+package com.creations.meister.jungleexplorer.activity;
 
 import android.Manifest;
 import android.app.Activity;

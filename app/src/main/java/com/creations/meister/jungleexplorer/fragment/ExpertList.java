@@ -1,4 +1,4 @@
-package com.creations.meister.jungleexplorer;
+package com.creations.meister.jungleexplorer.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,7 +14,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.creations.meister.jungleexplorer.activities.ContactList;
+import com.creations.meister.jungleexplorer.R;
+import com.creations.meister.jungleexplorer.activity.ContactList;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.domain.Domain;
 import com.creations.meister.jungleexplorer.domain.Expert;
@@ -34,7 +35,6 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
     private PinnedHeaderListView mListView;
     private FloatingActionButton fabAddExpert;
     private LayoutInflater mInflater;
-    private ContactList contactList;
 
     private DomainAdapter mAdapter;
 
