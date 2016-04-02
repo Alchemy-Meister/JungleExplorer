@@ -2,14 +2,20 @@ package com.creations.meister.jungleexplorer;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
@@ -38,11 +44,16 @@ import lb.library.PinnedHeaderListView;
  */
 public class ContactList extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    private PinnedHeaderListView mListView;
-    private NewAnimal newAnimal;
+    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
+    private static final String[] requiredPermissions = new String[]{
+            Manifest.permission.READ_CONTACTS
+    };
 
+    private PinnedHeaderListView mListView;
     private DomainAdapter mAdapter;
     private SearchView searchView;
+
+    private ArrayList<Domain> contacts;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,22 +76,7 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
         this.setContentView(R.layout.contact_list_frament);
 
-        this.requestPermission();
-
-        // TODO set list adapter.
-        final ArrayList<Domain> animals = getExperts();
-        Collections.sort(animals, new Comparator<Domain>() {
-
-            @Override
-            public int compare(Domain lhs, Domain rhs) {
-                char lhsFirstLetter = TextUtils.isEmpty(lhs.getName()) ? ' ' : lhs.getName().charAt(0);
-                char rhsFirstLetter = TextUtils.isEmpty(rhs.getName()) ? ' ' : rhs.getName().charAt(0);
-                int firstLetterComparison = Character.toUpperCase(lhsFirstLetter) - Character.toUpperCase(rhsFirstLetter);
-                if (firstLetterComparison == 0)
-                    return lhs.getName().compareTo(rhs.getName());
-                return firstLetterComparison;
-            }
-        });
+        this.initializeContacts();
 
         this.mListView = (PinnedHeaderListView) this.findViewById(R.id.list);
         this.mListView.setEmptyView(this.findViewById(R.id.emptyText));
@@ -88,15 +84,11 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         mListView.setPinnedHeaderView(this.getLayoutInflater().inflate(
                 R.layout.pinned_header_listview_side_header, mListView, false));
 
-        mAdapter = new DomainAdapter(this, animals);
-        int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
-                this,android.R.attr.colorBackground));
-        mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
-        mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
-
-        mListView.setAdapter(mAdapter);
-        mListView.setOnScrollListener(mAdapter);
         mListView.setEnableHeaderTransparencyChanges(false);
+
+        if(contacts != null) {
+            this.initializeAdapter();
+        }
     }
 
     public static int getResIdFromAttribute(final Activity activity,final int attr)
@@ -113,78 +105,124 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         Toast.makeText(this, "Item: " + position, Toast.LENGTH_SHORT).show();
     }
 
-    private boolean checkContactsReadPermission()
-    {
-        String permission="android.permission.READ_CONTACTS";
-        int res = this.checkCallingOrSelfPermission(permission);
-        return (res == PackageManager.PERMISSION_GRANTED);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    contacts = this.getExperts();
+                    this.initializeAdapter();
+                } else {
+                    showMessageOKCancel("You need to allow access to Contacts");
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
-    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
-
-    private void requestPermission() {
-        int hasReadContactsPermission = this.checkSelfPermission(
+    private void initializeContacts() {
+        int hasReadContactsPermission = ContextCompat.checkSelfPermission(ContactList.this,
                 Manifest.permission.READ_CONTACTS);
         if (hasReadContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            this.requestPermissions(new String[] {Manifest.permission.READ_CONTACTS},
+            ActivityCompat.requestPermissions(ContactList.this,
+                    requiredPermissions,
                     REQUEST_CODE_ASK_PERMISSIONS);
             return;
         }
+        contacts = getExperts();
 
+    }
+
+    private void showMessageOKCancel(String message) {
+        new AlertDialog.Builder(ContactList.this)
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .setNegativeButton("SETTINGS", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ContactList.this.goToSettings();
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    private void goToSettings() {
+        Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.parse("package:" + this.getPackageName()));
+        myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
+        myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(myAppSettings);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(hasPermissions(requiredPermissions)) {
+            contacts = this.getExperts();
+            this.initializeAdapter();
+        }
+    }
+
+    public boolean hasPermissions(@NonNull String... permissions) {
+        for (String permission : permissions)
+            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(
+                    ContactList.this, permission))
+                return false;
+        return true;
     }
 
     private ArrayList<Domain> getExperts()
     {
         ArrayList<Domain> result=new ArrayList<>();
-        if(checkContactsReadPermission())
+
+        Uri uri = ContactsQuery.CONTENT_URI;
+        final Cursor cursor = this.getContentResolver().query(
+                uri,
+                ContactsQuery.PROJECTION,
+                ContactsQuery.SELECTION,
+                null,
+                ContactsQuery.SORT_ORDER);
+
+        if(cursor == null)
+            return null;
+        while(cursor.moveToNext())
         {
-            Uri uri = ContactsQuery.CONTENT_URI;
-            final Cursor cursor = this.getContentResolver().query(
-                    uri,
-                    ContactsQuery.PROJECTION,
-                    ContactsQuery.SELECTION,
-                    null,
-                    ContactsQuery.SORT_ORDER);
-
-            if(cursor == null)
-                return null;
-            while(cursor.moveToNext())
-            {
-                Expert expert = new Expert();
-                expert.setContactUri(ContactsContract.Contacts.getLookupUri(
-                        cursor.getLong(ContactsQuery.ID),
-                        cursor.getString(ContactsQuery.LOOKUP_KEY)));
-                expert.setName(cursor.getString(ContactsQuery.DISPLAY_NAME));
-                expert.setPhotoId(cursor.getString(ContactsQuery.PHOTO_THUMBNAIL_DATA));
-                result.add(expert);
-            }
-        } else {
-
-            Random r=new Random();
-            StringBuilder sb=new StringBuilder();
-            for(int i=0;i<1000;++i)
-            {
-                Expert animal = new Expert();
-                sb.delete(0,sb.length());
-                int strLength=r.nextInt(10)+1;
-                for(int j=0;j<strLength;++j)
-                    switch(r.nextInt(3))
-                    {
-                        case 0:
-                            sb.append((char)('a'+r.nextInt('z'-'a')));
-                            break;
-                        case 1:
-                            sb.append((char)('A'+r.nextInt('Z'-'A')));
-                            break;
-                        case 2:
-                            sb.append((char)('0'+r.nextInt('9'-'0')));
-                            break;
-                    }
-
-                animal.setName(sb.toString());
-                result.add(animal);
-            }
+            Expert expert = new Expert();
+            expert.setContactUri(ContactsContract.Contacts.getLookupUri(
+                    cursor.getLong(ContactsQuery.ID),
+                    cursor.getString(ContactsQuery.LOOKUP_KEY)));
+            expert.setName(cursor.getString(ContactsQuery.DISPLAY_NAME));
+            expert.setPhotoId(cursor.getString(ContactsQuery.PHOTO_THUMBNAIL_DATA));
+            result.add(expert);
         }
-        return new ArrayList<>();
+        return result;
+    }
+
+    private void initializeAdapter() {
+        Collections.sort(contacts, new Comparator<Domain>() {
+
+            @Override
+            public int compare(Domain lhs, Domain rhs) {
+                char lhsFirstLetter = TextUtils.isEmpty(lhs.getName()) ? ' ' : lhs.getName().charAt(0);
+                char rhsFirstLetter = TextUtils.isEmpty(rhs.getName()) ? ' ' : rhs.getName().charAt(0);
+                int firstLetterComparison = Character.toUpperCase(lhsFirstLetter) - Character.toUpperCase(rhsFirstLetter);
+                if (firstLetterComparison == 0)
+                    return lhs.getName().compareTo(rhs.getName());
+                return firstLetterComparison;
+            }
+        });
+
+        mAdapter = new DomainAdapter(this, contacts);
+        int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
+                this, android.R.attr.colorBackground));
+        mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
+        mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
+
+        mListView.setAdapter(mAdapter);
+        mListView.setOnScrollListener(mAdapter);
     }
 }

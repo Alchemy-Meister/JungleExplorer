@@ -30,7 +30,8 @@
         </activity>
         <activity android:name="com.creations.meister.jungleexplorer.NewAnimal" >
         </activity>
-        <activity android:name="com.creations.meister.jungleexplorer.ContactList" >
+        <activity android:name="com.creations.meister.jungleexplorer.ContactList"
+            android:launchMode="singleTop">
 
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
