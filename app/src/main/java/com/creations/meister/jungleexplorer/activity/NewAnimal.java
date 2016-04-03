@@ -10,8 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -24,6 +22,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.creations.meister.jungleexplorer.R;
+import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -74,7 +73,7 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
     public void onResume() {
         super.onResume();
 
-        if(hasPermissions(requiredPermissions)) {
+        if(RuntimePermissionsHelper.hasPermissions(NewAnimal.this, requiredPermissions)) {
             mImageView.setOnClickListener(this);
         }
     }
@@ -91,14 +90,6 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
         mImageView.setOnClickListener(this);
     }
 
-    public boolean hasPermissions(@NonNull String... permissions) {
-        for (String permission : permissions)
-            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(
-                    NewAnimal.this, permission))
-                return false;
-        return true;
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
@@ -106,9 +97,10 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mImageView.setOnClickListener(NewAnimal.this);
                 } else {
-                    showMessageOKCancel(getResources().getString(
+                    RuntimePermissionsHelper.showMessageOKCancel(getResources().getString(
                             R.string.storage_permission_message,
-                            getResources().getString(R.string.app_name)));
+                            getResources().getString(R.string.app_name)),
+                            NewAnimal.this);
                 }
                 break;
             default:
@@ -238,28 +230,5 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
 
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
         mImageView.setImageBitmap(bitmap);
-    }
-
-    private void showMessageOKCancel(String message) {
-        new AlertDialog.Builder(NewAnimal.this)
-                .setMessage(message)
-                .setPositiveButton(R.string.ok, null)
-                .setNegativeButton(R.string.settings, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        NewAnimal.this.goToSettings();
-                    }
-                })
-                .create()
-                .show();
-    }
-
-    private void goToSettings() {
-        Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.parse("package:" + this.getPackageName()));
-        myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
-        myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        startActivity(myAppSettings);
     }
 }

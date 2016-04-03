@@ -32,6 +32,7 @@ import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.domain.Domain;
 import com.creations.meister.jungleexplorer.domain.Expert;
+import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
 import com.creations.meister.jungleexplorer.utils.ContactsQuery;
 
 import java.util.ArrayList;
@@ -154,9 +155,9 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
                     contacts = this.getExperts();
                     this.initializeAdapter();
                 } else {
-                    showMessageOKCancel(getResources().getString(
+                    RuntimePermissionsHelper.showMessageOKCancel(getResources().getString(
                             R.string.contact_permission_message,
-                            getResources().getString(R.string.app_name)));
+                            getResources().getString(R.string.app_name)), ContactList.this);
                 }
                 break;
             default:
@@ -201,29 +202,6 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         mListView.setOnScrollListener(mAdapter);
     }
 
-    private void showMessageOKCancel(String message) {
-        new AlertDialog.Builder(ContactList.this)
-                .setMessage(message)
-                .setPositiveButton(R.string.ok, null)
-                .setNegativeButton(R.string.settings, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ContactList.this.goToSettings();
-                    }
-                })
-                .create()
-                .show();
-    }
-
-    private void goToSettings() {
-        Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.parse("package:" + this.getPackageName()));
-        myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
-        myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        startActivity(myAppSettings);
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == android.R.id.home) {
@@ -236,18 +214,10 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     public void onResume() {
         super.onResume();
 
-        if(hasPermissions(requiredPermissions)) {
+        if(RuntimePermissionsHelper.hasPermissions(ContactList.this, requiredPermissions)) {
             contacts = this.getExperts();
             this.initializeAdapter();
         }
-    }
-
-    public boolean hasPermissions(@NonNull String... permissions) {
-        for (String permission : permissions)
-            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(
-                    ContactList.this, permission))
-                return false;
-        return true;
     }
 
     private ArrayList<Domain> getExperts()
