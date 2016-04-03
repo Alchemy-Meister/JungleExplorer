@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#4CAF50</color>
     <color name="colorPrimaryDark">#43A047</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#448AFF</color>
 
     <!-- used for bottom panel and floating buttons -->
     <color name="colorGroup">#8BC34A</color>

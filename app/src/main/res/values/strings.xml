@@ -15,6 +15,10 @@
     <string name="no_fav">No favorite animals saved</string>
     <string name="no_contacts">No contacts available</string>
 
+    <string name="name_hint">Name</string>
+    <string name="description_hint">Description</string>
+    <string name="location_text_hint">Location text</string>
+
     <string name="hint">Search</string>
     <string name="change_photo">Change photo</string>
 
