@@ -18,6 +18,7 @@ import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.activity.MainActivity;
 import com.creations.meister.jungleexplorer.activity.NewAnimal;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
+import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Domain;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
     private NewAnimal newAnimal;
 
     private DomainAdapter mAdapter;
+    private DBHelper dbHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,7 +54,9 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final ArrayList<Domain> animals = getAnimals();
+        dbHelper = DBHelper.getHelper(this.getActivity());
+
+        final ArrayList<Domain> animals = (ArrayList) dbHelper.getAllAnimals();
         Collections.sort(animals, new Comparator<Domain>() {
 
             @Override

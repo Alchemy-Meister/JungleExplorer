@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.domain.Expert;
@@ -16,7 +17,9 @@ import java.util.List;
 /**
  * Created by meister on 3/30/16.
  */
-public class DBHandler extends SQLiteOpenHelper {
+public class DBHelper extends SQLiteOpenHelper {
+
+    private static DBHelper instance;
 
     // Database Version
     private static final int DATABASE_VERSION = 1;
@@ -25,11 +28,11 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "JungleExplorer.db";
 
     // Table Names
-    private static final String TABLE_ANIMAL = "animal";
-    private static final String TABLE_GROUP = "group";
-    private static final String TABLE_ANIMAL_GROUP = "animal_group";
-    private static final String TABLE_EXPERT = "expert";
-    private static final String TABLE_ANIMAL_EXPERT = "animal_expert";
+    private static final String TABLE_ANIMAL = "animals";
+    private static final String TABLE_GROUP = "groups";
+    private static final String TABLE_ANIMAL_GROUP = "animals_groups";
+    private static final String TABLE_EXPERT = "experts";
+    private static final String TABLE_ANIMAL_EXPERT = "animals_experts";
 
     // Common table column names
     private static final String KEY_ID = "id";
@@ -37,6 +40,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_PHOTO_ID = "photo_id";
 
     // ANIMAL Table - column names
+    private static final String KEY_FAVORITE = "favorite";
     private static final String KEY_LOCATION_TEXT = "location_text";
     private static final String KEY_DESCRIPTION = "description";
 
@@ -53,16 +57,16 @@ public class DBHandler extends SQLiteOpenHelper {
     // Animal table create statement
     private static final String CREATE_TABLE_ANIMAL = "CREATE TABLE "
             + TABLE_ANIMAL + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_PHOTO_ID
-            + " INTEGER," + KEY_NAME + " TEXT," + KEY_LOCATION_TEXT + " TEXT,"
-            + KEY_DESCRIPTION + " TEXT)";
+            + " INTEGER," + KEY_NAME + " TEXT," + KEY_FAVORITE + " INTEGER,"
+            + KEY_LOCATION_TEXT + " TEXT," + KEY_DESCRIPTION + " TEXT)";
 
     private static final String CREATE_TABLE_GROUP = "CREATE TABLE "
-            + TABLE_GROUP + "(" + KEY_ID + "INTEGER PRIMARY KEY," + KEY_PHOTO_ID
+            + TABLE_GROUP + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_PHOTO_ID
             + " INTEGER," + KEY_NAME + " TEXT)";
 
     private static final String CREATE_TABLE_ANIMAL_GROUP = "CREATE TABLE "
-            + TABLE_ANIMAL_GROUP + "(" + KEY_ANIMAL_ID + "REFERENCES " + TABLE_ANIMAL
-            + "(" + KEY_ID + ")," + KEY_GROUP_ID + "REFERENCES " + TABLE_GROUP
+            + TABLE_ANIMAL_GROUP + "(" + KEY_ANIMAL_ID + " REFERENCES " + TABLE_ANIMAL
+            + "(" + KEY_ID + ")," + KEY_GROUP_ID + " REFERENCES " + TABLE_GROUP
             + "(" + KEY_ID + "),PRIMARY KEY(" + KEY_ANIMAL_ID + "," + KEY_GROUP_ID + "))";
 
     private static final String CREATE_TABLE_EXPERT = "CREATE TABLE "
@@ -70,12 +74,18 @@ public class DBHandler extends SQLiteOpenHelper {
             + " INTEGER," + KEY_NAME + " TEXT)";
 
     private static final String CREATE_TABLE_ANIMAL_EXPERT = "CREATE TABLE "
-            + TABLE_ANIMAL_EXPERT + "(" + KEY_ANIMAL_ID + "REFERENCES " + TABLE_ANIMAL
-            + "(" + KEY_ID + ")," + KEY_EXPERT_ID + "REFERENCES " + TABLE_EXPERT
+            + TABLE_ANIMAL_EXPERT + "(" + KEY_ANIMAL_ID + " REFERENCES " + TABLE_ANIMAL
+            + "(" + KEY_ID + ")," + KEY_EXPERT_ID + " REFERENCES " + TABLE_EXPERT
             + "(" + KEY_ID + "),PRIMARY KEY(" + KEY_ANIMAL_ID + "," + KEY_EXPERT_ID + "))";
 
-    public DBHandler(Context context) {
+    private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public static synchronized DBHelper getHelper(Context context) {
+        if (instance == null)
+            instance = new DBHelper(context);
+        return instance;
     }
 
     @Override
@@ -123,6 +133,32 @@ public class DBHandler extends SQLiteOpenHelper {
     public List<Animal> getAllAnimals() {
         List<Animal> animals = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + TABLE_ANIMAL;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                Animal animal = new Animal();
+                animal.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+                animal.setName(c.getString(c.getColumnIndex(KEY_NAME)));
+                animal.setPhotoId(c.getString(c.getColumnIndex(KEY_PHOTO_ID)));
+                animal.setLocationText(c.getString(c.getColumnIndex(KEY_LOCATION_TEXT)));
+                animal.setDescription(c.getString(c.getColumnIndex(KEY_DESCRIPTION)));
+
+                // TODO get and set all the groups and experts.
+
+                // adding to tags list
+                animals.add(animal);
+            } while (c.moveToNext());
+        }
+        return animals;
+    }
+
+    public List<Animal> getFavorites() {
+        List<Animal> animals = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_ANIMAL + " WHERE " + KEY_FAVORITE + "=1";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);

@@ -18,8 +18,10 @@ import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.activity.MainActivity;
 import com.creations.meister.jungleexplorer.activity.NewAnimal;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
+import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Domain;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,6 +39,7 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
     private LayoutInflater mInflater;
 
     private DomainAdapter mAdapter;
+    private DBHelper dbHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,9 +54,10 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // TODO set list adapter.
-        final ArrayList<Domain> animals = getAnimals();
-        Collections.sort(animals, new Comparator<Domain>() {
+        dbHelper = DBHelper.getHelper(this.getActivity());
+
+        final ArrayList<Domain> groups = (ArrayList) dbHelper.getAllGroups();
+        Collections.sort(groups, new Comparator<Domain>() {
 
             @Override
             public int compare(Domain lhs, Domain rhs) {
@@ -71,7 +75,7 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
         mListView.setPinnedHeaderView(mInflater.inflate(
                 R.layout.pinned_header_listview_side_header, mListView, false));
 
-        mAdapter=new DomainAdapter(this.getContext(), animals);
+        mAdapter=new DomainAdapter(this.getContext(), groups);
         int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
                 this.getActivity(),android.R.attr.colorBackground));
         mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);

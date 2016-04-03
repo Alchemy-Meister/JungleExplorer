@@ -19,6 +19,7 @@ import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.activity.ContactList;
 import com.creations.meister.jungleexplorer.activity.MainActivity;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
+import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Domain;
 import com.creations.meister.jungleexplorer.domain.Expert;
 
@@ -39,6 +40,7 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
     private LayoutInflater mInflater;
 
     private DomainAdapter mAdapter;
+    private DBHelper dbHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,9 +55,10 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // TODO set list adapter.
-        final ArrayList<Domain> animals = getExperts();
-        Collections.sort(animals, new Comparator<Domain>() {
+        dbHelper = DBHelper.getHelper(this.getActivity());
+
+        final ArrayList<Domain> experts = (ArrayList) dbHelper.getAllExperts();
+        Collections.sort(experts, new Comparator<Domain>() {
 
             @Override
             public int compare(Domain lhs, Domain rhs) {
@@ -73,7 +76,7 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
         mListView.setPinnedHeaderView(mInflater.inflate(
                 R.layout.pinned_header_listview_side_header, mListView, false));
 
-        mAdapter = new DomainAdapter(this.getContext(), animals);
+        mAdapter = new DomainAdapter(this.getContext(), experts);
         int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
                 this.getActivity(),android.R.attr.colorBackground));
         mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
@@ -112,13 +115,6 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
-    }
-
-    private boolean checkContactsReadPermission()
-    {
-        String permission="android.permission.READ_CONTACTS";
-        int res = this.getContext().checkCallingOrSelfPermission(permission);
-        return (res == PackageManager.PERMISSION_GRANTED);
     }
 
     private ArrayList<Domain> getExperts()

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.activity.MainActivity;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
+import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Domain;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
     private LayoutInflater mInflater;
 
     private DomainAdapter mAdapter;
+    private DBHelper dbHelper;
 
 
     @Override
@@ -48,8 +50,9 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // TODO set list adapter.
-        final ArrayList<Domain> animals = getAnimals();
+        dbHelper = DBHelper.getHelper(this.getActivity());
+
+        final ArrayList<Domain> animals = (ArrayList) dbHelper.getFavorites();
         Collections.sort(animals, new Comparator<Domain>() {
 
             @Override
