@@ -55,13 +55,11 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     private PinnedHeaderListView mListView;
     private DomainAdapter mAdapter;
     private SearchView searchView;
-    private Menu mMenu;
 
     private ArrayList<Domain> contacts;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        this.mMenu = menu;
 
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.search_menu, menu);
@@ -90,16 +88,6 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
                 return true;
             }
         });
-
-        if (!TextUtils.isEmpty(searchView.getQuery())) {
-            searchView.post(new Runnable() {
-                @Override
-                public void run() {
-                    MenuItemCompat.expandActionView(searchItem);
-                    searchView.setQuery(searchView.getQuery(), true);
-                }
-            });
-        }
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -135,7 +123,14 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             searchView.setQuery(query, false);
-            this.onCreateOptionsMenu(mMenu);
+            if (!TextUtils.isEmpty(searchView.getQuery())) {
+                searchView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        searchView.setQuery(searchView.getQuery(), true);
+                    }
+                });
+            }
         }
     }
 
