@@ -154,7 +154,9 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
                     contacts = this.getExperts();
                     this.initializeAdapter();
                 } else {
-                    showMessageOKCancel("You need to allow access to Contacts");
+                    showMessageOKCancel(getResources().getString(
+                            R.string.contact_permission_message,
+                            getResources().getString(R.string.app_name)));
                 }
                 break;
             default:
@@ -202,8 +204,8 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     private void showMessageOKCancel(String message) {
         new AlertDialog.Builder(ContactList.this)
                 .setMessage(message)
-                .setPositiveButton("OK", null)
-                .setNegativeButton("SETTINGS", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, null)
+                .setNegativeButton(R.string.settings, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ContactList.this.goToSettings();

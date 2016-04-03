@@ -36,7 +36,6 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
     private PinnedHeaderListView mListView;
     private FloatingActionButton fabAddAnimal;
     private LayoutInflater mInflater;
-    private NewAnimal newAnimal;
 
     private DomainAdapter mAdapter;
     private DBHelper dbHelper;
@@ -89,7 +88,6 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
         this.fabAddAnimal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                newAnimal = new NewAnimal();
                 Intent menuIntent = new Intent(AnimalList.this.getContext(), NewAnimal.class);
                 startActivityForResult(menuIntent, 0);
             }

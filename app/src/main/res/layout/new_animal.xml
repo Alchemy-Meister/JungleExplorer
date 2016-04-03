@@ -9,5 +9,6 @@
         android:layout_height="wrap_content"
         android:background="@color/colorAnimal"
         android:src="@drawable/animal_no_image"
+        android:clickable="true"
         android:tint="#ffffff" />
 </LinearLayout>
