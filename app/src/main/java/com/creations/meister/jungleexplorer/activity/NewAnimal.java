@@ -11,12 +11,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,9 +24,9 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.creations.meister.jungleexplorer.R;
-import com.creations.meister.jungleexplorer.domain.Animal;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -70,17 +70,33 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
         initializeImageViewListener();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(hasPermissions(requiredPermissions)) {
+            mImageView.setOnClickListener(this);
+        }
+    }
+
     private void initializeImageViewListener() {
         int hasReadContactsPermission = ContextCompat.checkSelfPermission(NewAnimal.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (hasReadContactsPermission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(NewAnimal.this,
                     requiredPermissions,
-                   STORAGE_ASK_REQUEST);
+                    STORAGE_ASK_REQUEST);
             return;
         }
         mImageView.setOnClickListener(this);
+    }
 
+    public boolean hasPermissions(@NonNull String... permissions) {
+        for (String permission : permissions)
+            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(
+                    NewAnimal.this, permission))
+                return false;
+        return true;
     }
 
     @Override
@@ -104,25 +120,25 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Bitmap takenPictureData = null;
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
+            this.galleryAddPic();
+            this.setPic();
+            mImageView.invalidate();
+        } else if(requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
+            if(data != null) {
+                try {
+                    Uri uri = data.getData();
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                    mImageView.setImageBitmap(bitmap);
+                    mImageView.invalidate();
 
-        switch(requestCode){
-
-            case CAMERA_REQUEST:
-                if(resultCode==AppCompatActivity.RESULT_OK) {
-                    this.galleryAddPic();
-                    this.setPic();
-
+                } catch (FileNotFoundException e) {
+                    // Error opening the image
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                break;
-            case GALLERY_REQUEST:
-                if(resultCode==AppCompatActivity.RESULT_OK) {
-                    Log.d("GALLERY", String.valueOf(data));
-                }
-                break;
+            }
         }
-
-        mImageView.setImageBitmap(takenPictureData);
     }
 
     @Override
@@ -155,7 +171,6 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
                                         photoFile = createImageFile();
                                     } catch (IOException ex) {
                                         // Error occurred while creating the File
-                                        Log.d("STILL ERROR", ex.getMessage());
                                     }
                                     // Continue only if the File was successfully created
                                     if (photoFile != null) {
@@ -217,16 +232,12 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
 
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
+
         bmOptions.inSampleSize = scaleFactor;
         bmOptions.inPurgeable = true;
 
-        final Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        mImageView.post(new Runnable() {
-            @Override
-            public void run() {
-                mImageView.setImageBitmap(bitmap);
-            }
-        });
+        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+        mImageView.setImageBitmap(bitmap);
     }
 
     private void showMessageOKCancel(String message) {
