@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.activity.MainActivity;
 import com.creations.meister.jungleexplorer.activity.NewAnimal;
+import com.creations.meister.jungleexplorer.activity.NewGroup;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Domain;
@@ -89,7 +90,7 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
         this.fabAddGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent menuIntent = new Intent(GroupList.this.getContext(), NewAnimal.class);
+                Intent menuIntent = new Intent(GroupList.this.getContext(), NewGroup.class);
                 startActivityForResult(menuIntent, 0);
             }
         });
