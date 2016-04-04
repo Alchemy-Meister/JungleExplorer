@@ -30,8 +30,13 @@
 
             </intent-filter>
         </activity>
+
         <activity android:name=".activity.NewAnimal" >
         </activity>
+
+        <activity android:name=".activity.NewGroup" >
+        </activity>
+
         <activity android:name=".activity.ContactList"
             android:launchMode="singleTop">
 
