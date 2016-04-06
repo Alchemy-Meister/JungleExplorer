@@ -8,18 +8,19 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.db.DBHelper;
@@ -100,7 +101,9 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults)
+    {
         switch (requestCode) {
             case STORAGE_ASK_REQUEST:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -149,18 +152,22 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
         if(menuItem.getItemId() == android.R.id.home) {
             this.finish();
         } else if(menuItem.getItemId() == R.id.done) {
-            Animal newAnimal = new Animal();
-            newAnimal.setName(mAnimalName.getText().toString());
-            if(mDescription.getText() != null) {
-                newAnimal.setDescription(mDescription.getText().toString());
+            if(!TextUtils.isEmpty(mAnimalName.getText())) {
+                Animal newAnimal = new Animal();
+                newAnimal.setName(mAnimalName.getText().toString());
+                if (!TextUtils.isEmpty(mDescription.getText())) {
+                    newAnimal.setDescription(mDescription.getText().toString());
+                }
+                if (!TextUtils.isEmpty(mLocationText.getText())) {
+                    newAnimal.setDescription(mLocationText.getText().toString());
+                }
+                DBHelper.getHelper(NewAnimal.this).insertAnimal(newAnimal);
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("newAnimal", newAnimal);
+                this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
+            } else {
+                this.setResult(AppCompatActivity.RESULT_CANCELED);
             }
-            if(mLocationText.getText() != null) {
-                newAnimal.setDescription(mLocationText.getText().toString());
-            }
-            DBHelper.getHelper(NewAnimal.this).insertAnimal(newAnimal);
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("newAnimal", newAnimal);
-            this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
             this.finish();
         }
         return super.onOptionsItemSelected(menuItem);

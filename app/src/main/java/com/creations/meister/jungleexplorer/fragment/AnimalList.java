@@ -118,8 +118,7 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
             Collections.sort(animals);
             AnimalList.this.mAdapter.setData(animals);
             mListView.setAdapter(mAdapter);
-        } else {
-
+            Toast.makeText(this.getContext(), getResources().getString(R.string.animal_saved), Toast.LENGTH_SHORT).show();
         }
     }
 

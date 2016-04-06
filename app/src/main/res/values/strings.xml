@@ -24,12 +24,19 @@
     <string name="change_photo">Change photo</string>
 
     <string name="ok">OK</string>
-    <string name="cancel">CANCEL</string>
-    <string name="settings">SETTINGS</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="animal_saved">Animal saved</string>
 
     <string name="contact_permission_message">%1$s needs access to your contacts to
         create and fill experts\' profile information.</string>
 
     <string name="storage_permission_message">%1$s needs access to your storage to
         save and access gallery photographs so that you can set profile images.</string>
+
+    <!-- Preference Strings -->
+    <string name="settings">Settings</string>
+    <string name="inline_preferences">Background services</string>
+    <string name="title_checkbox_preference">Automatic update</string>
+    <string name="summary_checkbox_preference"></string>
 </resources>

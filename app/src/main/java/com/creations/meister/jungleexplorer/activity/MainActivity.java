@@ -2,6 +2,7 @@ package com.creations.meister.jungleexplorer.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
@@ -10,7 +11,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.search_menu, menu);
+        menuInflater.inflate(R.menu.main_menu, menu);
 
         MenuItem searchItem = menu.findItem(R.id.searchView);
         searchView = (SearchView) searchItem.getActionView();
@@ -110,6 +110,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.settings) {
+            Intent preferences = new Intent(this, PreferencesActivity.class);
+            MainActivity.this.startActivity(preferences);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void filterFragment(String query) {

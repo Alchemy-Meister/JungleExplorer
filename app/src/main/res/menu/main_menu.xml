@@ -8,4 +8,10 @@
         android:icon="@drawable/abc_ic_search_api_mtrl_alpha"
         app:showAsAction="ifRoom|collapseActionView"
         android:title="@string/hint"/>
+
+
+    <item
+        android:id="@+id/settings"
+        android:title="@string/settings"
+        app:showAsAction="withText"/>
 </menu>
