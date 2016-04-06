@@ -24,7 +24,6 @@ import com.creations.meister.jungleexplorer.domain.Domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
 import lb.library.PinnedHeaderListView;
 
@@ -106,36 +105,6 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
-    }
-
-    private ArrayList<Domain> getAnimals()
-    {
-        ArrayList<Domain> result=new ArrayList<>();
-        Random r=new Random();
-        StringBuilder sb=new StringBuilder();
-        for(int i=0;i<1000;++i)
-        {
-            Domain animal = new Domain();
-            sb.delete(0,sb.length());
-            int strLength=r.nextInt(10)+1;
-            for(int j=0;j<strLength;++j)
-                switch(r.nextInt(3))
-                {
-                    case 0:
-                        sb.append((char)('a'+r.nextInt('z'-'a')));
-                        break;
-                    case 1:
-                        sb.append((char)('A'+r.nextInt('Z'-'A')));
-                        break;
-                    case 2:
-                        sb.append((char)('0'+r.nextInt('9'-'0')));
-                        break;
-                }
-
-            animal.setName(sb.toString());
-            result.add(animal);
-        }
-        return result;
     }
 
     @Override

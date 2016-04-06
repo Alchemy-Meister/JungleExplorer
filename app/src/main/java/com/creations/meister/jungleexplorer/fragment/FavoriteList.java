@@ -53,18 +53,7 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
         dbHelper = DBHelper.getHelper(this.getActivity());
 
         final ArrayList<Domain> animals = (ArrayList) dbHelper.getFavorites();
-        Collections.sort(animals, new Comparator<Domain>() {
-
-            @Override
-            public int compare(Domain lhs, Domain rhs) {
-                char lhsFirstLetter = TextUtils.isEmpty(lhs.getName()) ? ' ' : lhs.getName().charAt(0);
-                char rhsFirstLetter = TextUtils.isEmpty(rhs.getName()) ? ' ' : rhs.getName().charAt(0);
-                int firstLetterComparison = Character.toUpperCase(lhsFirstLetter) - Character.toUpperCase(rhsFirstLetter);
-                if (firstLetterComparison == 0)
-                    return lhs.getName().compareTo(rhs.getName());
-                return firstLetterComparison;
-            }
-        });
+        Collections.sort(animals);
 
         this.mListView = ((PinnedHeaderListView)this.getListView());
         this.mListView.setOnItemClickListener(this);
@@ -101,36 +90,6 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
-    }
-
-    private ArrayList<Domain> getAnimals()
-    {
-        ArrayList<Domain> result=new ArrayList<>();
-        Random r=new Random();
-        StringBuilder sb=new StringBuilder();
-        for(int i=0;i<1000;++i)
-        {
-            Domain animal = new Domain();
-            sb.delete(0,sb.length());
-            int strLength=r.nextInt(10)+1;
-            for(int j=0;j<strLength;++j)
-                switch(r.nextInt(3))
-                {
-                    case 0:
-                        sb.append((char)('a'+r.nextInt('z'-'a')));
-                        break;
-                    case 1:
-                        sb.append((char)('A'+r.nextInt('Z'-'A')));
-                        break;
-                    case 2:
-                        sb.append((char)('0'+r.nextInt('9'-'0')));
-                        break;
-                }
-
-            animal.setName(sb.toString());
-            result.add(animal);
-        }
-        return result;
     }
 
     public DomainAdapter getAdapter() {

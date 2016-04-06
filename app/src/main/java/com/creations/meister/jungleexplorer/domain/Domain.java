@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by meister on 4/1/16.
@@ -49,5 +51,35 @@ public class Domain implements Comparable<Domain>, Serializable {
         if (firstLetterComparison == 0)
             return this.getName().compareTo(another.getName());
         return firstLetterComparison;
+    }
+
+    public static ArrayList<Domain> getRandomDomains()
+    {
+        ArrayList<Domain> result=new ArrayList<>();
+        Random r=new Random();
+        StringBuilder sb=new StringBuilder();
+        for(int i=0;i<1000;++i)
+        {
+            Domain animal = new Domain();
+            sb.delete(0,sb.length());
+            int strLength=r.nextInt(10)+1;
+            for(int j=0;j<strLength;++j)
+                switch(r.nextInt(3))
+                {
+                    case 0:
+                        sb.append((char)('a'+r.nextInt('z'-'a')));
+                        break;
+                    case 1:
+                        sb.append((char)('A'+r.nextInt('Z'-'A')));
+                        break;
+                    case 2:
+                        sb.append((char)('0'+r.nextInt('9'-'0')));
+                        break;
+                }
+
+            animal.setName(sb.toString());
+            result.add(animal);
+        }
+        return result;
     }
 }

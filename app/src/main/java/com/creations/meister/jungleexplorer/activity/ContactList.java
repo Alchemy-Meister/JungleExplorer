@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -144,7 +145,7 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CODE_ASK_PERMISSIONS:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -175,18 +176,7 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     }
 
     private void initializeAdapter() {
-        Collections.sort(contacts, new Comparator<Domain>() {
-
-            @Override
-            public int compare(Domain lhs, Domain rhs) {
-                char lhsFirstLetter = TextUtils.isEmpty(lhs.getName()) ? ' ' : lhs.getName().charAt(0);
-                char rhsFirstLetter = TextUtils.isEmpty(rhs.getName()) ? ' ' : rhs.getName().charAt(0);
-                int firstLetterComparison = Character.toUpperCase(lhsFirstLetter) - Character.toUpperCase(rhsFirstLetter);
-                if (firstLetterComparison == 0)
-                    return lhs.getName().compareTo(rhs.getName());
-                return firstLetterComparison;
-            }
-        });
+        Collections.sort(contacts);
 
         mAdapter = new ContactAdapter(this, contacts);
         int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(

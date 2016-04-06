@@ -117,37 +117,6 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
         Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
     }
 
-    private ArrayList<Domain> getExperts()
-    {
-        ArrayList<Domain> result=new ArrayList<>();
-
-        Random r=new Random();
-        StringBuilder sb=new StringBuilder();
-        for(int i=0;i<1000;++i)
-        {
-            Expert animal = new Expert();
-            sb.delete(0,sb.length());
-            int strLength=r.nextInt(10)+1;
-            for(int j=0;j<strLength;++j)
-                switch(r.nextInt(3))
-                {
-                    case 0:
-                        sb.append((char)('a'+r.nextInt('z'-'a')));
-                        break;
-                    case 1:
-                        sb.append((char)('A'+r.nextInt('Z'-'A')));
-                        break;
-                    case 2:
-                        sb.append((char)('0'+r.nextInt('9'-'0')));
-                        break;
-                }
-
-            animal.setName(sb.toString());
-            result.add(animal);
-        }
-        return result;
-    }
-
     public DomainAdapter getAdapter() {
         return this.mAdapter;
     }
