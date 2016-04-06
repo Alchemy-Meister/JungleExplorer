@@ -5,10 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -19,16 +17,19 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
+import com.creations.meister.jungleexplorer.db.DBHelper;
+import com.creations.meister.jungleexplorer.domain.Animal;
+import com.creations.meister.jungleexplorer.image_utils.ImageHelper;
 import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 /**
@@ -37,7 +38,12 @@ import java.util.Date;
 public class NewAnimal extends AppCompatActivity implements View.OnClickListener {
 
     private String mCurrentPhotoPath;
+    private Bitmap animalBitmap;
     private ImageView mImageView;
+    private EditText mAnimalName;
+    private EditText mLocationText;
+    private EditText mDescription;
+
     private final int CAMERA_REQUEST = 1888;
     private final int GALLERY_REQUEST = 4261;
     private final int STORAGE_ASK_REQUEST = 123;
@@ -64,6 +70,9 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
         actionBar.setTitle(R.string.add_animal);
 
         mImageView = (ImageView) this.findViewById(R.id.animalImage);
+        mAnimalName = (EditText) this.findViewById(R.id.name);
+        mDescription = (EditText) this.findViewById(R.id.description);
+        mLocationText = (EditText) this.findViewById(R.id.locationText);
 
 
         initializeImageViewListener();
@@ -113,14 +122,16 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            this.galleryAddPic();
-            this.setPic();
+            ImageHelper.galleryAddPic(NewAnimal.this, mCurrentPhotoPath);
+            animalBitmap = ImageHelper.scaleImage(mImageView, mCurrentPhotoPath);
+            mImageView.setImageBitmap(animalBitmap);
             mImageView.invalidate();
         } else if(requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             if(data != null) {
                 try {
                     Uri uri = data.getData();
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                    animalBitmap = bitmap;
                     mImageView.setImageBitmap(bitmap);
                     mImageView.invalidate();
 
@@ -138,7 +149,18 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
         if(menuItem.getItemId() == android.R.id.home) {
             this.finish();
         } else if(menuItem.getItemId() == R.id.done) {
-            // TODO save on db;
+            Animal newAnimal = new Animal();
+            newAnimal.setName(mAnimalName.getText().toString());
+            if(mDescription.getText() != null) {
+                newAnimal.setDescription(mDescription.getText().toString());
+            }
+            if(mLocationText.getText() != null) {
+                newAnimal.setDescription(mLocationText.getText().toString());
+            }
+            DBHelper.getHelper(NewAnimal.this).insertAnimal(newAnimal);
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("newAnimal", newAnimal);
+            this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
             this.finish();
         }
         return super.onOptionsItemSelected(menuItem);
@@ -160,7 +182,8 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
                                     // Create the File where the photo should go
                                     File photoFile = null;
                                     try {
-                                        photoFile = createImageFile();
+                                        photoFile = ImageHelper.createImageFile();
+                                        mCurrentPhotoPath = photoFile.getAbsolutePath();
                                     } catch (IOException ex) {
                                         // Error occurred while creating the File
                                     }
@@ -184,51 +207,20 @@ public class NewAnimal extends AppCompatActivity implements View.OnClickListener
         }
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + ".jpg";
-        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Jungle Explorer");
-        if(!storageDir.exists())
-            storageDir.mkdir();
-
-        File image = new File(storageDir, imageFileName);
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("animalImage", animalBitmap);
     }
 
-    private void galleryAddPic() {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(mCurrentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
-    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedState) {
+        super.onRestoreInstanceState(savedState);
+        animalBitmap = savedState.getParcelable("animalImage");
 
-    private void setPic() {
-        // Get the dimensions of the View
-        int targetW = mImageView.getWidth();
-        int targetH = mImageView.getHeight();
-
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-
-        bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-        mImageView.setImageBitmap(bitmap);
+        if(animalBitmap != null) {
+            mImageView.setImageBitmap(animalBitmap);
+            mImageView.invalidate();
+        }
     }
 }

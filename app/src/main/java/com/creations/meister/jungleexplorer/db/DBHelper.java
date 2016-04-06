@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import android.database.sqlite.SQLiteStatement;
 
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.domain.Expert;
@@ -57,12 +57,12 @@ public class DBHelper extends SQLiteOpenHelper {
     // Animal table create statement
     private static final String CREATE_TABLE_ANIMAL = "CREATE TABLE "
             + TABLE_ANIMAL + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_PHOTO_ID
-            + " INTEGER," + KEY_NAME + " TEXT," + KEY_FAVORITE + " INTEGER,"
+            + " TEXT," + KEY_NAME + " TEXT," + KEY_FAVORITE + " INTEGER DEFAULT 0,"
             + KEY_LOCATION_TEXT + " TEXT," + KEY_DESCRIPTION + " TEXT)";
 
     private static final String CREATE_TABLE_GROUP = "CREATE TABLE "
             + TABLE_GROUP + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_PHOTO_ID
-            + " INTEGER," + KEY_NAME + " TEXT)";
+            + " TEXT," + KEY_NAME + " TEXT)";
 
     private static final String CREATE_TABLE_ANIMAL_GROUP = "CREATE TABLE "
             + TABLE_ANIMAL_GROUP + "(" + KEY_ANIMAL_ID + " REFERENCES " + TABLE_ANIMAL
@@ -71,7 +71,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_EXPERT = "CREATE TABLE "
             + TABLE_EXPERT + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_PHOTO_ID
-            + " INTEGER," + KEY_NAME + " TEXT)";
+            + " TEXT," + KEY_NAME + " TEXT)";
 
     private static final String CREATE_TABLE_ANIMAL_EXPERT = "CREATE TABLE "
             + TABLE_ANIMAL_EXPERT + "(" + KEY_ANIMAL_ID + " REFERENCES " + TABLE_ANIMAL
@@ -123,11 +123,9 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_LOCATION_TEXT, animal.getLocationText());
         values.put(KEY_DESCRIPTION, animal.getDescription());
 
-        long animal_id = db.insert(TABLE_ANIMAL, null, values);
-
+        return db.insert(TABLE_ANIMAL, null, values);
         // TODO Insert all the groups and experts.
 
-        return animal_id;
     }
 
     public List<Animal> getAllAnimals() {
@@ -153,6 +151,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 animals.add(animal);
             } while (c.moveToNext());
         }
+        c.close();
         return animals;
     }
 
@@ -179,11 +178,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 animals.add(animal);
             } while (c.moveToNext());
         }
+        c.close();
         return animals;
     }
 
-    public List<Group> getAllGroups() {
-        List<Group> groups = new ArrayList<>();
+    public ArrayList<Group> getAllGroups() {
+        ArrayList<Group> groups = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + TABLE_GROUP;
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -203,11 +203,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 groups.add(group);
             } while (c.moveToNext());
         }
+        c.close();
         return groups;
     }
 
-    public List<Expert> getAllExperts() {
-        List<Expert> experts = new ArrayList<>();
+    public ArrayList<Expert> getAllExperts() {
+        ArrayList<Expert> experts = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + TABLE_EXPERT;
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -227,6 +228,21 @@ public class DBHelper extends SQLiteOpenHelper {
                 experts.add(expert);
             } while (c.moveToNext());
         }
+        c.close();
         return experts;
+    }
+
+    public void insertAnimal(Animal animal) {
+        String insertQuery = "INSERT INTO " + TABLE_ANIMAL + "(" + KEY_NAME + "," + KEY_PHOTO_ID
+                + "," + KEY_LOCATION_TEXT + "," + KEY_DESCRIPTION + "," + KEY_FAVORITE + ")"
+                + "VALUES(?,?,?,?,?)";
+        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteStatement stmt = db.compileStatement(insertQuery);
+        stmt.bindString(1, animal.getName());
+        stmt.bindString(2, animal.getPhotoId());
+        stmt.bindString(3, animal.getLocationText());
+        stmt.bindString(4, animal.getDescription());
+        stmt.bindLong(5, animal.getFavorite());
+        stmt.execute();
     }
 }

@@ -57,7 +57,8 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
 
         dbHelper = DBHelper.getHelper(this.getActivity());
 
-        final ArrayList<Domain> groups = (ArrayList) dbHelper.getAllGroups();
+        //final ArrayList<Domain> groups = (ArrayList) dbHelper.getAllGroups();
+        final ArrayList<Domain> groups = getAnimals();
         Collections.sort(groups, new Comparator<Domain>() {
 
             @Override

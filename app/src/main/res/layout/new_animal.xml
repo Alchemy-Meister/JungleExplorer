@@ -21,7 +21,9 @@
                 android:background="@color/colorAnimal"
                 android:src="@drawable/animal_no_image"
                 android:clickable="true"
-                android:tint="#ffffff" />
+                android:scaleType="centerCrop"
+                android:maxHeight="220dp"
+                android:adjustViewBounds="true" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -101,7 +103,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
                     android:ems="10"
-                    android:id="@+id/Description"
+                    android:id="@+id/description"
                     android:layout_gravity="center_horizontal"
                     android:hint="@string/description_hint" />
             </LinearLayout>

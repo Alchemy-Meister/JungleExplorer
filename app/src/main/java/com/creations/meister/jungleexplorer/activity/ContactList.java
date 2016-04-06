@@ -25,7 +25,7 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
-import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
+import com.creations.meister.jungleexplorer.adapter.ContactAdapter;
 import com.creations.meister.jungleexplorer.domain.Domain;
 import com.creations.meister.jungleexplorer.domain.Expert;
 import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
@@ -48,7 +48,7 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     };
 
     private PinnedHeaderListView mListView;
-    private DomainAdapter mAdapter;
+    private ContactAdapter mAdapter;
     private SearchView searchView;
 
     private ArrayList<Domain> contacts;
@@ -188,7 +188,7 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
             }
         });
 
-        mAdapter = new DomainAdapter(this, contacts);
+        mAdapter = new ContactAdapter(this, contacts);
         int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
                 this, android.R.attr.colorBackground));
         mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);

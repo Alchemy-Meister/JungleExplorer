@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -23,7 +24,6 @@ import com.creations.meister.jungleexplorer.domain.Domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Random;
 
 import lb.library.PinnedHeaderListView;
@@ -33,10 +33,13 @@ import lb.library.PinnedHeaderListView;
  */
 public class AnimalList extends ListFragment implements AdapterView.OnItemClickListener {
 
+    private final int NEW_ANIMAL_REQUEST = 0;
+
     private PinnedHeaderListView mListView;
     private FloatingActionButton fabAddAnimal;
     private LayoutInflater mInflater;
 
+    private ArrayList<Domain> animals;
     private DomainAdapter mAdapter;
     private DBHelper dbHelper;
 
@@ -55,19 +58,8 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
 
         dbHelper = DBHelper.getHelper(this.getActivity());
 
-        final ArrayList<Domain> animals = (ArrayList) dbHelper.getAllAnimals();
-        Collections.sort(animals, new Comparator<Domain>() {
-
-            @Override
-            public int compare(Domain lhs, Domain rhs) {
-                char lhsFirstLetter = TextUtils.isEmpty(lhs.getName()) ? ' ' : lhs.getName().charAt(0);
-                char rhsFirstLetter = TextUtils.isEmpty(rhs.getName()) ? ' ' : rhs.getName().charAt(0);
-                int firstLetterComparison = Character.toUpperCase(lhsFirstLetter) - Character.toUpperCase(rhsFirstLetter);
-                if (firstLetterComparison == 0)
-                    return lhs.getName().compareTo(rhs.getName());
-                return firstLetterComparison;
-            }
-        });
+        animals = (ArrayList) dbHelper.getAllAnimals();
+        Collections.sort(animals);
 
         this.mListView = ((PinnedHeaderListView)this.getListView());
         this.mListView.setOnItemClickListener(this);
@@ -75,8 +67,8 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
                 R.layout.pinned_header_listview_side_header, mListView, false));
 
         mAdapter = new DomainAdapter(this.getContext(), animals);
-        int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
-                this.getActivity(),android.R.attr.colorBackground));
+        int pinnedHeaderBackgroundColor=getResources().getColor(AnimalList.getResIdFromAttribute(
+                this.getActivity(), android.R.attr.colorBackground));
         mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
         mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
 
@@ -84,12 +76,12 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
         mListView.setOnScrollListener(mAdapter);
         mListView.setEnableHeaderTransparencyChanges(false);
 
-        this.fabAddAnimal = (FloatingActionButton) this.getView().findViewById(R.id.animalFAB);
+        this.fabAddAnimal = (FloatingActionButton) this.getActivity().findViewById(R.id.animalFAB);
         this.fabAddAnimal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent menuIntent = new Intent(AnimalList.this.getContext(), NewAnimal.class);
-                startActivityForResult(menuIntent, 0);
+                startActivityForResult(menuIntent, NEW_ANIMAL_REQUEST);
             }
         });
 
@@ -144,6 +136,22 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
             result.add(animal);
         }
         return result;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == NEW_ANIMAL_REQUEST
+                && resultCode == AppCompatActivity.RESULT_OK)
+        {
+            animals.add((Domain) data.getExtras().getSerializable("newAnimal"));
+            Collections.sort(animals);
+            AnimalList.this.mAdapter.setData(animals);
+            mListView.setAdapter(mAdapter);
+        } else {
+
+        }
     }
 
     public DomainAdapter getAdapter() {
