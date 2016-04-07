@@ -17,6 +17,7 @@ import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.fragment.AnimalBasicInfo;
+import com.creations.meister.jungleexplorer.fragment.AnimalLocation;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 
@@ -28,6 +29,7 @@ public class NewAnimal extends AppCompatActivity {
     private FragmentManager mFragmentManager;
     private BottomBar mBottomBar;
     private AnimalBasicInfo info;
+    private AnimalLocation location;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -51,6 +53,7 @@ public class NewAnimal extends AppCompatActivity {
         mBottomBar = BottomBar.attach(this, savedInstanceState);
 
         info = new AnimalBasicInfo();
+        location = new AnimalLocation();
 
         mBottomBar.setItemsFromMenu(R.menu.new_anima_bottombar, new OnMenuTabClickListener() {
             @Override
@@ -61,7 +64,7 @@ public class NewAnimal extends AppCompatActivity {
                         transaction.replace(R.id.contentFragment, info, "INFO");
                         break;
                     case R.id.bb_menu_location:
-                        transaction.replace(R.id.contentFragment, null, "LOCATION");
+                        transaction.replace(R.id.contentFragment, location, "LOCATION");
                         break;
                     case R.id.bb_menu_new_animal_group:
                         transaction.replace(R.id.contentFragment, null, "GROUP");
@@ -106,5 +109,12 @@ public class NewAnimal extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        mBottomBar.onSaveInstanceState(outState);
     }
 }

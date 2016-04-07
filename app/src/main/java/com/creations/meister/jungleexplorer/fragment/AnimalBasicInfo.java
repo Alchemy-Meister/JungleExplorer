@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -80,9 +81,9 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
         mNameTextLayout = (TextInputLayout)
                 this.getActivity().findViewById(R.id.text_input_name);
 
-        mAnimalName = (EditText) this.getActivity().findViewById(R.id.name);
-        mDescription = (EditText) this.getActivity().findViewById(R.id.description);
-        mLocationText = (EditText) this.getActivity().findViewById(R.id.locationText);
+        mAnimalName = (TextInputEditText) this.getActivity().findViewById(R.id.name);
+        mDescription = (TextInputEditText) this.getActivity().findViewById(R.id.description);
+        mLocationText = (TextInputEditText) this.getActivity().findViewById(R.id.locationText);
 
         initializeImageViewListener();
 

@@ -54,7 +54,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <EditText
+                    <android.support.design.widget.TextInputEditText
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/name_hint"
@@ -87,7 +87,8 @@
                     android:id="@+id/text_input_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <EditText
+
+                    <android.support.design.widget.TextInputEditText
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/location_text_hint"
@@ -121,7 +122,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <EditText
+                    <android.support.design.widget.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
