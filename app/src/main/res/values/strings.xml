@@ -32,6 +32,8 @@
     <string name="invalid_name">You need to enter a name</string>
     <string name="animal_saved">Animal saved</string>
 
+    <string name="unknown_location">Unknown place name</string>
+
     <string name="contact_permission_message">%1$s needs access to your contacts to
         create and fill experts\' profile information.</string>
 
