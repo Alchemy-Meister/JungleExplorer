@@ -26,6 +26,9 @@ import com.roughike.bottombar.OnMenuTabClickListener;
  */
 public class NewAnimal extends AppCompatActivity {
 
+    private static final String INFO_KEY = "INFO";
+    private static final String LOCATION_KEY = "LOCATION";
+
     private FragmentManager mFragmentManager;
     private BottomBar mBottomBar;
     private AnimalBasicInfo info;
@@ -49,11 +52,25 @@ public class NewAnimal extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(R.string.add_animal);
         }
-        mFragmentManager = this.getSupportFragmentManager();
-        mBottomBar = BottomBar.attach(this, savedInstanceState);
 
-        info = new AnimalBasicInfo();
-        location = new AnimalLocation();
+        mFragmentManager = this.getSupportFragmentManager();
+
+        if(savedInstanceState == null) {
+            info = new AnimalBasicInfo();
+            location = new AnimalLocation();
+            FragmentTransaction transaction = mFragmentManager.beginTransaction();
+            transaction.add(R.id.contentFragment, location, NewAnimal.LOCATION_KEY);
+            transaction.detach(location);
+            transaction.add(R.id.contentFragment, info, NewAnimal.INFO_KEY);
+            transaction.commit();
+        } else {
+            info = (AnimalBasicInfo) mFragmentManager.getFragment(
+                    savedInstanceState, NewAnimal.INFO_KEY);
+            location = (AnimalLocation) mFragmentManager.getFragment(
+                    savedInstanceState, NewAnimal.LOCATION_KEY);
+        }
+
+        mBottomBar = BottomBar.attach(this, savedInstanceState);
 
         mBottomBar.setItemsFromMenu(R.menu.new_anima_bottombar, new OnMenuTabClickListener() {
             @Override
@@ -61,10 +78,16 @@ public class NewAnimal extends AppCompatActivity {
                 FragmentTransaction transaction = mFragmentManager.beginTransaction();
                 switch (menuItemId) {
                     case R.id.bb_menu_info:
-                        transaction.replace(R.id.contentFragment, info, "INFO");
+                        if(info.isDetached()) {
+                            transaction.attach(info);
+                            transaction.detach(location);
+                        }
                         break;
                     case R.id.bb_menu_location:
-                        transaction.replace(R.id.contentFragment, location, "LOCATION");
+                        if(location.isDetached()) {
+                            transaction.attach(location);
+                            transaction.detach(info);
+                        }
                         break;
                     case R.id.bb_menu_new_animal_group:
                         transaction.replace(R.id.contentFragment, null, "GROUP");
@@ -94,13 +117,13 @@ public class NewAnimal extends AppCompatActivity {
             Animal newAnimal = new Animal();
             for (Fragment fragment : mFragmentManager.getFragments()) {
                 if (fragment instanceof AnimalBasicInfo) {
-                    ((AnimalBasicInfo) fragment).setAnimalBasicInfo(newAnimal);
+                   newAnimal = ((AnimalBasicInfo) fragment).setAnimalBasicInfo(newAnimal);
                 }
             }
-            DBHelper.getHelper(NewAnimal.this).insertAnimal(newAnimal);
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("newAnimal", newAnimal);
             if(!TextUtils.isEmpty(newAnimal.getName())) {
+                DBHelper.getHelper(NewAnimal.this).insertAnimal(newAnimal);
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("newAnimal", newAnimal);
                 this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
             } else {
                 this.setResult(AppCompatActivity.RESULT_CANCELED);
@@ -114,6 +137,9 @@ public class NewAnimal extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        mFragmentManager.putFragment(outState, NewAnimal.INFO_KEY, info);
+        mFragmentManager.putFragment(outState, NewAnimal.LOCATION_KEY, location);
 
         mBottomBar.onSaveInstanceState(outState);
     }

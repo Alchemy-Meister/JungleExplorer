@@ -33,12 +33,16 @@
     <string name="animal_saved">Animal saved</string>
 
     <string name="unknown_location">Unknown place name</string>
+    <string name="location_unavailable">Location is not available, try turning it on first.</string>
 
     <string name="contact_permission_message">%1$s needs access to your contacts to
         create and fill experts\' profile information.</string>
 
     <string name="storage_permission_message">%1$s needs access to your storage to
         save and access gallery photographs so that you can set profile images.</string>
+    <string name="location_permission_message">%1$s needs access to your location to zoom in into
+        your current position and auto-set animal location.</string>
+
 
     <!-- Preference Strings -->
     <string name="settings">Settings</string>

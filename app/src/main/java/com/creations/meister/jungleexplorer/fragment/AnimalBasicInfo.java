@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,18 +65,25 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("WTF?", String.valueOf(savedInstanceState == null));
+
+        if(savedInstanceState != null) {
+            animalBitmap = savedInstanceState.getParcelable("animalImage");
+
+        }
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mImageView = (ImageView) this.getActivity().findViewById(R.id.animalImage);
 
-        if(savedInstanceState != null) {
-            animalBitmap = savedInstanceState.getParcelable("animalImage");
-
-            if (animalBitmap != null) {
-                mImageView.setImageBitmap(animalBitmap);
-                mImageView.invalidate();
-            }
+        if (animalBitmap != null) {
+            mImageView.setImageBitmap(animalBitmap);
+            mImageView.invalidate();
         }
 
         mNameTextLayout = (TextInputLayout)
