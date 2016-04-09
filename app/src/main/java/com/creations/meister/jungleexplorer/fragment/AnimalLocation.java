@@ -18,7 +18,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -121,7 +120,9 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
     @Override
     public void onPause() {
         super.onPause();
-        mapView.onPause();
+        if(mapView != null) {
+            mapView.onPause();
+        }
         if(mMarker != null) {
             mLatLng = mMarker.getPosition();
         }
@@ -132,7 +133,9 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
         super.onResume();
         mapView.onResume();
         if(mMap != null) {
-            initializeMyLocation();
+            if(RuntimePermissionsHelper.hasPermissions(this.getContext(), requiredPermissions)) {
+                myLocationMap();
+            }
             if(mMarker != null) {
                 mMarker.setPosition(mLatLng);
                 mMarker.setVisible(true);
@@ -143,13 +146,17 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
+        if(mapView != null) {
+            mapView.onDestroy();
+        }
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapView.onLowMemory();
+        if(mapView != null) {
+            mapView.onLowMemory();
+        }
     }
 
     @Override
@@ -185,6 +192,11 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
             this.requestPermissions(requiredPermissions, LOCATION_ASK_REQUEST);
             return;
         }
+        myLocationMap();
+    }
+
+    private void myLocationMap() {
+        //noinspection MissingPermission
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override

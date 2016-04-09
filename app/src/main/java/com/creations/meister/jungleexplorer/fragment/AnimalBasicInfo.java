@@ -139,9 +139,7 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
                 AnimalBasicInfo.this.getContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (hasReadContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(AnimalBasicInfo.this.getActivity(),
-                    requiredPermissions,
-                    STORAGE_ASK_REQUEST);
+            AnimalBasicInfo.this.requestPermissions(requiredPermissions, STORAGE_ASK_REQUEST);
             return;
         }
         mImageView.setOnClickListener(this);
@@ -151,6 +149,7 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults)
     {
+        Log.d("MODAFUKA", String.valueOf(grantResults[0] == PackageManager.PERMISSION_GRANTED));
         switch (requestCode) {
             case STORAGE_ASK_REQUEST:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
