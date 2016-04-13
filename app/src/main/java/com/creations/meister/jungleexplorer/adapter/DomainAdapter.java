@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.text.TextUtils;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,12 +33,14 @@ public class DomainAdapter extends SearchablePinnedHeaderListViewAdapter<Domain>
     private LayoutInflater mInflater;
     private Context context;
     private ArrayList<Domain> mDomain;
+    private SparseBooleanArray mSelectedItemsIds;
     private final int CONTACT_PHOTO_IMAGE_SIZE;
     private final int[] PHOTO_TEXT_BACKGROUND_COLORS;
     private final AsyncTaskThreadPool mAsyncTaskThreadPool=new AsyncTaskThreadPool(1,2,10);
 
     public DomainAdapter(Context context, final ArrayList<Domain> domain) {
         this.context = context;
+        this.mSelectedItemsIds = new SparseBooleanArray();
         this.setData(domain);
         PHOTO_TEXT_BACKGROUND_COLORS = context.getResources().getIntArray(R.array.contacts_text_background_colors);
         CONTACT_PHOTO_IMAGE_SIZE = context.getResources().getDimensionPixelSize(
@@ -135,6 +138,32 @@ public class DomainAdapter extends SearchablePinnedHeaderListViewAdapter<Domain>
         final String displayName=item.getName();
         return !TextUtils.isEmpty(displayName)&&displayName.toLowerCase(Locale.getDefault())
                 .contains(constraint.toString().toLowerCase(Locale.getDefault()));
+    }
+
+    public void toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+    public void selectView(int position, boolean value) {
+        if (value)
+            mSelectedItemsIds.put(position, value);
+        else
+            mSelectedItemsIds.delete(position);
+
+        notifyDataSetChanged();
+    }
+
+    public void removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedCount() {
+        return mSelectedItemsIds.size();
+    }
+
+    public SparseBooleanArray getSelectedIds() {
+        return mSelectedItemsIds;
     }
 
     @Override

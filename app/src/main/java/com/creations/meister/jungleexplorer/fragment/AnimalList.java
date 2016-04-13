@@ -8,8 +8,12 @@ import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.SparseBooleanArray;
 import android.util.TypedValue;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,17 +24,19 @@ import com.creations.meister.jungleexplorer.activity.MainActivity;
 import com.creations.meister.jungleexplorer.activity.NewAnimal;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
+import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.domain.Domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 import lb.library.PinnedHeaderListView;
 
 /**
  * Created by meister on 3/27/16.
  */
-public class AnimalList extends ListFragment implements AdapterView.OnItemClickListener {
+public class AnimalList extends ListFragment {
 
     private final int NEW_ANIMAL_REQUEST = 0;
 
@@ -41,6 +47,8 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
     private ArrayList<Domain> animals;
     private DomainAdapter mAdapter;
     private DBHelper dbHelper;
+
+    private ActionMode mActionMode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,7 +69,12 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
         Collections.sort(animals);
 
         this.mListView = ((PinnedHeaderListView)this.getListView());
-        this.mListView.setOnItemClickListener(this);
+        this.mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
+            }
+        });
         mListView.setPinnedHeaderView(mInflater.inflate(
                 R.layout.pinned_header_listview_side_header, mListView, false));
 
@@ -91,6 +104,74 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
             this.mAdapter.setHeaderViewVisible(TextUtils.isEmpty(sv.getQuery()));
         }
 
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(mActionMode != null) {
+                    onListItemSelect(position);
+                }
+            }
+        });
+
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                view.setSelected(true);
+                onListItemSelect(position);
+                return true;
+            }
+        });
+
+    }
+
+    private void onListItemSelect(int position) {
+        mAdapter.toggleSelection(position);
+        boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
+
+        if (hasCheckedItems && mActionMode == null)
+            // there are some selected items, start the actionMode
+            mActionMode = this.getActivity().startActionMode(new ActionMode.Callback() {
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    mode.getMenuInflater().inflate(R.menu.cab_menu, menu);
+                    return true;
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return false;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    if(item.getItemId() == R.id.action_delete) {
+                        SparseBooleanArray selectedIDs = mAdapter.getSelectedIds();
+                        for(int i = animals.size(); i >= 0; i--) {
+                            if(selectedIDs.get(i)){
+                                dbHelper.removeAnimal((Animal) animals.get(i));
+                                animals.remove(i);
+                            }
+                        }
+                        mAdapter.notifyDataSetChanged();
+
+                    }
+                    mActionMode.finish();
+                    return true;
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+                    mAdapter.removeSelection();
+                    mActionMode = null;
+                }
+            });
+        else if (!hasCheckedItems && mActionMode != null)
+            // there no selected items, finish the actionMode
+            mActionMode.finish();
+
+        if (mActionMode != null)
+            mActionMode.setTitle(String.valueOf(mAdapter
+                    .getSelectedCount()) + " selected");
     }
 
     public static int getResIdFromAttribute(final Activity activity,final int attr)
@@ -100,11 +181,6 @@ public class AnimalList extends ListFragment implements AdapterView.OnItemClickL
         final TypedValue typedValue=new TypedValue();
         activity.getTheme().resolveAttribute(attr, typedValue, true);
         return typedValue.resourceId;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
     }
 
     @Override

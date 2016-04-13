@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
+import android.support.annotation.NonNull;
 
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.domain.Expert;
@@ -232,7 +233,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return experts;
     }
 
-    public void insertAnimal(Animal animal) {
+    public void insertAnimal(@NonNull  Animal animal) {
         String insertQuery = "INSERT INTO " + TABLE_ANIMAL + "(" + KEY_NAME + "," + KEY_PHOTO_ID
                 + "," + KEY_LOCATION_TEXT + "," + KEY_DESCRIPTION + "," + KEY_FAVORITE + ")"
                 + "VALUES(?,?,?,?,?)";
@@ -243,6 +244,14 @@ public class DBHelper extends SQLiteOpenHelper {
         stmt.bindString(3, animal.getLocationText());
         stmt.bindString(4, animal.getDescription());
         stmt.bindLong(5, animal.getFavorite());
+        stmt.execute();
+    }
+
+    public void removeAnimal(@NonNull  Animal animal) {
+        String deleteQuery = "DELETE FROM " + TABLE_ANIMAL + " WHERE " + KEY_ID + "=?";
+        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteStatement stmt = db.compileStatement(deleteQuery);
+        stmt.bindLong(1, animal.getId());
         stmt.execute();
     }
 }
