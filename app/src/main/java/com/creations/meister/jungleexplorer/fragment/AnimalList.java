@@ -29,7 +29,6 @@ import com.creations.meister.jungleexplorer.domain.Domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 
 import lb.library.PinnedHeaderListView;
 
@@ -39,6 +38,7 @@ import lb.library.PinnedHeaderListView;
 public class AnimalList extends ListFragment {
 
     private final int NEW_ANIMAL_REQUEST = 0;
+    private final int ANIMAL_EDIT_REQUEST = 1;
 
     private PinnedHeaderListView mListView;
     private FloatingActionButton fabAddAnimal;
@@ -109,6 +109,10 @@ public class AnimalList extends ListFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(mActionMode != null) {
                     onListItemSelect(position);
+                } else {
+                    Intent newAnimalIntent = new Intent(AnimalList.this.getContext(), NewAnimal.class);
+                    newAnimalIntent.putExtra("EXTRA_SESSION_ID", animals.get(position));
+                    startActivityForResult(newAnimalIntent, ANIMAL_EDIT_REQUEST);
                 }
             }
         });

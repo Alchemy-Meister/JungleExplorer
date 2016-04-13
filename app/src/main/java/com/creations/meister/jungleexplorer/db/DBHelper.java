@@ -44,6 +44,8 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_FAVORITE = "favorite";
     private static final String KEY_LOCATION_TEXT = "location_text";
     private static final String KEY_DESCRIPTION = "description";
+    private static final String KEY_LATITUDE = "latitude";
+    private static final String KEY_LONGITUDE = "longitude";
 
     // Common relation table column names
     private static final String KEY_ANIMAL_ID = "animal_id";
@@ -59,7 +61,8 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_ANIMAL = "CREATE TABLE "
             + TABLE_ANIMAL + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_PHOTO_ID
             + " TEXT," + KEY_NAME + " TEXT," + KEY_FAVORITE + " INTEGER DEFAULT 0,"
-            + KEY_LOCATION_TEXT + " TEXT," + KEY_DESCRIPTION + " TEXT)";
+            + KEY_LOCATION_TEXT + " TEXT," + KEY_DESCRIPTION + " TEXT,"
+            + KEY_LATITUDE + " REAL," + KEY_LONGITUDE + " REAL)";
 
     private static final String CREATE_TABLE_GROUP = "CREATE TABLE "
             + TABLE_GROUP + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_PHOTO_ID
