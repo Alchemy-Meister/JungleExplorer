@@ -82,6 +82,7 @@ public class NewAnimal extends AppCompatActivity {
             transaction.add(R.id.contentFragment, info, NewAnimal.INFO_KEY);
             transaction.commit();
         } else {
+            animal = (Animal) savedInstanceState.getSerializable("animal");
             info = (AnimalBasicInfo) mFragmentManager.getFragment(
                     savedInstanceState, NewAnimal.INFO_KEY);
             location = (AnimalLocation) mFragmentManager.getFragment(
@@ -167,6 +168,7 @@ public class NewAnimal extends AppCompatActivity {
                 this.getMenuInflater().inflate(R.menu.view_animal_menu, menu);
                 this.editMode = false;
                 this.info.setEditable(editMode);
+                this.location.setEditable(editMode);
             }
         } else if(menuItem.getItemId() == R.id.edit) {
             actionBar.setTitle(getResources().getString(R.string.edit_animal));
@@ -174,6 +176,7 @@ public class NewAnimal extends AppCompatActivity {
             this.getMenuInflater().inflate(R.menu.new_animal_menu, menu);
             this.editMode = true;
             this.info.setEditable(editMode);
+            this.location.setEditable(editMode);
         }
 
         return super.onOptionsItemSelected(menuItem);
@@ -187,5 +190,6 @@ public class NewAnimal extends AppCompatActivity {
         mFragmentManager.putFragment(outState, NewAnimal.LOCATION_KEY, location);
 
         mBottomBar.onSaveInstanceState(outState);
+        outState.putSerializable("animal", animal);
     }
 }
