@@ -238,8 +238,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void insertAnimal(@NonNull  Animal animal) {
         String insertQuery = "INSERT INTO " + TABLE_ANIMAL + "(" + KEY_NAME + "," + KEY_PHOTO_ID
-                + "," + KEY_LOCATION_TEXT + "," + KEY_DESCRIPTION + "," + KEY_FAVORITE + ")"
-                + "VALUES(?,?,?,?,?)";
+                + "," + KEY_LOCATION_TEXT + "," + KEY_DESCRIPTION + "," + KEY_FAVORITE
+                + "," + KEY_LATITUDE + "," + KEY_LONGITUDE + ")"
+                + "VALUES(?,?,?,?,?,?,?)";
         SQLiteDatabase db = this.getWritableDatabase();
         SQLiteStatement stmt = db.compileStatement(insertQuery);
         stmt.bindString(1, animal.getName());
@@ -247,6 +248,14 @@ public class DBHelper extends SQLiteOpenHelper {
         stmt.bindString(3, animal.getLocationText());
         stmt.bindString(4, animal.getDescription());
         stmt.bindLong(5, animal.getFavorite());
+        if(animal.getLatitude() != null)
+            stmt.bindDouble(6, animal.getLatitude());
+        else
+            stmt.bindNull(6);
+        if(animal.getLongitude() != null)
+            stmt.bindDouble(7, animal.getLongitude());
+        else
+            stmt.bindNull(7);
         stmt.execute();
     }
 

@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.creations.meister.jungleexplorer.R;
+import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -287,6 +288,14 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
 
     private void goLocationSettings() {
         this.getContext().startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+    }
+
+    public Animal setAnimalLocation(Animal animal) {
+        if(mMarker != null) {
+            animal.setLatitude(mMarker.getPosition().latitude);
+            animal.setLongitude(mMarker.getPosition().longitude);
+        }
+        return animal;
     }
 
     @Override

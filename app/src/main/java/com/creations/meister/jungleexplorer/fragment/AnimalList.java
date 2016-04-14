@@ -39,6 +39,7 @@ public class AnimalList extends ListFragment {
 
     private final int NEW_ANIMAL_REQUEST = 0;
     private final int ANIMAL_EDIT_REQUEST = 1;
+    private final String ANIMAL_KEY = "ANIMAL";
 
     private PinnedHeaderListView mListView;
     private FloatingActionButton fabAddAnimal;
@@ -111,7 +112,7 @@ public class AnimalList extends ListFragment {
                     onListItemSelect(position);
                 } else {
                     Intent newAnimalIntent = new Intent(AnimalList.this.getContext(), NewAnimal.class);
-                    newAnimalIntent.putExtra("EXTRA_SESSION_ID", animals.get(position));
+                    newAnimalIntent.putExtra(ANIMAL_KEY, animals.get(position));
                     startActivityForResult(newAnimalIntent, ANIMAL_EDIT_REQUEST);
                 }
             }

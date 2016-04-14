@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,16 +29,31 @@ public class NewAnimal extends AppCompatActivity {
 
     private static final String INFO_KEY = "INFO";
     private static final String LOCATION_KEY = "LOCATION";
+    private static final String ANIMAL_KEY = "ANIMAL";
 
     private FragmentManager mFragmentManager;
     private BottomBar mBottomBar;
+    private ActionBar actionBar;
+    private Menu menu;
+
+    private boolean editMode = true;
+    private boolean creation;
+
     private AnimalBasicInfo info;
     private AnimalLocation location;
+    private Animal animal;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.new_animal_menu, menu);
+
+        this.menu = menu;
+
+        if(animal == null) {
+            menuInflater.inflate(R.menu.new_animal_menu, menu);
+        } else {
+            menuInflater.inflate(R.menu.view_animal_menu, menu);
+        }
 
         return true;
     }
@@ -47,15 +63,17 @@ public class NewAnimal extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_main);
 
-        ActionBar actionBar = this.getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(R.string.add_animal);
-        }
-
         mFragmentManager = this.getSupportFragmentManager();
+        actionBar = this.getSupportActionBar();
 
         if(savedInstanceState == null) {
+            Bundle bundle = getIntent().getExtras();
+            if(bundle != null) {
+                animal = (Animal) bundle.get(ANIMAL_KEY);
+            } else {
+                creation = true;
+            }
+
             info = new AnimalBasicInfo();
             location = new AnimalLocation();
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
@@ -68,6 +86,17 @@ public class NewAnimal extends AppCompatActivity {
                     savedInstanceState, NewAnimal.INFO_KEY);
             location = (AnimalLocation) mFragmentManager.getFragment(
                     savedInstanceState, NewAnimal.LOCATION_KEY);
+
+            creation = false;
+        }
+
+        if (actionBar != null) {
+            if(animal == null) {
+                actionBar.setTitle(R.string.add_animal);
+            } else {
+                actionBar.setTitle(R.string.view_animal);
+            }
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         mBottomBar = BottomBar.attach(this, savedInstanceState);
@@ -114,21 +143,37 @@ public class NewAnimal extends AppCompatActivity {
         if(menuItem.getItemId() == android.R.id.home) {
             this.finish();
         } else if(menuItem.getItemId() == R.id.done) {
-            Animal newAnimal = new Animal();
-            for (Fragment fragment : mFragmentManager.getFragments()) {
-                if (fragment instanceof AnimalBasicInfo) {
-                   newAnimal = ((AnimalBasicInfo) fragment).setAnimalBasicInfo(newAnimal);
+            if(creation) {
+                Animal newAnimal = new Animal();
+                for (Fragment fragment : mFragmentManager.getFragments()) {
+                    if (fragment instanceof AnimalBasicInfo) {
+                       newAnimal = ((AnimalBasicInfo) fragment).setAnimalBasicInfo(newAnimal);
+                    } else  if(fragment instanceof AnimalLocation) {
+                        newAnimal = ((AnimalLocation) fragment).setAnimalLocation(newAnimal);
+                    }
                 }
+                if(!TextUtils.isEmpty(newAnimal.getName())) {
+                    DBHelper.getHelper(NewAnimal.this).insertAnimal(newAnimal);
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("newAnimal", newAnimal);
+                    this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
+                } else {
+                    this.setResult(AppCompatActivity.RESULT_CANCELED);
+                }
+                this.finish();
+            } else if(editMode){
+                actionBar.setTitle(getResources().getString(R.string.view_animal));
+                this.menu.clear();
+                this.getMenuInflater().inflate(R.menu.view_animal_menu, menu);
+                this.editMode = false;
+                this.info.setEditable(editMode);
             }
-            if(!TextUtils.isEmpty(newAnimal.getName())) {
-                DBHelper.getHelper(NewAnimal.this).insertAnimal(newAnimal);
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra("newAnimal", newAnimal);
-                this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
-            } else {
-                this.setResult(AppCompatActivity.RESULT_CANCELED);
-            }
-            this.finish();
+        } else if(menuItem.getItemId() == R.id.edit) {
+            actionBar.setTitle(getResources().getString(R.string.edit_animal));
+            this.menu.clear();
+            this.getMenuInflater().inflate(R.menu.new_animal_menu, menu);
+            this.editMode = true;
+            this.info.setEditable(editMode);
         }
 
         return super.onOptionsItemSelected(menuItem);

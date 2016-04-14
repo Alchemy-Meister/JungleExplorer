@@ -11,7 +11,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -19,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -27,7 +25,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.creations.meister.jungleexplorer.R;
-import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.image_utils.ImageHelper;
 import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
@@ -49,6 +46,11 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
     private EditText mLocationText;
     private EditText mDescription;
 
+    private final String ANIMAL_KEY = "ANIMAL";
+    private Animal animal;
+
+    private boolean creation = false;
+
     private final int CAMERA_REQUEST = 1888;
     private final int GALLERY_REQUEST = 4261;
     private final int STORAGE_ASK_REQUEST = 123;
@@ -67,11 +69,17 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("WTF?", String.valueOf(savedInstanceState == null));
 
         if(savedInstanceState != null) {
             animalBitmap = savedInstanceState.getParcelable("animalImage");
+        } else {
+            Bundle bundle = this.getActivity().getIntent().getExtras();
+            if(bundle != null) {
+                animal = (Animal) bundle.get(ANIMAL_KEY);
 
+            } else {
+                creation = true;
+            }
         }
     }
 
@@ -110,6 +118,8 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
 
         this.getActivity().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        this.setEditable(creation);
     }
 
     @Override
@@ -149,7 +159,6 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults)
     {
-        Log.d("MODAFUKA", String.valueOf(grantResults[0] == PackageManager.PERMISSION_GRANTED));
         switch (requestCode) {
             case STORAGE_ASK_REQUEST:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -195,32 +204,6 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        if(menuItem.getItemId() == android.R.id.home) {
-            AnimalBasicInfo.this.getActivity().finish();
-        } else if(menuItem.getItemId() == R.id.done) {
-            if(!TextUtils.isEmpty(mAnimalName.getText())) {
-                Animal newAnimal = new Animal();
-                newAnimal.setName(mAnimalName.getText().toString());
-                if (!TextUtils.isEmpty(mDescription.getText())) {
-                    newAnimal.setDescription(mDescription.getText().toString());
-                }
-                if (!TextUtils.isEmpty(mLocationText.getText())) {
-                    newAnimal.setDescription(mLocationText.getText().toString());
-                }
-                DBHelper.getHelper(AnimalBasicInfo.this.getContext()).insertAnimal(newAnimal);
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra("newAnimal", newAnimal);
-                this.getActivity().setResult(AppCompatActivity.RESULT_OK, resultIntent);
-            } else {
-                this.getActivity().setResult(AppCompatActivity.RESULT_CANCELED);
-            }
-            this.getActivity().finish();
-        }
-        return super.onOptionsItemSelected(menuItem);
-    }
-
-    @Override
     public void onClick(View v) {
         if(v.getId() == R.id.animalImage) {
             final String[] pOptions = getResources().getStringArray(R.array.photo_options);
@@ -262,6 +245,32 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
                     .setPositiveButton(R.string.cancel, null)
                     .create()
                     .show();
+        }
+    }
+
+    public void setEditable(boolean editable) {
+        if(editable) {
+            this.mImageView.setEnabled(true);
+            this.mImageView.setFocusableInTouchMode(true);
+            this.mImageView.setFocusable(true);
+            this.mAnimalName.setEnabled(true);
+            this.mAnimalName.setFocusableInTouchMode(true);
+            this.mAnimalName.setFocusable(true);
+            this.mLocationText.setEnabled(true);
+            this.mLocationText.setFocusableInTouchMode(true);
+            this.mLocationText.setFocusable(true);
+            this.mDescription.setEnabled(true);
+            this.mDescription.setFocusableInTouchMode(true);
+            this.mDescription.setFocusable(true);
+        } else {
+            this.mImageView.setEnabled(false);
+            this.mImageView.setFocusable(false);
+            this.mAnimalName.setEnabled(false);
+            this.mAnimalName.setFocusable(false);
+            this.mLocationText.setEnabled(false);
+            this.mLocationText.setFocusable(false);
+            this.mDescription.setEnabled(false);
+            this.mDescription.setFocusable(false);
         }
     }
 

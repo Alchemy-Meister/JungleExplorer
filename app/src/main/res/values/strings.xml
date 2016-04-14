@@ -11,6 +11,8 @@
 
 
     <string name="add_animal">Add new animal</string>
+    <string name="view_animal">View animal</string>
+    <string name="edit_animal">Edit animal</string>
     <string name="add_group">Add new group</string>
 
     <string name="no_animals">No animals saved</string>
