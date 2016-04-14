@@ -62,7 +62,7 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
     private boolean editable = false;
 
     private final String ANIMAL_KEY = "ANIMAL";
-    private Animal animal;
+    private Animal mAnimal;
 
 
     @Override
@@ -88,8 +88,10 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
         if(savedInstanceState == null) {
             Bundle bundle = this.getActivity().getIntent().getExtras();
             if(bundle != null) {
-                animal = (Animal) bundle.get(ANIMAL_KEY);
-
+                mAnimal = (Animal) bundle.get(ANIMAL_KEY);
+                if(mAnimal.getLatitude() != null && mAnimal.getLongitude() != null) {
+                    mLatLng = new LatLng(mAnimal.getLatitude(), mAnimal.getLongitude());
+                }
             } else {
                 editable = true;
             }
