@@ -34,6 +34,7 @@
 
     <string name="invalid_name">You need to enter a name</string>
     <string name="animal_saved">Animal saved</string>
+    <string name="expert_saved">Expert saved</string>
 
     <string name="unknown_location">Unknown place name</string>
     <string name="location_unavailable">Location is not available, try turning it on first.</string>

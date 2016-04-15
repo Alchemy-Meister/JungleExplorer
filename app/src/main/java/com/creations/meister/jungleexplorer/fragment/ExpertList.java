@@ -105,8 +105,10 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
         {
             experts.add((Domain) data.getExtras().getSerializable("newContact"));
             Collections.sort(experts);
-            mAdapter.notifyDataSetChanged();
-            Toast.makeText(this.getContext(), getResources().getString(R.string.animal_saved), Toast.LENGTH_SHORT).show();
+            mAdapter.setData(experts);
+            mListView.setAdapter(mAdapter);
+            Toast.makeText(this.getContext(), getResources().getString(R.string.expert_saved),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -17,14 +17,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.adapter.ContactAdapter;
@@ -36,14 +34,13 @@ import com.creations.meister.jungleexplorer.utils.ContactsQuery;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import lb.library.PinnedHeaderListView;
 
 /**
- * Created by meister on 4/1/16.
+ * Created by meister on 4/15/16.
  */
-public class ContactList extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class NewAnimalExpertList extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
     private static final String[] requiredPermissions = new String[]{
@@ -143,7 +140,7 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         }
     }
 
-    public static int getResIdFromAttribute(final Activity activity,final int attr)
+    public static int getResIdFromAttribute(final Activity activity, final int attr)
     {
         if(attr==0)
             return 0;
@@ -154,16 +151,10 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        dbHelper.createExpert((Expert) contacts.get(position));
         Intent resultIntent = new Intent();
-        if(!dbHelper.expertExists((Expert) contacts.get(position))) {
-            Log.d("Exist", "FALSE");
-            dbHelper.createExpert((Expert) contacts.get(position));
-            resultIntent.putExtra("newContact", contacts.get(position));
-            this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
-        } else {
-            Log.d("Exists", "TRUE");
-            this.setResult(AppCompatActivity.RESULT_CANCELED);
-        }
+        resultIntent.putExtra("newContact", contacts.get(position));
+        this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
         finish();
     }
 
@@ -178,7 +169,7 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
                 } else {
                     RuntimePermissionsHelper.showMessageOKCancel(getResources().getString(
                             R.string.contact_permission_message,
-                            getResources().getString(R.string.app_name)), ContactList.this);
+                            getResources().getString(R.string.app_name)), NewAnimalExpertList.this);
                 }
                 break;
             default:
@@ -191,10 +182,10 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
             return;
         }
 
-        int hasReadContactsPermission = ContextCompat.checkSelfPermission(ContactList.this,
+        int hasReadContactsPermission = ContextCompat.checkSelfPermission(NewAnimalExpertList.this,
                 Manifest.permission.READ_CONTACTS);
         if (hasReadContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(ContactList.this,
+            ActivityCompat.requestPermissions(NewAnimalExpertList.this,
                     requiredPermissions,
                     REQUEST_CODE_ASK_PERMISSIONS);
             alreadyAskedForPermission = true;
@@ -229,7 +220,7 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     public void onResume() {
         super.onResume();
 
-        if(RuntimePermissionsHelper.hasPermissions(ContactList.this, requiredPermissions)) {
+        if(RuntimePermissionsHelper.hasPermissions(NewAnimalExpertList.this, requiredPermissions)) {
             contacts = this.getExperts();
             this.initializeAdapter();
         }

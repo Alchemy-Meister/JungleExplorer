@@ -6,7 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.domain.Expert;
@@ -23,7 +25,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper instance;
 
     // Database Version
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // Database Name
     private static final String DATABASE_NAME = "JungleExplorer.db";
@@ -53,6 +55,9 @@ public class DBHelper extends SQLiteOpenHelper {
     // ANIMAL_GROUP Table - column names
     private static final String KEY_GROUP_ID = "group_id";
 
+    // EXPERT Table - column names
+    private static final String KEY_CONTACT_URI = "contact_uri";
+
     // ANIMAL_EXPERT Table - column names
     private static final String KEY_EXPERT_ID = "expert_id";
 
@@ -75,7 +80,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_EXPERT = "CREATE TABLE "
             + TABLE_EXPERT + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_PHOTO_ID
-            + " TEXT," + KEY_NAME + " TEXT)";
+            + " TEXT," + KEY_NAME + " TEXT," + KEY_CONTACT_URI + " TEXT)";
 
     private static final String CREATE_TABLE_ANIMAL_EXPERT = "CREATE TABLE "
             + TABLE_ANIMAL_EXPERT + "(" + KEY_ANIMAL_ID + " REFERENCES " + TABLE_ANIMAL
@@ -141,12 +146,30 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    public boolean expertExists(@NonNull Expert expert) {
+        String selectQuery = "SELECT * FROM " + TABLE_EXPERT + " WHERE "
+                + KEY_CONTACT_URI + "=?";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, new String[] {expert.getContactUri().toString()});
+        if(c.moveToFirst()) {
+            Log.d("URI_CHECK2", c.getString(c.getColumnIndex(KEY_CONTACT_URI)));
+            c.close();
+            return true;
+        }
+        c.close();
+        return false;
+    }
+
     public long createExpert(@NonNull  Expert expert) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, expert.getName());
         values.put(KEY_PHOTO_ID, expert.getPhotoId());
+        values.put(KEY_CONTACT_URI, expert.getContactUri().toString());
+
+        Log.d("URI", expert.getContactUri().toString());
 
         return db.insert(TABLE_EXPERT, null, values);
     }
@@ -249,6 +272,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 expert.setId(c.getInt((c.getColumnIndex(KEY_ID))));
                 expert.setName(c.getString(c.getColumnIndex(KEY_NAME)));
                 expert.setPhotoId(c.getString(c.getColumnIndex(KEY_PHOTO_ID)));
+                expert.setContactUri(Uri.parse(c.getString(c.getColumnIndex(KEY_CONTACT_URI))));
+
+                Log.d("SELECT URI", expert.getContactUri().toString());
 
                 // TODO get and set all the animals.
 

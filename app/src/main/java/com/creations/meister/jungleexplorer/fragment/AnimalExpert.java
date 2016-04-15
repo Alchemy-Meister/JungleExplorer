@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.activity.ContactList;
+import com.creations.meister.jungleexplorer.activity.NewAnimalExpertList;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
@@ -104,7 +105,8 @@ public class AnimalExpert extends ListFragment implements AdapterView.OnItemClic
         this.fabAddExpert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent menuIntent = new Intent(AnimalExpert.this.getContext(), ContactList.class);
+                Intent menuIntent = new Intent(AnimalExpert.this.getContext(),
+                        NewAnimalExpertList.class);
                 startActivityForResult(menuIntent, EXPERT_REQUEST);
             }
         });
@@ -161,9 +163,5 @@ public class AnimalExpert extends ListFragment implements AdapterView.OnItemClic
         } else {
             this.fabAddExpert.setVisibility(View.INVISIBLE);
         }
-    }
-
-    public DomainAdapter getAdapter() {
-        return this.mAdapter;
     }
 }
