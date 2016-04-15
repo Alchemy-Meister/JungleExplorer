@@ -52,6 +52,9 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     private ContactAdapter mAdapter;
     private SearchView searchView;
 
+    private static final String PERMISSION = "permission";
+    private boolean alreadyAskedForPermission = false;
+
     private ArrayList<Domain> contacts;
 
     @Override
@@ -93,6 +96,10 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         super.onCreate(savedInstanceState);
 
         this.setContentView(R.layout.contact_list_frament);
+
+        if(savedInstanceState != null) {
+            alreadyAskedForPermission= savedInstanceState.getBoolean(PERMISSION, false);
+        }
 
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -148,7 +155,8 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CODE_ASK_PERMISSIONS:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                alreadyAskedForPermission = false;
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     contacts = this.getExperts();
                     this.initializeAdapter();
                 } else {
@@ -163,12 +171,17 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     }
 
     private void initializeContacts() {
+        if(alreadyAskedForPermission) {
+            return;
+        }
+
         int hasReadContactsPermission = ContextCompat.checkSelfPermission(ContactList.this,
                 Manifest.permission.READ_CONTACTS);
         if (hasReadContactsPermission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(ContactList.this,
                     requiredPermissions,
                     REQUEST_CODE_ASK_PERMISSIONS);
+            alreadyAskedForPermission = true;
             return;
         }
         contacts = getExperts();
@@ -231,5 +244,11 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
             result.add(expert);
         }
         return result;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(PERMISSION, alreadyAskedForPermission);
     }
 }
