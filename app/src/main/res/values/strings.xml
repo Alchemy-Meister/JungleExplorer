@@ -18,6 +18,7 @@
     <string name="no_animals">No animals saved</string>
     <string name="no_groups">No groups saved</string>
     <string name="no_experts">No experts saved</string>
+    <string name="no_experts_animal">No experts saved for this animal</string>
     <string name="no_fav">No favorite animals saved</string>
     <string name="no_contacts">No contacts available</string>
 

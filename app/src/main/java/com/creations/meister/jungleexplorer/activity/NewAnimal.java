@@ -209,6 +209,7 @@ public class NewAnimal extends AppCompatActivity {
                     this.editMode = false;
                     this.info.setEditable(editMode);
                     this.location.setEditable(editMode);
+                    this.expert.setEditable(editMode);
                 } else {
                     Toast.makeText(NewAnimal.this,
                             this.getResources().getString(R.string.invalid_name),
@@ -222,6 +223,7 @@ public class NewAnimal extends AppCompatActivity {
             this.editMode = true;
             this.info.setEditable(editMode);
             this.location.setEditable(editMode);
+            this.expert.setEditable(editMode);
         }
 
         return super.onOptionsItemSelected(menuItem);
