@@ -49,6 +49,8 @@ public class AnimalList extends ListFragment {
     private DomainAdapter mAdapter;
     private DBHelper dbHelper;
 
+    private int editPosition;
+
     private ActionMode mActionMode;
 
     @Override
@@ -111,6 +113,7 @@ public class AnimalList extends ListFragment {
                 if(mActionMode != null) {
                     onListItemSelect(position);
                 } else {
+                    editPosition = position;
                     Intent newAnimalIntent = new Intent(AnimalList.this.getContext(), NewAnimal.class);
                     newAnimalIntent.putExtra(ANIMAL_KEY, animals.get(position));
                     startActivityForResult(newAnimalIntent, ANIMAL_EDIT_REQUEST);
@@ -200,6 +203,9 @@ public class AnimalList extends ListFragment {
             AnimalList.this.mAdapter.setData(animals);
             mListView.setAdapter(mAdapter);
             Toast.makeText(this.getContext(), getResources().getString(R.string.animal_saved), Toast.LENGTH_SHORT).show();
+        } else if(requestCode == ANIMAL_EDIT_REQUEST && resultCode == AppCompatActivity.RESULT_OK) {
+            animals.set(editPosition, (Domain) data.getExtras().getSerializable("editAnimal"));
+            mAdapter.notifyDataSetChanged();
         }
     }
 

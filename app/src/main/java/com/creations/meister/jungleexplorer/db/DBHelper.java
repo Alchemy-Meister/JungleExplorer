@@ -23,7 +23,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper instance;
 
     // Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Database Name
     private static final String DATABASE_NAME = "JungleExplorer.db";
@@ -82,6 +82,8 @@ public class DBHelper extends SQLiteOpenHelper {
             + "(" + KEY_ID + ")," + KEY_EXPERT_ID + " REFERENCES " + TABLE_EXPERT
             + "(" + KEY_ID + "),PRIMARY KEY(" + KEY_ANIMAL_ID + "," + KEY_EXPERT_ID + "))";
 
+
+
     private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -103,13 +105,18 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXIST " + TABLE_ANIMAL);
-        db.execSQL("DROP TABLE IF EXIST " + TABLE_GROUP);
-        db.execSQL("DROP TABLE IF EXIST " + TABLE_ANIMAL_GROUP);
-        db.execSQL("DROP TABLE IF EXIST " + TABLE_EXPERT);
-        db.execSQL("DROP TABLE IF EXIST " + TABLE_ANIMAL_EXPERT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ANIMAL);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GROUP);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ANIMAL_GROUP);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPERT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ANIMAL_EXPERT);
 
         this.onCreate(db);
+    }
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        onUpgrade(db, oldVersion, newVersion);
     }
 
     public void closeDB() {
@@ -126,6 +133,8 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_PHOTO_ID, animal.getPhotoId());
         values.put(KEY_LOCATION_TEXT, animal.getLocationText());
         values.put(KEY_DESCRIPTION, animal.getDescription());
+        values.put(KEY_LATITUDE, animal.getLatitude());
+        values.put(KEY_LONGITUDE, animal.getLongitude());
 
         return db.insert(TABLE_ANIMAL, null, values);
         // TODO Insert all the groups and experts.
@@ -148,6 +157,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 animal.setPhotoId(c.getString(c.getColumnIndex(KEY_PHOTO_ID)));
                 animal.setLocationText(c.getString(c.getColumnIndex(KEY_LOCATION_TEXT)));
                 animal.setDescription(c.getString(c.getColumnIndex(KEY_DESCRIPTION)));
+                animal.setFavorite(c.getInt(c.getColumnIndex(KEY_FAVORITE)));
+                animal.setLatitude(c.getDouble(c.getColumnIndex(KEY_LATITUDE)));
+                animal.setLongitude(c.getDouble(c.getColumnIndex(KEY_LONGITUDE)));
 
                 // TODO get and set all the groups and experts.
 
@@ -175,6 +187,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 animal.setPhotoId(c.getString(c.getColumnIndex(KEY_PHOTO_ID)));
                 animal.setLocationText(c.getString(c.getColumnIndex(KEY_LOCATION_TEXT)));
                 animal.setDescription(c.getString(c.getColumnIndex(KEY_DESCRIPTION)));
+                animal.setLatitude(c.getDouble(c.getColumnIndex(KEY_LATITUDE)));
+                animal.setLongitude(c.getDouble(c.getColumnIndex(KEY_LONGITUDE)));
 
                 // TODO get and set all the groups and experts.
 
@@ -256,6 +270,30 @@ public class DBHelper extends SQLiteOpenHelper {
             stmt.bindDouble(7, animal.getLongitude());
         else
             stmt.bindNull(7);
+        stmt.execute();
+    }
+
+    public void  updateAnimal(@NonNull Animal animal) {
+        String updateQuery = "UPDATE " + TABLE_ANIMAL + " SET " + KEY_NAME + "=?,"
+                + KEY_PHOTO_ID + "=?," + KEY_LOCATION_TEXT + "=?," + KEY_DESCRIPTION
+                + "=?," + KEY_FAVORITE + "=?," + KEY_LATITUDE + "=?," + KEY_LONGITUDE
+                + "=? WHERE " + KEY_ID + "=?";
+        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteStatement stmt = db.compileStatement(updateQuery);
+        stmt.bindString(1, animal.getName());
+        stmt.bindString(2, animal.getPhotoId());
+        stmt.bindString(3, animal.getLocationText());
+        stmt.bindString(4, animal.getDescription());
+        stmt.bindLong(5, animal.getFavorite());
+        if(animal.getLatitude() != null)
+            stmt.bindDouble(6, animal.getLatitude());
+        else
+            stmt.bindNull(6);
+        if(animal.getLongitude() != null)
+            stmt.bindDouble(7, animal.getLongitude());
+        else
+            stmt.bindNull(7);
+        stmt.bindLong(8, animal.getId());
         stmt.execute();
     }
 

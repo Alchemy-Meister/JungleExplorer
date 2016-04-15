@@ -44,9 +44,10 @@ import java.util.Locale;
  */
 public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickListener,
         GoogleMap.OnMarkerDragListener, OnMapReadyCallback {
-    private static final int LOCATION_ASK_REQUEST = 123;
+    private static final int LOCATION_ASK_REQUEST = 3;
     private static final String MAP_KEY = "map";
     private static final String LATLNG_KEY = "latlng";
+    private static final String PERMISSION = "permission";
 
     private static final String[] requiredPermissions = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -60,6 +61,7 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
     private Bundle mapState = null;
 
     private boolean editable = false;
+    private boolean alreadyAskedForPermission = false;
 
     private final String ANIMAL_KEY = "ANIMAL";
     private Animal mAnimal;
@@ -95,6 +97,9 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
             } else {
                 editable = true;
             }
+        } else {
+            editable = savedInstanceState.getBoolean("editable");
+            alreadyAskedForPermission= savedInstanceState.getBoolean(PERMISSION, false);
         }
     }
 
@@ -104,9 +109,10 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
         map.getUiSettings().setMapToolbarEnabled(false);
         map.setOnMarkerDragListener(AnimalLocation.this);
         map.setOnMapClickListener(AnimalLocation.this);
-        initializeMyLocation();
 
         this.setEditable(editable);
+
+        initializeMyLocation();
 
         if(mLatLng != null) {
             initializeMarker(mLatLng);
@@ -156,6 +162,7 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
     public void onResume() {
         super.onResume();
         mapView.onResume();
+
         if(mMap != null) {
             if(RuntimePermissionsHelper.hasPermissions(this.getContext(), requiredPermissions)) {
                 if(editable) {
@@ -190,6 +197,7 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
             case LOCATION_ASK_REQUEST:
+                alreadyAskedForPermission = false;
                 if (ActivityCompat.checkSelfPermission(
                         this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED
@@ -209,17 +217,33 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
         }
     }
 
-    private void initializeMyLocation() {
+    public void initializeMyLocationPermission() {
         if(editable) {
+            if(alreadyAskedForPermission) {
+                return;
+            }
+
             int hasFineLocationPermission = ContextCompat.checkSelfPermission(
                     AnimalLocation.this.getContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION);
 
             if (hasFineLocationPermission != PackageManager.PERMISSION_GRANTED) {
                 this.requestPermissions(requiredPermissions, LOCATION_ASK_REQUEST);
+                alreadyAskedForPermission = true;
                 return;
             }
-            myLocationMap();
+        }
+    }
+
+    private void initializeMyLocation() {
+        if(editable) {
+            int hasFineLocationPermission = ContextCompat.checkSelfPermission(
+                    AnimalLocation.this.getContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION);
+
+            if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
+                myLocationMap();
+            }
         }
     }
 
@@ -242,6 +266,7 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
                         mMarker.setPosition(mLatLngClick);
                         mMarker.setSnippet(getLocationName(mLatLngClick));
                         mMarker.showInfoWindow();
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(mMarker.getPosition()));
                     }
                 } else {
                     showLocationSettingsMsg(
@@ -336,33 +361,32 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
                 outState.putParcelable(AnimalLocation.LATLNG_KEY, mMarker.getPosition());
             }
         }
-
+        outState.putBoolean(PERMISSION, alreadyAskedForPermission);
+        outState.putBoolean("editable", editable);
         super.onSaveInstanceState(outState);
     }
 
     public void setEditable(boolean editable) {
         this.editable = editable;
-        if(this.isVisible()) {
-            if(editable) {
-                if(mMap != null) {
-                    int hasFineLocationPermission = ContextCompat.checkSelfPermission(
-                            AnimalLocation.this.getContext(),
-                            Manifest.permission.ACCESS_FINE_LOCATION);
+        if(editable) {
+            if(mMap != null) {
+                int hasFineLocationPermission = ContextCompat.checkSelfPermission(
+                        AnimalLocation.this.getContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION);
 
-                    if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
-                        myLocationMap();
-                    }
+                if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
+                    myLocationMap();
                 }
-                if(mMarker != null) {
-                    mMarker.setDraggable(true);
-                }
-            } else {
-                if(mMap != null) {
-                    mMap.setMyLocationEnabled(false);
-                }
-                if(mMarker != null) {
-                    mMarker.setDraggable(false);
-                }
+            }
+            if(mMarker != null) {
+                mMarker.setDraggable(true);
+            }
+        } else {
+            if(mMap != null) {
+                mMap.setMyLocationEnabled(false);
+            }
+            if(mMarker != null) {
+                mMarker.setDraggable(false);
             }
         }
     }

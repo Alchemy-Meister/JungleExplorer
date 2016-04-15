@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.db.DBHelper;
@@ -36,12 +37,14 @@ public class NewAnimal extends AppCompatActivity {
     private ActionBar actionBar;
     private Menu menu;
 
-    private boolean editMode = true;
+    private boolean editMode = false;
     private boolean creation;
 
     private AnimalBasicInfo info;
     private AnimalLocation location;
     private Animal animal;
+
+    private DBHelper dbHelper;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -49,7 +52,7 @@ public class NewAnimal extends AppCompatActivity {
 
         this.menu = menu;
 
-        if(animal == null) {
+        if(animal == null || editMode) {
             menuInflater.inflate(R.menu.new_animal_menu, menu);
         } else {
             menuInflater.inflate(R.menu.view_animal_menu, menu);
@@ -62,6 +65,8 @@ public class NewAnimal extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_main);
+
+        dbHelper = DBHelper.getHelper(this);
 
         mFragmentManager = this.getSupportFragmentManager();
         actionBar = this.getSupportActionBar();
@@ -78,11 +83,12 @@ public class NewAnimal extends AppCompatActivity {
             location = new AnimalLocation();
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
             transaction.add(R.id.contentFragment, location, NewAnimal.LOCATION_KEY);
-            transaction.detach(location);
+            transaction.hide(location);
             transaction.add(R.id.contentFragment, info, NewAnimal.INFO_KEY);
             transaction.commit();
         } else {
-            animal = (Animal) savedInstanceState.getSerializable("animal");
+            animal = (Animal)  savedInstanceState.getSerializable("animal");
+            editMode = savedInstanceState.getBoolean("editable");
             info = (AnimalBasicInfo) mFragmentManager.getFragment(
                     savedInstanceState, NewAnimal.INFO_KEY);
             location = (AnimalLocation) mFragmentManager.getFragment(
@@ -95,7 +101,10 @@ public class NewAnimal extends AppCompatActivity {
             if(animal == null) {
                 actionBar.setTitle(R.string.add_animal);
             } else {
-                actionBar.setTitle(R.string.view_animal);
+                if(!editMode)
+                    actionBar.setTitle(R.string.view_animal);
+                else
+                    actionBar.setTitle(R.string.edit_animal);
             }
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -108,15 +117,16 @@ public class NewAnimal extends AppCompatActivity {
                 FragmentTransaction transaction = mFragmentManager.beginTransaction();
                 switch (menuItemId) {
                     case R.id.bb_menu_info:
-                        if(info.isDetached()) {
-                            transaction.attach(info);
-                            transaction.detach(location);
+                        if(!info.isVisible()) {
+                            transaction.show(info);
+                            transaction.hide(location);
                         }
                         break;
                     case R.id.bb_menu_location:
-                        if(location.isDetached()) {
-                            transaction.attach(location);
-                            transaction.detach(info);
+                        if(!location.isVisible()) {
+                            transaction.show(location);
+                            transaction.hide(info);
+                            location.initializeMyLocationPermission();
                         }
                         break;
                     case R.id.bb_menu_new_animal_group:
@@ -142,7 +152,11 @@ public class NewAnimal extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if(menuItem.getItemId() == android.R.id.home) {
-            this.finish();
+            if(animal == null) {
+                this.finish();
+            } else {
+                sendEditRequest();
+            }
         } else if(menuItem.getItemId() == R.id.done) {
             if(creation) {
                 Animal newAnimal = new Animal();
@@ -163,12 +177,26 @@ public class NewAnimal extends AppCompatActivity {
                 }
                 this.finish();
             } else if(editMode){
-                actionBar.setTitle(getResources().getString(R.string.view_animal));
-                this.menu.clear();
-                this.getMenuInflater().inflate(R.menu.view_animal_menu, menu);
-                this.editMode = false;
-                this.info.setEditable(editMode);
-                this.location.setEditable(editMode);
+                for (Fragment fragment : mFragmentManager.getFragments()) {
+                    if (fragment instanceof AnimalBasicInfo) {
+                        animal = ((AnimalBasicInfo) fragment).setAnimalBasicInfo(animal);
+                    } else  if(fragment instanceof AnimalLocation) {
+                        animal = ((AnimalLocation) fragment).setAnimalLocation(animal);
+                    }
+                }
+                if(!TextUtils.isEmpty(animal.getName())) {
+                    dbHelper.updateAnimal(animal);
+                    actionBar.setTitle(getResources().getString(R.string.view_animal));
+                    this.menu.clear();
+                    this.getMenuInflater().inflate(R.menu.view_animal_menu, menu);
+                    this.editMode = false;
+                    this.info.setEditable(editMode);
+                    this.location.setEditable(editMode);
+                } else {
+                    Toast.makeText(NewAnimal.this,
+                            this.getResources().getString(R.string.invalid_name),
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         } else if(menuItem.getItemId() == R.id.edit) {
             actionBar.setTitle(getResources().getString(R.string.edit_animal));
@@ -191,5 +219,19 @@ public class NewAnimal extends AppCompatActivity {
 
         mBottomBar.onSaveInstanceState(outState);
         outState.putSerializable("animal", animal);
+        outState.putBoolean("editable", editMode);
+    }
+
+    private void sendEditRequest() {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("editAnimal", animal);
+        this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sendEditRequest();
     }
 }

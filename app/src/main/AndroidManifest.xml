@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.NewAnimal" >
+        <activity android:name=".activity.NewAnimal">
         </activity>
 
         <activity android:name=".activity.NewGroup" >

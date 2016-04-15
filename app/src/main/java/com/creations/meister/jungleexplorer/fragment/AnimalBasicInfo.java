@@ -52,7 +52,7 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
 
     private final int CAMERA_REQUEST = 1888;
     private final int GALLERY_REQUEST = 4261;
-    private final int STORAGE_ASK_REQUEST = 123;
+    private final int STORAGE_ASK_REQUEST = 255;
 
     private static final String[] requiredPermissions = new String[]{
             Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -72,11 +72,11 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
         if(savedInstanceState != null) {
             animalBitmap = savedInstanceState.getParcelable("animalImage");
             animal = (Animal) savedInstanceState.getSerializable("animal");
+            editable = savedInstanceState.getBoolean("editable");
         } else {
             Bundle bundle = this.getActivity().getIntent().getExtras();
             if(bundle != null) {
                 animal = (Animal) bundle.get(ANIMAL_KEY);
-
             } else {
                 editable = true;
             }
@@ -101,7 +101,8 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
         mDescription = (TextInputEditText) this.getActivity().findViewById(R.id.description);
         mLocationText = (TextInputEditText) this.getActivity().findViewById(R.id.locationText);
 
-        initializeImageViewListener();
+
+        mImageView.setOnClickListener(this);
 
         mAnimalName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -124,6 +125,7 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
             mLocationText.setText(animal.getLocationText());
             mDescription.setText(animal.getDescription());
         }
+
         this.setEditable(editable);
     }
 
@@ -144,12 +146,12 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
                 animal.setDescription(mDescription.getText().toString());
             }
             if (!TextUtils.isEmpty(mLocationText.getText())) {
-                animal.setDescription(mLocationText.getText().toString());
+                animal.setLocationText(mLocationText.getText().toString());
             }
             return animal;
     }
 
-    private void initializeImageViewListener() {
+    public void initializeImageViewListener() {
         int hasReadContactsPermission = ContextCompat.checkSelfPermission(
                 AnimalBasicInfo.this.getContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -166,7 +168,8 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
     {
         switch (requestCode) {
             case STORAGE_ASK_REQUEST:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
                     mImageView.setOnClickListener(AnimalBasicInfo.this);
                 } else {
                     RuntimePermissionsHelper.showMessageOKCancel(getResources().getString(
@@ -211,6 +214,14 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.animalImage) {
+            int hasReadContactsPermission = ContextCompat.checkSelfPermission(
+                    AnimalBasicInfo.this.getContext(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if (hasReadContactsPermission != PackageManager.PERMISSION_GRANTED) {
+                AnimalBasicInfo.this.requestPermissions(requiredPermissions, STORAGE_ASK_REQUEST);
+                return;
+            }
+
             final String[] pOptions = getResources().getStringArray(R.array.photo_options);
             new AlertDialog.Builder(AnimalBasicInfo.this.getContext())
                     .setTitle(R.string.change_photo)
@@ -255,30 +266,28 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
 
     public void setEditable(boolean editable) {
         this.editable = editable;
-        if(this.isVisible()) {
-            if(editable) {
-                this.mImageView.setEnabled(true);
-                this.mImageView.setFocusableInTouchMode(true);
-                this.mImageView.setFocusable(true);
-                this.mAnimalName.setEnabled(true);
-                this.mAnimalName.setFocusableInTouchMode(true);
-                this.mAnimalName.setFocusable(true);
-                this.mLocationText.setEnabled(true);
-                this.mLocationText.setFocusableInTouchMode(true);
-                this.mLocationText.setFocusable(true);
-                this.mDescription.setEnabled(true);
-                this.mDescription.setFocusableInTouchMode(true);
-                this.mDescription.setFocusable(true);
-            } else {
-                this.mImageView.setEnabled(false);
-                this.mImageView.setFocusable(false);
-                this.mAnimalName.setEnabled(false);
-                this.mAnimalName.setFocusable(false);
-                this.mLocationText.setEnabled(false);
-                this.mLocationText.setFocusable(false);
-                this.mDescription.setEnabled(false);
-                this.mDescription.setFocusable(false);
-            }
+        if(editable) {
+            this.mImageView.setEnabled(true);
+            this.mImageView.setFocusableInTouchMode(true);
+            this.mImageView.setFocusable(true);
+            this.mAnimalName.setEnabled(true);
+            this.mAnimalName.setFocusableInTouchMode(true);
+            this.mAnimalName.setFocusable(true);
+            this.mLocationText.setEnabled(true);
+            this.mLocationText.setFocusableInTouchMode(true);
+            this.mLocationText.setFocusable(true);
+            this.mDescription.setEnabled(true);
+            this.mDescription.setFocusableInTouchMode(true);
+            this.mDescription.setFocusable(true);
+        } else {
+            this.mImageView.setEnabled(false);
+            this.mImageView.setFocusable(false);
+            this.mAnimalName.setEnabled(false);
+            this.mAnimalName.setFocusable(false);
+            this.mLocationText.setEnabled(false);
+            this.mLocationText.setFocusable(false);
+            this.mDescription.setEnabled(false);
+            this.mDescription.setFocusable(false);
         }
     }
 
@@ -287,5 +296,6 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
         super.onSaveInstanceState(outState);
         outState.putParcelable("animalImage", animalBitmap);
         outState.putSerializable("animal", animal);
+        outState.putBoolean("editable", editable);
     }
 }
