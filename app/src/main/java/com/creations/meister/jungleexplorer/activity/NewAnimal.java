@@ -230,8 +230,8 @@ public class NewAnimal extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onBackPressed() {
         sendEditRequest();
+        super.onBackPressed();
     }
 }
