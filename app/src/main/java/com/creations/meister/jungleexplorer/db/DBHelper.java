@@ -125,7 +125,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.close();
     }
 
-    public long createAnimal(Animal animal) {
+    public long createAnimal(@NonNull  Animal animal) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -139,6 +139,16 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_ANIMAL, null, values);
         // TODO Insert all the groups and experts.
 
+    }
+
+    public long createExpert(@NonNull  Expert expert) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_NAME, expert.getName());
+        values.put(KEY_PHOTO_ID, expert.getPhotoId());
+
+        return db.insert(TABLE_EXPERT, null, values);
     }
 
     public List<Animal> getAllAnimals() {

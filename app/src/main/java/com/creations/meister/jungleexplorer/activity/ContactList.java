@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.adapter.ContactAdapter;
+import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Domain;
 import com.creations.meister.jungleexplorer.domain.Expert;
 import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
@@ -56,6 +57,8 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     private boolean alreadyAskedForPermission = false;
 
     private ArrayList<Domain> contacts;
+
+    private DBHelper dbHelper;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,6 +99,8 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
         super.onCreate(savedInstanceState);
 
         this.setContentView(R.layout.contact_list_frament);
+
+        dbHelper = DBHelper.getHelper(this);
 
         if(savedInstanceState != null) {
             alreadyAskedForPermission= savedInstanceState.getBoolean(PERMISSION, false);
@@ -148,7 +153,11 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(this, "Item: " + position, Toast.LENGTH_SHORT).show();
+        dbHelper.createExpert((Expert) contacts.get(position));
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("newContact", contacts.get(position));
+        this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
+        finish();
     }
 
     @Override

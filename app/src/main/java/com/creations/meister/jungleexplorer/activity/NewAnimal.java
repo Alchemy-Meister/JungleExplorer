@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,6 +18,7 @@ import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.fragment.AnimalBasicInfo;
+import com.creations.meister.jungleexplorer.fragment.AnimalExpert;
 import com.creations.meister.jungleexplorer.fragment.AnimalLocation;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
@@ -30,6 +30,7 @@ public class NewAnimal extends AppCompatActivity {
 
     private static final String INFO_KEY = "INFO";
     private static final String LOCATION_KEY = "LOCATION";
+    private static final String EXPERT_KEY = "EXPERT";
     private static final String ANIMAL_KEY = "ANIMAL";
 
     private FragmentManager mFragmentManager;
@@ -42,6 +43,7 @@ public class NewAnimal extends AppCompatActivity {
 
     private AnimalBasicInfo info;
     private AnimalLocation location;
+    private AnimalExpert expert;
     private Animal animal;
 
     private DBHelper dbHelper;
@@ -81,7 +83,10 @@ public class NewAnimal extends AppCompatActivity {
 
             info = new AnimalBasicInfo();
             location = new AnimalLocation();
+            expert = new AnimalExpert();
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
+            transaction.add(R.id.contentFragment, expert, NewAnimal.EXPERT_KEY);
+            transaction.hide(expert);
             transaction.add(R.id.contentFragment, location, NewAnimal.LOCATION_KEY);
             transaction.hide(location);
             transaction.add(R.id.contentFragment, info, NewAnimal.INFO_KEY);
@@ -93,6 +98,8 @@ public class NewAnimal extends AppCompatActivity {
                     savedInstanceState, NewAnimal.INFO_KEY);
             location = (AnimalLocation) mFragmentManager.getFragment(
                     savedInstanceState, NewAnimal.LOCATION_KEY);
+            expert = (AnimalExpert) mFragmentManager.getFragment(
+                    savedInstanceState, NewAnimal.EXPERT_KEY);
 
             creation = false;
         }
@@ -120,12 +127,14 @@ public class NewAnimal extends AppCompatActivity {
                         if(!info.isVisible()) {
                             transaction.show(info);
                             transaction.hide(location);
+                            transaction.hide(expert);
                         }
                         break;
                     case R.id.bb_menu_location:
                         if(!location.isVisible()) {
                             transaction.show(location);
                             transaction.hide(info);
+                            transaction.hide(expert);
                             location.initializeMyLocationPermission();
                         }
                         break;
@@ -133,7 +142,11 @@ public class NewAnimal extends AppCompatActivity {
                         transaction.replace(R.id.contentFragment, null, "GROUP");
                         break;
                     case R.id.bb_menu_new_animal_experts:
-                        transaction.replace(R.id.contentFragment, null, "EXPERT");
+                        if(!expert.isVisible()) {
+                            transaction.show(expert);
+                            transaction.hide(info);
+                            transaction.hide(location);
+                        }
                         break;
                 }
 
@@ -146,6 +159,10 @@ public class NewAnimal extends AppCompatActivity {
             }
         });
 
+        mBottomBar.mapColorForTab(0, "#009688");
+        mBottomBar.mapColorForTab(1, "#009688");
+        mBottomBar.mapColorForTab(2, "#009688");
+        mBottomBar.mapColorForTab(3, "#009688");
 
     }
 
@@ -216,6 +233,7 @@ public class NewAnimal extends AppCompatActivity {
 
         mFragmentManager.putFragment(outState, NewAnimal.INFO_KEY, info);
         mFragmentManager.putFragment(outState, NewAnimal.LOCATION_KEY, location);
+        mFragmentManager.putFragment(outState, NewAnimal.EXPERT_KEY, expert);
 
         mBottomBar.onSaveInstanceState(outState);
         outState.putSerializable("animal", animal);
@@ -231,7 +249,8 @@ public class NewAnimal extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        sendEditRequest();
+        if(animal != null)
+            sendEditRequest();
         super.onBackPressed();
     }
 }

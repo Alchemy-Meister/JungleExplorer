@@ -2,7 +2,6 @@ package com.creations.meister.jungleexplorer.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
@@ -22,19 +21,16 @@ import com.creations.meister.jungleexplorer.activity.MainActivity;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Domain;
-import com.creations.meister.jungleexplorer.domain.Expert;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Random;
 
 import lb.library.PinnedHeaderListView;
 
 /**
- * Created by meister on 4/1/16.
+ * Created by meister on 4/15/16.
  */
-public class ExpertList extends ListFragment implements AdapterView.OnItemClickListener {
+public class AnimalExpert extends ListFragment implements AdapterView.OnItemClickListener {
 
     private PinnedHeaderListView mListView;
     private FloatingActionButton fabAddExpert;
@@ -83,17 +79,17 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
         this.fabAddExpert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent menuIntent = new Intent(ExpertList.this.getContext(), ContactList.class);
+                Intent menuIntent = new Intent(AnimalExpert.this.getContext(), ContactList.class);
                 startActivityForResult(menuIntent, EXPERT_REQUEST);
             }
         });
 
-        SearchView sv = ((MainActivity) this.getActivity()).getSearchView();
+        /*SearchView sv = ((MainActivity) this.getActivity()).getSearchView();
 
         if(sv != null) {
             this.mAdapter.getFilter().filter(sv.getQuery());
             this.mAdapter.setHeaderViewVisible(TextUtils.isEmpty(sv.getQuery()));
-        }
+        }*/
     }
 
     @Override
@@ -110,7 +106,7 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
         }
     }
 
-    public static int getResIdFromAttribute(final Activity activity,final int attr)
+    public static int getResIdFromAttribute(final Activity activity, final int attr)
     {
         if(attr==0)
             return 0;
