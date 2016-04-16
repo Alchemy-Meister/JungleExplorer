@@ -1,18 +1,10 @@
 package com.creations.meister.jungleexplorer.activity;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -23,14 +15,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.TextView;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.adapter.ContactAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Domain;
-import com.creations.meister.jungleexplorer.domain.Expert;
-import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
-import com.creations.meister.jungleexplorer.utils.ContactsQuery;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,17 +32,10 @@ import lb.library.PinnedHeaderListView;
  */
 public class NewAnimalExpertList extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
-    private static final String[] requiredPermissions = new String[]{
-            Manifest.permission.READ_CONTACTS
-    };
 
     private PinnedHeaderListView mListView;
     private ContactAdapter mAdapter;
     private SearchView searchView;
-
-    private static final String PERMISSION = "permission";
-    private boolean alreadyAskedForPermission = false;
 
     private ArrayList<Domain> contacts;
 
@@ -100,15 +83,11 @@ public class NewAnimalExpertList extends AppCompatActivity implements AdapterVie
 
         dbHelper = DBHelper.getHelper(this);
 
-        if(savedInstanceState != null) {
-            alreadyAskedForPermission= savedInstanceState.getBoolean(PERMISSION, false);
-        }
-
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(R.string.contacts);
+        actionBar.setTitle(R.string.experts);
 
-        this.initializeContacts();
+
 
         this.mListView = (PinnedHeaderListView) this.findViewById(R.id.list);
         this.mListView.setEmptyView(this.findViewById(R.id.emptyText));
@@ -118,9 +97,20 @@ public class NewAnimalExpertList extends AppCompatActivity implements AdapterVie
 
         mListView.setEnableHeaderTransparencyChanges(false);
 
-        if(contacts != null) {
-            this.initializeAdapter();
-        }
+        contacts = (ArrayList) dbHelper.getAllExperts();
+        Collections.sort(contacts);
+
+        TextView et = (TextView) this.findViewById(R.id.emptyText);
+        et.setText(this.getResources().getString(R.string.no_experts));
+
+        mAdapter = new ContactAdapter(this, contacts);
+        int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
+                this, android.R.attr.colorBackground));
+        mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
+        mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
+
+        mListView.setAdapter(mAdapter);
+        mListView.setOnScrollListener(mAdapter);
     }
 
     @Override
@@ -151,61 +141,10 @@ public class NewAnimalExpertList extends AppCompatActivity implements AdapterVie
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        dbHelper.createExpert((Expert) contacts.get(position));
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("newContact", contacts.get(position));
+        resultIntent.putExtra("newAnimalExpert", contacts.get(position));
         this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
         finish();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CODE_ASK_PERMISSIONS:
-                alreadyAskedForPermission = false;
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    contacts = this.getExperts();
-                    this.initializeAdapter();
-                } else {
-                    RuntimePermissionsHelper.showMessageOKCancel(getResources().getString(
-                            R.string.contact_permission_message,
-                            getResources().getString(R.string.app_name)), NewAnimalExpertList.this);
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    private void initializeContacts() {
-        if(alreadyAskedForPermission) {
-            return;
-        }
-
-        int hasReadContactsPermission = ContextCompat.checkSelfPermission(NewAnimalExpertList.this,
-                Manifest.permission.READ_CONTACTS);
-        if (hasReadContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(NewAnimalExpertList.this,
-                    requiredPermissions,
-                    REQUEST_CODE_ASK_PERMISSIONS);
-            alreadyAskedForPermission = true;
-            return;
-        }
-        contacts = getExperts();
-
-    }
-
-    private void initializeAdapter() {
-        Collections.sort(contacts);
-
-        mAdapter = new ContactAdapter(this, contacts);
-        int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
-                this, android.R.attr.colorBackground));
-        mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
-        mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
-
-        mListView.setAdapter(mAdapter);
-        mListView.setOnScrollListener(mAdapter);
     }
 
     @Override
@@ -214,48 +153,5 @@ public class NewAnimalExpertList extends AppCompatActivity implements AdapterVie
             this.finish();
         }
         return super.onOptionsItemSelected(menuItem);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if(RuntimePermissionsHelper.hasPermissions(NewAnimalExpertList.this, requiredPermissions)) {
-            contacts = this.getExperts();
-            this.initializeAdapter();
-        }
-    }
-
-    private ArrayList<Domain> getExperts()
-    {
-        ArrayList<Domain> result=new ArrayList<>();
-
-        Uri uri = ContactsQuery.CONTENT_URI;
-        final Cursor cursor = this.getContentResolver().query(
-                uri,
-                ContactsQuery.PROJECTION,
-                ContactsQuery.SELECTION,
-                null,
-                ContactsQuery.SORT_ORDER);
-
-        if(cursor == null)
-            return null;
-        while(cursor.moveToNext())
-        {
-            Expert expert = new Expert();
-            expert.setContactUri(ContactsContract.Contacts.getLookupUri(
-                    cursor.getLong(ContactsQuery.ID),
-                    cursor.getString(ContactsQuery.LOOKUP_KEY)));
-            expert.setName(cursor.getString(ContactsQuery.DISPLAY_NAME));
-            expert.setPhotoId(cursor.getString(ContactsQuery.PHOTO_THUMBNAIL_DATA));
-            result.add(expert);
-        }
-        return result;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(PERMISSION, alreadyAskedForPermission);
     }
 }

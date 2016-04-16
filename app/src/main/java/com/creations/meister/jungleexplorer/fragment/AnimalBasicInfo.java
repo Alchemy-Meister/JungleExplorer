@@ -140,7 +140,7 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
         }
     }
 
-    public Animal setAnimalBasicInfo(Animal animal) {
+    public Animal setAnimalBasicInfo(@NonNull  Animal animal) {
             animal.setName(mAnimalName.getText().toString());
             if (!TextUtils.isEmpty(mDescription.getText())) {
                 animal.setDescription(mDescription.getText().toString());

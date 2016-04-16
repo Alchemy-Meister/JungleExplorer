@@ -1,5 +1,7 @@
 package com.creations.meister.jungleexplorer.domain;
 
+import java.util.ArrayList;
+
 /**
  * Created by meister on 3/28/16.
  */
@@ -11,6 +13,9 @@ public class Animal extends Domain {
     private String description;
     private int favorite;
 
+    private ArrayList<Expert> animalExperts;
+    private ArrayList<Group> animalGroups;
+
     public Animal() {
         this.setName("");
         this.setPhotoId("");
@@ -19,6 +24,8 @@ public class Animal extends Domain {
         this.setFavorite(0);
         this.latitude = null;
         this.longitude = null;
+        animalExperts = new ArrayList<>();
+        animalGroups = new ArrayList<>();
     }
 
     public String getLocationText() { return this.locationText; }
@@ -51,5 +58,21 @@ public class Animal extends Domain {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public ArrayList<Expert> getAnimalExperts() {
+        return animalExperts;
+    }
+
+    public void setAnimalExperts(ArrayList<Expert> animalExperts) {
+        this.animalExperts = animalExperts;
+    }
+
+    public ArrayList<Group> getAnimalGroups() {
+        return animalGroups;
+    }
+
+    public void setAnimalGroups(ArrayList<Group> animalGroups) {
+        this.animalGroups = animalGroups;
     }
 }

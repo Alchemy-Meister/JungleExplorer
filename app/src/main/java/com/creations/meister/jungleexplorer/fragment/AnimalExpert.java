@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
@@ -14,16 +13,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
-import com.creations.meister.jungleexplorer.activity.ContactList;
 import com.creations.meister.jungleexplorer.activity.NewAnimalExpertList;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.domain.Domain;
+import com.creations.meister.jungleexplorer.domain.Expert;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,6 +62,8 @@ public class AnimalExpert extends ListFragment implements AdapterView.OnItemClic
 
         if(savedInstanceState != null) {
             editable = savedInstanceState.getBoolean("editable");
+            animal = (Animal) savedInstanceState.getSerializable("animal");
+            experts = (ArrayList<Domain>) savedInstanceState.getSerializable("experts");
         } else {
             Bundle bundle = this.getActivity().getIntent().getExtras();
             if(bundle != null) {
@@ -75,8 +75,8 @@ public class AnimalExpert extends ListFragment implements AdapterView.OnItemClic
 
         dbHelper = DBHelper.getHelper(this.getActivity());
 
-        if(animal != null) {
-            experts = (ArrayList) dbHelper.getAllExperts();
+        if(experts == null && animal != null) {
+            experts = (ArrayList) dbHelper.getAllAnimalExperts(animal);
             Collections.sort(experts);
         } else {
             experts = new ArrayList<>();
@@ -128,10 +128,20 @@ public class AnimalExpert extends ListFragment implements AdapterView.OnItemClic
         if(requestCode == EXPERT_REQUEST
                 && resultCode == AppCompatActivity.RESULT_OK)
         {
-            experts.add((Domain) data.getExtras().getSerializable("newContact"));
-            Collections.sort(experts);
-            mAdapter.notifyDataSetChanged();
-            Toast.makeText(this.getContext(), getResources().getString(R.string.animal_saved), Toast.LENGTH_SHORT).show();
+            boolean exists = false;
+            Expert newExpert = (Expert) data.getExtras().getSerializable("newAnimalExpert");
+            for(Domain searchExpert : experts) {
+                if(newExpert.getContactUri().equals(((Expert)searchExpert).getContactUri())) {
+                    exists = true;
+                }
+            }
+            if(!exists) {
+                experts.add(newExpert);
+                Collections.sort(experts);
+                mAdapter.setData(experts);
+                mListView.setAdapter(mAdapter);
+                Toast.makeText(this.getContext(), getResources().getString(R.string.expert_saved), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -154,6 +164,7 @@ public class AnimalExpert extends ListFragment implements AdapterView.OnItemClic
         super.onSaveInstanceState(outState);
         outState.putBoolean("editable", editable);
         outState.putSerializable("animal", animal);
+        outState.putSerializable("experts", experts);
     }
 
     public void setEditable(boolean editable) {
@@ -163,5 +174,10 @@ public class AnimalExpert extends ListFragment implements AdapterView.OnItemClic
         } else {
             this.fabAddExpert.setVisibility(View.INVISIBLE);
         }
+    }
+
+    public Animal setAnimalExperts(Animal newAnimal) {
+        newAnimal.setAnimalExperts((ArrayList) experts);
+        return newAnimal;
     }
 }

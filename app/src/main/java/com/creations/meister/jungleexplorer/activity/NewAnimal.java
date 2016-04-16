@@ -180,12 +180,14 @@ public class NewAnimal extends AppCompatActivity {
                 for (Fragment fragment : mFragmentManager.getFragments()) {
                     if (fragment instanceof AnimalBasicInfo) {
                        newAnimal = ((AnimalBasicInfo) fragment).setAnimalBasicInfo(newAnimal);
-                    } else  if(fragment instanceof AnimalLocation) {
+                    } else if(fragment instanceof AnimalLocation) {
                         newAnimal = ((AnimalLocation) fragment).setAnimalLocation(newAnimal);
+                    } else if(fragment instanceof  AnimalExpert) {
+                        newAnimal = ((AnimalExpert) fragment).setAnimalExperts(newAnimal);
                     }
                 }
                 if(!TextUtils.isEmpty(newAnimal.getName())) {
-                    DBHelper.getHelper(NewAnimal.this).insertAnimal(newAnimal);
+                    DBHelper.getHelper(NewAnimal.this).createAnimal(newAnimal);
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("newAnimal", newAnimal);
                     this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
@@ -197,8 +199,10 @@ public class NewAnimal extends AppCompatActivity {
                 for (Fragment fragment : mFragmentManager.getFragments()) {
                     if (fragment instanceof AnimalBasicInfo) {
                         animal = ((AnimalBasicInfo) fragment).setAnimalBasicInfo(animal);
-                    } else  if(fragment instanceof AnimalLocation) {
+                    } else if(fragment instanceof AnimalLocation) {
                         animal = ((AnimalLocation) fragment).setAnimalLocation(animal);
+                    } else if(fragment instanceof AnimalExpert) {
+                        animal = ((AnimalExpert) fragment).setAnimalExperts(animal);
                     }
                 }
                 if(!TextUtils.isEmpty(animal.getName())) {

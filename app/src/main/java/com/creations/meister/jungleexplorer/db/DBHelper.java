@@ -138,27 +138,19 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_PHOTO_ID, animal.getPhotoId());
         values.put(KEY_LOCATION_TEXT, animal.getLocationText());
         values.put(KEY_DESCRIPTION, animal.getDescription());
+        values.put(KEY_FAVORITE, animal.getFavorite());
         values.put(KEY_LATITUDE, animal.getLatitude());
         values.put(KEY_LONGITUDE, animal.getLongitude());
 
-        return db.insert(TABLE_ANIMAL, null, values);
-        // TODO Insert all the groups and experts.
+        long id = db.insert(TABLE_ANIMAL, null, values);
 
-    }
+        animal.setId((int) id);
 
-    public boolean expertExists(@NonNull Expert expert) {
-        String selectQuery = "SELECT * FROM " + TABLE_EXPERT + " WHERE "
-                + KEY_CONTACT_URI + "=?";
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(selectQuery, new String[] {expert.getContactUri().toString()});
-        if(c.moveToFirst()) {
-            Log.d("URI_CHECK2", c.getString(c.getColumnIndex(KEY_CONTACT_URI)));
-            c.close();
-            return true;
+        for(Expert expert : animal.getAnimalExperts()) {
+            this.createAnimalExpert(animal, expert);
         }
-        c.close();
-        return false;
+        // TODO Insert all the groups.
+        return id;
     }
 
     public long createExpert(@NonNull  Expert expert) {
@@ -169,9 +161,31 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_PHOTO_ID, expert.getPhotoId());
         values.put(KEY_CONTACT_URI, expert.getContactUri().toString());
 
-        Log.d("URI", expert.getContactUri().toString());
-
         return db.insert(TABLE_EXPERT, null, values);
+    }
+
+    public long createAnimalExpert(@NonNull Animal animal, @NonNull Expert expert) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ANIMAL_ID, animal.getId());
+        values.put(KEY_EXPERT_ID, expert.getId());
+
+        return db.insert(TABLE_ANIMAL_EXPERT, null, values);
+    }
+
+    public boolean expertExists(@NonNull Expert expert) {
+        String selectQuery = "SELECT * FROM " + TABLE_EXPERT + " WHERE "
+                + KEY_CONTACT_URI + "=?";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, new String[] {expert.getContactUri().toString()});
+        if(c.moveToFirst()) {
+            c.close();
+            return true;
+        }
+        c.close();
+        return false;
     }
 
     public List<Animal> getAllAnimals() {
@@ -274,8 +288,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 expert.setPhotoId(c.getString(c.getColumnIndex(KEY_PHOTO_ID)));
                 expert.setContactUri(Uri.parse(c.getString(c.getColumnIndex(KEY_CONTACT_URI))));
 
-                Log.d("SELECT URI", expert.getContactUri().toString());
-
                 // TODO get and set all the animals.
 
                 // adding to tags list
@@ -286,58 +298,78 @@ public class DBHelper extends SQLiteOpenHelper {
         return experts;
     }
 
-    public void insertAnimal(@NonNull  Animal animal) {
-        String insertQuery = "INSERT INTO " + TABLE_ANIMAL + "(" + KEY_NAME + "," + KEY_PHOTO_ID
-                + "," + KEY_LOCATION_TEXT + "," + KEY_DESCRIPTION + "," + KEY_FAVORITE
-                + "," + KEY_LATITUDE + "," + KEY_LONGITUDE + ")"
-                + "VALUES(?,?,?,?,?,?,?)";
-        SQLiteDatabase db = this.getWritableDatabase();
-        SQLiteStatement stmt = db.compileStatement(insertQuery);
-        stmt.bindString(1, animal.getName());
-        stmt.bindString(2, animal.getPhotoId());
-        stmt.bindString(3, animal.getLocationText());
-        stmt.bindString(4, animal.getDescription());
-        stmt.bindLong(5, animal.getFavorite());
-        if(animal.getLatitude() != null)
-            stmt.bindDouble(6, animal.getLatitude());
-        else
-            stmt.bindNull(6);
-        if(animal.getLongitude() != null)
-            stmt.bindDouble(7, animal.getLongitude());
-        else
-            stmt.bindNull(7);
-        stmt.execute();
+    public ArrayList<Expert> getAllAnimalExperts(@NonNull  Animal animal) {
+        ArrayList<Expert> experts = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_ANIMAL_EXPERT + " WHERE "
+                + KEY_ANIMAL_ID + "=" + animal.getId();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if(c.moveToFirst()) {
+            do {
+                Log.d("EXPERT ID", String.valueOf(c.getLong(c.getColumnIndex(KEY_EXPERT_ID))));
+                Log.d("ANIMAL ID", String.valueOf(c.getLong(c.getColumnIndex(KEY_ANIMAL_ID))));
+                Log.d("ACTUAL ID", String.valueOf(animal.getId()));
+                Expert expert = this.getExpert(c.getLong(c.getColumnIndex(KEY_EXPERT_ID)));
+                if(expert != null) {
+                    experts.add(expert);
+                }
+            } while(c.moveToNext());
+        }
+        c.close();
+        return experts;
+    }
+
+    public Expert getExpert(Long id) {
+        Expert expert = null;
+        String selectQuery = "SELECT * FROM " + TABLE_EXPERT + " WHERE " + KEY_ID + "=?";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, new String[] {String.valueOf(id)});
+        if(c.moveToFirst()) {
+            expert = new Expert();
+            expert.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+            expert.setName(c.getString(c.getColumnIndex(KEY_NAME)));
+            expert.setPhotoId(c.getString(c.getColumnIndex(KEY_PHOTO_ID)));
+            expert.setContactUri(Uri.parse(c.getString(c.getColumnIndex(KEY_CONTACT_URI))));
+        }
+        return expert;
     }
 
     public void  updateAnimal(@NonNull Animal animal) {
-        String updateQuery = "UPDATE " + TABLE_ANIMAL + " SET " + KEY_NAME + "=?,"
-                + KEY_PHOTO_ID + "=?," + KEY_LOCATION_TEXT + "=?," + KEY_DESCRIPTION
-                + "=?," + KEY_FAVORITE + "=?," + KEY_LATITUDE + "=?," + KEY_LONGITUDE
-                + "=? WHERE " + KEY_ID + "=?";
-        SQLiteDatabase db = this.getWritableDatabase();
-        SQLiteStatement stmt = db.compileStatement(updateQuery);
-        stmt.bindString(1, animal.getName());
-        stmt.bindString(2, animal.getPhotoId());
-        stmt.bindString(3, animal.getLocationText());
-        stmt.bindString(4, animal.getDescription());
-        stmt.bindLong(5, animal.getFavorite());
+        ContentValues cv = new ContentValues();
+        cv.put(KEY_NAME, animal.getName());
+        cv.put(KEY_PHOTO_ID, animal.getPhotoId());
+        cv.put(KEY_LOCATION_TEXT, animal.getLocationText());
+        cv.put(KEY_DESCRIPTION, animal.getDescription());
+        cv.put(KEY_FAVORITE, animal.getFavorite());
         if(animal.getLatitude() != null)
-            stmt.bindDouble(6, animal.getLatitude());
+            cv.put(KEY_LATITUDE, animal.getLatitude());
         else
-            stmt.bindNull(6);
+            cv.putNull(KEY_LATITUDE);
         if(animal.getLongitude() != null)
-            stmt.bindDouble(7, animal.getLongitude());
+            cv.put(KEY_LONGITUDE, animal.getLongitude());
         else
-            stmt.bindNull(7);
-        stmt.bindLong(8, animal.getId());
-        stmt.execute();
+            cv.putNull(KEY_LONGITUDE);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.update(TABLE_ANIMAL, cv,KEY_ID + "=" + animal.getId(), null);
+
+        this.removeAnimalExperts(animal);
+
+        for(Expert expert : animal.getAnimalExperts()) {
+            this.createAnimalExpert(animal, expert);
+        }
     }
 
     public void removeAnimal(@NonNull  Animal animal) {
-        String deleteQuery = "DELETE FROM " + TABLE_ANIMAL + " WHERE " + KEY_ID + "=?";
         SQLiteDatabase db = this.getWritableDatabase();
-        SQLiteStatement stmt = db.compileStatement(deleteQuery);
-        stmt.bindLong(1, animal.getId());
-        stmt.execute();
+
+        this.removeAnimalExperts(animal);
+        db.delete(TABLE_ANIMAL, KEY_ID + "=" + animal.getId(), null);
+    }
+
+    public void removeAnimalExperts(@NonNull Animal animal) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_ANIMAL_EXPERT, KEY_ANIMAL_ID + "=" + animal.getId(), null);
     }
 }
