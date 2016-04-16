@@ -44,14 +44,13 @@
 
     <string name="storage_permission_message">%1$s needs access to your storage to
         save and access gallery photographs so that you can set profile images.</string>
-    <string name="location_permission_message">%1$s needs access to your location to zoom in into
-        your current position and auto-set animal location.</string>
+    <string name="location_permission_message">%1$s needs access to your location to
+        auto-set animal location, and start notification service.</string>
 
 
     <!-- Preference Strings -->
     <string name="settings">Settings</string>
     <string name="inline_preferences">Background services</string>
-    <string name="title_checkbox_preference">Automatic update</string>
-    <string name="summary_checkbox_preference">Refresh animals just with those
-        that are near you.</string>
+    <string name="title_checkbox_preference">Animal searcher notifications</string>
+    <string name="summary_checkbox_preference">Enables notifications when nearby animal is found.</string>
 </resources>

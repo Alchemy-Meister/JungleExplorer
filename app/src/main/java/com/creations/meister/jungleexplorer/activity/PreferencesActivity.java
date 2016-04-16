@@ -11,7 +11,7 @@ import com.creations.meister.jungleexplorer.fragment.Preferences;
 /**
  * Created by meister on 4/6/16.
  */
-public class PreferencesActivity extends AppCompatActivity{
+public class PreferencesActivity extends AppCompatActivity {
 
     FragmentManager mFragmentManager;
 
