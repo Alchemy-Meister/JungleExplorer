@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -16,9 +18,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -124,9 +128,36 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
             mAnimalName.setText(animal.getName());
             mLocationText.setText(animal.getLocationText());
             mDescription.setText(animal.getDescription());
+
+
+            if(!TextUtils.isEmpty(animal.getPhotoId())) {
+                ViewTreeObserver vto = mImageView.getViewTreeObserver();
+                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        if(animalBitmap == null) {
+                            animalBitmap = ImageHelper.scaleImage(mImageView, animal.getPhotoId());
+                            mImageView.setImageBitmap(animalBitmap);
+                            mImageView.invalidate();
+                            if (Build.VERSION.SDK_INT < 16) {
+                                mImageView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            } else {
+                                mImageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            }
+                        }
+                    }
+                });
+            }
         }
 
         this.setEditable(editable);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
     }
 
     @Override
@@ -142,11 +173,14 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
 
     public Animal setAnimalBasicInfo(@NonNull  Animal animal) {
             animal.setName(mAnimalName.getText().toString());
-            if (!TextUtils.isEmpty(mDescription.getText())) {
+            if(!TextUtils.isEmpty(mDescription.getText())) {
                 animal.setDescription(mDescription.getText().toString());
             }
-            if (!TextUtils.isEmpty(mLocationText.getText())) {
+            if(!TextUtils.isEmpty(mLocationText.getText())) {
                 animal.setLocationText(mLocationText.getText().toString());
+            }
+            if(mCurrentPhotoPath != null) {
+                animal.setPhotoId(mCurrentPhotoPath);
             }
             return animal;
     }
@@ -190,6 +224,8 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
                     animalBitmap = bitmap;
                     mImageView.setImageBitmap(bitmap);
                     mImageView.invalidate();
+
+                    mCurrentPhotoPath = ImageHelper.getRealPathFromURI(this.getContext(), uri);
 
                 } catch (FileNotFoundException e) {
                     // Error opening the image

@@ -335,6 +335,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 Animal animal = new Animal();
                 animal.setId(c.getInt(c.getColumnIndex(KEY_ID)));
                 animal.setName(c.getString(c.getColumnIndex(KEY_NAME)));
+                animal.setPhotoId(c.getColumnName(c.getColumnIndex(KEY_PHOTO_ID)));
                 animal.setLocationText(c.getString(c.getColumnIndex(KEY_LOCATION_TEXT)));
                 animal.setDescription(c.getString(c.getColumnIndex(KEY_DESCRIPTION)));
                 animal.setFavorite(c.getInt(c.getColumnIndex(KEY_FAVORITE)));
