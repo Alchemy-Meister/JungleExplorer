@@ -2,6 +2,7 @@ package com.creations.meister.jungleexplorer.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
@@ -12,12 +13,15 @@ import android.widget.TextView;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.domain.Domain;
+import com.creations.meister.jungleexplorer.image_utils.ImageHelper;
 import com.creations.meister.jungleexplorer.utils.CircularView;
 import com.creations.meister.jungleexplorer.utils.ContactImageUtil;
 import com.creations.meister.jungleexplorer.utils.ImageCache;
 import com.creations.meister.jungleexplorer.utils.async_task_thread_pool.AsyncTaskEx;
 import com.creations.meister.jungleexplorer.utils.async_task_thread_pool.AsyncTaskThreadPool;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -107,7 +111,20 @@ public class DomainAdapter extends SearchablePinnedHeaderListViewAdapter<Domain>
                         if (isCancelled())
                             return null;
                         // TODO get real image from DB.
-                        final Bitmap b = ContactImageUtil.loadContactPhotoThumbnail(context, domain.getPhotoId(), CONTACT_PHOTO_IMAGE_SIZE);
+                        final int THUMBNAIL_SIZE = 64;
+
+                        Bitmap imageBitmap = null;
+
+                        try {
+                            FileInputStream fis = new FileInputStream(domain.getPhotoId());
+                            imageBitmap = BitmapFactory.decodeStream(fis);
+                            imageBitmap = Bitmap.createScaledBitmap(imageBitmap, THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        final Bitmap b = imageBitmap;
                         if (b != null)
                             return ThumbnailUtils.extractThumbnail(b, CONTACT_PHOTO_IMAGE_SIZE,
                                     CONTACT_PHOTO_IMAGE_SIZE);
