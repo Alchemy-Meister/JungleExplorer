@@ -7,5 +7,6 @@
     <dimen name="list_item__contact_imageview_size">55dp</dimen>
 
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="margin">8dp</dimen>
+
+    <dimen name="margin">0dp</dimen>
 </resources>

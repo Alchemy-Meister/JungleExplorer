@@ -87,6 +87,14 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name=".widget.AnimalWidget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/animal_info_widget" />
+        </receiver>
     </application>
 
 </manifest>
