@@ -14,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.preference.PreferenceManager;
-import android.util.Log;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.activity.MainActivity;
@@ -78,21 +77,17 @@ public class AnimalNotification extends BroadcastReceiver implements GoogleApiCl
         Location cLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         DBHelper dbHelper = DBHelper.getHelper(this.context);
         Animal animal = dbHelper.getNearestAnimal(cLocation);
-        Log.d("APP", "User latitude: " + cLocation.getLatitude());
-        Log.d("APP", "User longitude: " + cLocation.getLongitude());
-        Log.d("NEAREST", animal.getName() + ", " + animal.getLatitude() + ", " + animal.getLongitude());
-
-        SharedPreferences sharedPref = context.getApplicationContext()
-                .getSharedPreferences("notification_animal",Context.MODE_PRIVATE);
-        String previousAnimalID = sharedPref.getString("previous_animal", null);
-        Log.d("PREV", String.valueOf(previousAnimalID));
-        if((previousAnimalID != null && !String.valueOf(animal.getId()).equals(previousAnimalID))
-                || previousAnimalID == null)
-        {
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putString("previous_animal", String.valueOf(animal.getId()));
-            editor.commit();
-            this.showNotification(animal);
+        if(animal != null) {
+            SharedPreferences sharedPref = context.getApplicationContext()
+                    .getSharedPreferences("notification_animal", Context.MODE_PRIVATE);
+            String previousAnimalID = sharedPref.getString("previous_animal", null);
+            if ((previousAnimalID != null && !String.valueOf(animal.getId()).equals(previousAnimalID))
+                    || previousAnimalID == null) {
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("previous_animal", String.valueOf(animal.getId()));
+                editor.commit();
+                this.showNotification(animal);
+            }
         }
         mGoogleApiClient.disconnect();
     }
@@ -127,7 +122,7 @@ public class AnimalNotification extends BroadcastReceiver implements GoogleApiCl
                 .setContentIntent(pIntent)
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_SOUND)
-                .setSmallIcon(R.mipmap.ic_launcher);
+                .setSmallIcon(R.drawable.ic_small_icon);
 
 
         NotificationManager notificationManager = (NotificationManager)
