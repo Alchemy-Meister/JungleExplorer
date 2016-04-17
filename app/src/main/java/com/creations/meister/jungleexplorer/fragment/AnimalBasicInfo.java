@@ -151,17 +151,6 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
             return animal;
     }
 
-    public void initializeImageViewListener() {
-        int hasReadContactsPermission = ContextCompat.checkSelfPermission(
-                AnimalBasicInfo.this.getContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (hasReadContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            AnimalBasicInfo.this.requestPermissions(requiredPermissions, STORAGE_ASK_REQUEST);
-            return;
-        }
-        mImageView.setOnClickListener(this);
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults)

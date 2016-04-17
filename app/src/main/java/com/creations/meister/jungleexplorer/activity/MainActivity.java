@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.fragment.AnimalList;
 import com.creations.meister.jungleexplorer.fragment.ExpertList;
 import com.creations.meister.jungleexplorer.fragment.FavoriteList;
@@ -35,10 +36,20 @@ public class MainActivity extends AppCompatActivity {
 
     private SearchView searchView;
 
+    private boolean showAnimals = false;
+    private static final String SHOW_ANIMALS = "SHOW_ANIMALS";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(savedInstanceState == null) {
+            Bundle bundle = this.getIntent().getExtras();
+            if(bundle != null) {
+                showAnimals = bundle.getBoolean(SHOW_ANIMALS);
+            }
+        }
 
         mFragmentManager = this.getSupportFragmentManager();
         mBottomBar = BottomBar.attach(this, savedInstanceState);
@@ -81,6 +92,12 @@ public class MainActivity extends AppCompatActivity {
         mBottomBar.mapColorForTab(2, "#F44336");
         mBottomBar.mapColorForTab(3, "#2196F3");
 
+        if(showAnimals) {
+            FragmentTransaction transaction = mFragmentManager.beginTransaction();
+            transaction.replace(R.id.contentFragment, mAnimalList, "ANIMAL");
+            transaction.commit();
+            mBottomBar.selectTabAtPosition(1, false);
+        }
     }
 
     @Override

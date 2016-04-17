@@ -37,7 +37,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.NewAnimal">
+        <activity android:name=".activity.NewAnimal"
+            android:parentActivityName=".activity.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainActivity"/>
         </activity>
 
         <activity android:name=".activity.NewAnimalExpertList"

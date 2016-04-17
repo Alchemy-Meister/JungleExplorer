@@ -45,7 +45,7 @@ public class NewAnimalExpertList extends AppCompatActivity implements AdapterVie
     public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.search_menu, menu);
+        menuInflater.inflate(R.menu.search, menu);
 
         final MenuItem searchItem = menu.findItem(R.id.searchView);
         searchView = (SearchView) searchItem.getActionView();

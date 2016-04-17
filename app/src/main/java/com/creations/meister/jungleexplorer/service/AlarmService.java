@@ -12,6 +12,8 @@ import android.util.Log;
 public class AlarmService {
     private static final int TRIGGER_AT_MILLIS = 60;
 
+    public static final String ACTION = "ANIMAL_NOTIFICATION";
+
     private static AlarmService alarmService;
 
     private Context context;
@@ -30,12 +32,11 @@ public class AlarmService {
 
     public void start(){
         Intent intent = new Intent(context, AnimalNotification.class);
-        intent.putExtra("source", "AlarmService");
+        intent.setAction(ACTION);
         alarmService.mPendingIntent = PendingIntent.getBroadcast(
                 context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmService.alarmManager.setRepeating(
                 AlarmManager.ELAPSED_REALTIME_WAKEUP, TRIGGER_AT_MILLIS * 1000, 10, mPendingIntent);
-        Log.d("Start", "TRUE");
     }
 
     public void stop(){
@@ -43,6 +44,5 @@ public class AlarmService {
             alarmService.mPendingIntent.cancel();
             alarmService.alarmManager.cancel(mPendingIntent);
         }
-        Log.d("STOP", "TRUE");
     }
 }
