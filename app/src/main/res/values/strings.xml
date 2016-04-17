@@ -50,6 +50,7 @@
     <string name="animal_found">New animal found</string>
     <string name="touch_view">Touch to view more information.</string>
 
+    <string name="no_animal_available">No animal available</string>
 
     <!-- Preference Strings -->
     <string name="settings">Settings</string>

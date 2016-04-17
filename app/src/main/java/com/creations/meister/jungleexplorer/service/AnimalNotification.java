@@ -32,6 +32,7 @@ public class AnimalNotification extends BroadcastReceiver implements GoogleApiCl
 
     private GoogleApiClient mGoogleApiClient;
     private Context context;
+    SharedPreferences prefs;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -39,7 +40,7 @@ public class AnimalNotification extends BroadcastReceiver implements GoogleApiCl
 
         AlarmService as = AlarmService.getInstance(context);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if(prefs.getBoolean("background_service", false)) {
             if (intent.getAction() != null
                     && intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED))
@@ -75,6 +76,12 @@ public class AnimalNotification extends BroadcastReceiver implements GoogleApiCl
     public void onConnected(@Nullable Bundle bundle) {
         //noinspection MissingPermission
         Location cLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+        SharedPreferences.Editor sharedEditor = prefs.edit();
+        sharedEditor.putString("current_latitude", String.valueOf(cLocation.getLatitude()));
+        sharedEditor.putString("current_longitude", String.valueOf(cLocation.getLongitude()));
+        sharedEditor.commit();
+
         DBHelper dbHelper = DBHelper.getHelper(this.context);
         Animal animal = dbHelper.getNearestAnimal(cLocation);
         if(animal != null) {
