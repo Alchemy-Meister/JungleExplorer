@@ -9,4 +9,30 @@
             android:summary="@string/summary_checkbox_preference" />
 
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/animal_preferences">
+
+        <SwitchPreference
+            android:key="filter_animal_list"
+            android:title="@string/filter_animal_list"
+            android:summary="@string/filter_animal_list_summary" />
+
+        <EditTextPreferenceFix
+            android:key="animal_list_radius"
+            android:inputType="number"
+            android:defaultValue="50"
+            android:title="@string/filter_distance"
+            android:summary="@string/filter_distance_summary"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/map_preferences">
+
+        <ListPreference
+            android:key="map_default_continent"
+            android:title="@string/map_default_title"
+            android:summary="@string/map_default_summary"
+            />
+    </PreferenceCategory>
 </PreferenceScreen>

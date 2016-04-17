@@ -2,14 +2,16 @@ package com.creations.meister.jungleexplorer.fragment;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v14.preference.SwitchPreference;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.EditTextPreferenceFix;
+import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
-import android.util.Log;
+import android.support.v7.preference.PreferenceFragmentCompatFix;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
@@ -18,7 +20,7 @@ import com.creations.meister.jungleexplorer.service.AlarmService;
 /**
  * Created by meister on 4/6/16.
  */
-public class Preferences extends PreferenceFragmentCompat {
+public class Preferences extends PreferenceFragmentCompatFix {
 
     private static final int REQUEST_LOCATION = 101;
 
@@ -54,6 +56,51 @@ public class Preferences extends PreferenceFragmentCompat {
                 }
             }
         });
+
+        SwitchPreference animalFilter = (SwitchPreference) findPreference("filter_animal_list");
+        final EditTextPreferenceFix distanceRadius =
+                (EditTextPreferenceFix) findPreference("animal_list_radius");
+
+        if(animalFilter.isChecked()) {
+            distanceRadius.setEnabled(true);
+        } else {
+            distanceRadius.setEnabled(false);
+        }
+
+        animalFilter.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if((boolean) newValue) {
+                    distanceRadius.setEnabled(true);
+                } else {
+                    distanceRadius.setEnabled(false);
+                }
+                return true;
+            }
+        });
+
+        Resources res = getResources();
+        TypedArray ta = res.obtainTypedArray(R.array.continents);
+        int n = ta.length();
+        String[][] continentArray = new String[n][];
+        for (int i = 0; i < n; ++i) {
+            int id = ta.getResourceId(i, 0);
+            if (id > 0) {
+                continentArray[i] = res.getStringArray(id);
+            }
+        }
+        ta.recycle();
+
+        String[] continentNames = new String[continentArray.length];
+        String[] values = new String[continentArray.length];
+        for(int i = 0; i < continentArray.length; i++) {
+            continentNames[i] = continentArray[i][0];
+            values[i] = String.valueOf(i);
+        }
+
+        ListPreference continents = (ListPreference) findPreference("map_default_continent");
+        continents.setEntries(continentNames);
+        continents.setEntryValues(values);
     }
 
     @Override

@@ -58,4 +58,68 @@
     <string name="inline_preferences">Background services</string>
     <string name="title_checkbox_preference">Animal searcher notifications</string>
     <string name="summary_checkbox_preference">Enables notifications when nearby animal is found.</string>
+
+    <string name="animal_preferences">Animal preferences</string>
+    <string name="filter_animal_list">Filter</string>
+    <string name="filter_animal_list_summary">Display animals based on their distance.</string>
+
+    <string name="filter_distance">Distance</string>
+    <string name="filter_distance_summary">Sets the animal search radius.</string>
+
+    <string name="map_preferences">Map preferences</string>
+    <string name="map_default_title">Default continent</string>
+    <string name="map_default_summary">Sets map\'s initial camera position.</string>
+
+    <string-array name="africa">
+        <item name="name">Africa</item>
+        <item name="lat"></item>
+        <item name="lng"></item>
+    </string-array>
+
+    <string-array name="antarctica">
+        <item name="name">Antarctica</item>
+        <item name="lat"></item>
+        <item name="lng"></item>
+    </string-array>
+
+    <string-array name="asia">
+        <item name="name">Asia</item>
+        <item name="lat"></item>
+        <item name="lng"></item>
+    </string-array>
+
+    <string-array name="australia">
+        <item name="name">Australia</item>
+        <item name="lat"></item>
+        <item name="lng"></item>
+    </string-array>
+
+    <string-array name="europe">
+        <item name="name">Europe</item>
+        <item name="lat"></item>
+        <item name="lng"></item>
+    </string-array>
+
+    <string-array name="north_america">
+        <item name="name">North America</item>
+        <item name="lat"></item>
+        <item name="lng"></item>
+    </string-array>
+
+    <string-array name="south_america">
+        <item name="name">South America</item>
+        <item name="lat"></item>
+        <item name="lng"></item>
+    </string-array>
+
+    <array name="continents">
+        <item>@array/africa</item>
+        <item>@array/antarctica</item>
+        <item>@array/asia</item>
+        <item>@array/australia</item>
+        <item>@array/europe</item>
+        <item>@array/north_america</item>
+        <item>@array/south_america</item>
+
+    </array>
 </resources>

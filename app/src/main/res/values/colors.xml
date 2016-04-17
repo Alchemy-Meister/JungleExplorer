@@ -12,6 +12,10 @@
 
     <color name="black">#000000</color>
 
+    <color name="accent">#FF4081</color>
+    <!-- this is needed as preference_category_material layout uses this color as the text color -->
+    <color name="preference_fallback_accent_color">@color/accent</color>
+
     <!-- used as background colors for contacts that don't have photos -->
     <integer-array name="contacts_text_background_colors">
         <item>0xFF9C27B0</item>
