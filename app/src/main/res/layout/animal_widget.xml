@@ -11,7 +11,8 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:src="@drawable/ic_animals"/>
+        android:src="@drawable/ic_animals"
+        android:tint="@android:color/white" />
 
     <TextView
         android:id="@+id/textView"
@@ -19,8 +20,8 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="000"
-        android:textSize="@dimen/abc_text_size_large_material"
-        android:textStyle="bold"/>
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"/>
 
 </LinearLayout>

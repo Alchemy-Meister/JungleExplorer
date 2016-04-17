@@ -33,9 +33,6 @@ public class AnimalWidget extends AppWidgetProvider {
         String lat = prefs.getString("current_latitude", null);
         String lng = prefs.getString("current_longitude",null);
 
-        Log.d("LAT", lat);
-        Log.d("LNG", lng);
-
         Location cLocation = null;
         Animal animal = null;
 
@@ -64,7 +61,8 @@ public class AnimalWidget extends AppWidgetProvider {
             stackBuilder.addNextIntent(resultIntent);
 
             if(animal != null) {
-                remoteViews.setTextViewText(R.id.textView, animal.getName());
+                remoteViews.setTextViewText(R.id.textView,
+                        context.getString(R.string.nearest_animal, animal.getName()));
 
                 resultIntent.putExtra("ANIMAL", animal);
 

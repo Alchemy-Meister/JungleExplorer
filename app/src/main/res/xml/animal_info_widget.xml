@@ -1,5 +1,5 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:minWidth="240dp"
+    android:minWidth="360dp"
     android:minHeight="60dp"
     android:updatePeriodMillis="30000"
     android:initialLayout="@layout/animal_widget"

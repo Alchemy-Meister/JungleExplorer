@@ -51,6 +51,7 @@
     <string name="touch_view">Touch to view more information.</string>
 
     <string name="no_animal_available">No animal available</string>
+    <string name="nearest_animal">Nearest animal found: %1$s</string>
 
     <!-- Preference Strings -->
     <string name="settings">Settings</string>

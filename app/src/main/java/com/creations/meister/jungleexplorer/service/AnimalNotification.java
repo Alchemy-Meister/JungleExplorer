@@ -3,7 +3,9 @@ package com.creations.meister.jungleexplorer.service;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,12 +16,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.preference.PreferenceManager;
+import android.widget.RemoteViews;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.activity.MainActivity;
 import com.creations.meister.jungleexplorer.activity.NewAnimal;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
+import com.creations.meister.jungleexplorer.widget.AnimalWidget;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -92,8 +96,35 @@ public class AnimalNotification extends BroadcastReceiver implements GoogleApiCl
                     || previousAnimalID == null) {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("previous_animal", String.valueOf(animal.getId()));
+
+                Intent resultIntent = new Intent(context, NewAnimal.class);
+                resultIntent.putExtra("ANIMAL", animal);
+
+                Intent parentIntent = new Intent(context, MainActivity.class);
+                parentIntent.putExtra("SHOW_ANIMALS", true);
+
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+                stackBuilder.addNextIntent(parentIntent);
+                stackBuilder.addNextIntent(resultIntent);
+
+                PendingIntent pIntent = stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+                ComponentName thisWidget = new ComponentName(context, AnimalWidget.class);
+                AppWidgetManager manager = AppWidgetManager.getInstance(context);
+                RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
+                        R.layout.animal_widget);
+
+                remoteViews.setTextViewText(R.id.textView,
+                        context.getString(R.string.nearest_animal, animal.getName()));
+                remoteViews.setOnClickPendingIntent(R.id.widget, pIntent);
+
+                manager.updateAppWidget(thisWidget, remoteViews);
+
                 editor.commit();
-                this.showNotification(animal);
+                this.showNotification(animal, pIntent);
             }
         }
         mGoogleApiClient.disconnect();
@@ -104,23 +135,7 @@ public class AnimalNotification extends BroadcastReceiver implements GoogleApiCl
         // Nothing to do here.
     }
 
-    private void showNotification(final Animal animal) {
-
-        Intent resultIntent = new Intent(context, NewAnimal.class);
-        resultIntent.putExtra("ANIMAL", animal);
-
-        Intent parentIntent = new Intent(context, MainActivity.class);
-        parentIntent.putExtra("SHOW_ANIMALS", true);
-
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addNextIntent(parentIntent);
-        stackBuilder.addNextIntent(resultIntent);
-
-        PendingIntent pIntent = stackBuilder.getPendingIntent(
-                0,
-                PendingIntent.FLAG_ONE_SHOT
-        );
-
+    private void showNotification(final Animal animal, PendingIntent pIntent) {
         // build notification
         // the addAction re-use the same intent to keep the example short
         NotificationCompat.Builder n  = new NotificationCompat.Builder(this.context)
