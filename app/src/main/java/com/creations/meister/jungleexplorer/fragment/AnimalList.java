@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.ActionMode;
@@ -35,6 +34,8 @@ import com.creations.meister.jungleexplorer.domain.Domain;
 import com.creations.meister.jungleexplorer.google_api_utils.GoogleApiHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
@@ -45,13 +46,14 @@ import lb.library.PinnedHeaderListView;
 /**
  * Created by meister on 3/27/16.
  */
-public class AnimalList extends ListFragment implements GoogleApiClient.ConnectionCallbacks {
+public class AnimalList extends ListFragment implements GoogleApiClient.ConnectionCallbacks,
+        LocationListener
+{
     private final int NEW_ANIMAL_REQUEST = 0;
     private final int ANIMAL_EDIT_REQUEST = 1;
     private final String ANIMAL_KEY = "ANIMAL";
 
     private PinnedHeaderListView mListView;
-    private FloatingActionButton fabAddAnimal;
     private LayoutInflater mInflater;
 
     private ArrayList<Domain> animals;
@@ -67,15 +69,27 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
     private GoogleApiClient mGoogleApiClient;
     private SharedPreferences prefs;
 
+    private Location cLocation = null;
+    private Integer radius = null;
+    private boolean filterEnabled = false;
+
+    private LocationRequest mLocationRequest;
+
     private SharedPreferences.OnSharedPreferenceChangeListener shareChangeListener
             = new SharedPreferences.OnSharedPreferenceChangeListener()
     {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            Log.d("CHANGE", "TRUE");
             if(key.equals("filter_animal_list") || key.equals("animal_list_radius")) {
+                filterEnabled = sharedPreferences.getBoolean("filter_animal_list", false);
                 if(sharedPreferences.getBoolean("filter_animal_list", false)) {
                     AnimalList.this.initializeFilterAnimals();
+                    if(key.equals("animal_list_radius")) {
+                        String radiusString = prefs.getString("animal_list_radius", null);
+                        if (!TextUtils.isEmpty(radiusString)) {
+                            radius = Integer.valueOf(radiusString);
+                        }
+                    }
                 } else {
                     AnimalList.this.initializeAllAnimals();
                 }
@@ -100,6 +114,11 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
                 this.getActivity().getApplicationContext());
 
         this.prefs.registerOnSharedPreferenceChangeListener(shareChangeListener);
+
+        this.mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
+                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
     }
 
     @Override
@@ -109,7 +128,7 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
 
         this.dbHelper = DBHelper.getHelper(this.getActivity());
         this.mListView = ((PinnedHeaderListView)this.getListView());
-        this.fabAddAnimal = (FloatingActionButton) this.getActivity().findViewById(R.id.animalFAB);
+        FloatingActionButton fabAddAnimal = (FloatingActionButton) this.getActivity().findViewById(R.id.animalFAB);
         this.sv = ((MainActivity) this.getActivity()).getSearchView();
 
         this.mListView.setPinnedHeaderView(mInflater.inflate(
@@ -118,7 +137,7 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
         this.pinnedHeaderBackgroundColor = getResources().getColor(AnimalList.getResIdFromAttribute(
                 this.getActivity(), android.R.attr.colorBackground));
 
-        this.fabAddAnimal.setOnClickListener(new View.OnClickListener() {
+        fabAddAnimal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent menuIntent = new Intent(AnimalList.this.getContext(), NewAnimal.class);
@@ -149,7 +168,9 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
             }
         });
 
-        if(prefs.getBoolean("filter_animal_list", false)
+        filterEnabled = prefs.getBoolean("filter_animal_list", false);
+
+        if(filterEnabled
                 && GoogleApiHelper.isAPIAvailable(this.getContext()))
         {
             this.initializeFilterAnimals();
@@ -164,7 +185,9 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        // Nothing to do here.
+                        Toast.makeText(AnimalList.this.getContext(),
+                                getResources().getString(R.string.google_service_unavailable),
+                                Toast.LENGTH_LONG).show();
                     }
                 })
                 .addApi(LocationServices.API)
@@ -245,7 +268,22 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
                     .getSelectedCount()) + " selected");
     }
 
-    public static int getResIdFromAttribute(final Activity activity,final int attr)
+    @Override
+    public void onResume() {
+        super.onResume();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    public static int getResIdFromAttribute(final Activity activity, final int attr)
     {
         if(attr==0)
             return 0;
@@ -261,14 +299,39 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
         if(requestCode == NEW_ANIMAL_REQUEST
                 && resultCode == AppCompatActivity.RESULT_OK)
         {
-            animals.add((Domain) data.getExtras().getSerializable("newAnimal"));
-            Collections.sort(animals);
-            AnimalList.this.mAdapter.setData(animals);
-            mListView.setAdapter(mAdapter);
+            Domain newAnimal = (Domain) data.getExtras().getSerializable("newAnimal");
+            if(filterEnabled) {
+                if (newAnimal != null && cLocation != null && radius != null) {
+                    if (((Animal) newAnimal).isWithinRadius(cLocation, radius)) {
+                        animals.add(newAnimal);
+                        Collections.sort(animals);
+                        AnimalList.this.mAdapter.setData(animals);
+                        mListView.setAdapter(mAdapter);
+                    }
+                }
+            } else {
+                animals.add(newAnimal);
+                Collections.sort(animals);
+                AnimalList.this.mAdapter.setData(animals);
+                mListView.setAdapter(mAdapter);
+            }
             Toast.makeText(this.getContext(), getResources().getString(R.string.animal_saved), Toast.LENGTH_SHORT).show();
         } else if(requestCode == ANIMAL_EDIT_REQUEST && resultCode == AppCompatActivity.RESULT_OK) {
-            animals.set(editPosition, (Domain) data.getExtras().getSerializable("editAnimal"));
-            mAdapter.notifyDataSetChanged();
+            Domain editAnimal = (Domain) data.getExtras().getSerializable("editAnimal");
+            if(filterEnabled) {
+                if (editAnimal != null && cLocation != null && radius != null) {
+                    if (((Animal) editAnimal).isWithinRadius(cLocation, radius)) {
+                        animals.set(editPosition, editAnimal);
+                        mAdapter.notifyDataSetChanged();
+                    } else {
+                        animals.remove(editPosition);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+            } else {
+                animals.set(editPosition, editAnimal);
+                mAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -280,16 +343,24 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
     public void onConnected(@Nullable Bundle bundle) {
         animals = new ArrayList<>();
         //noinspection MissingPermission
-        Location cLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        cLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if(cLocation != null) {
             String radiusString = prefs.getString("animal_list_radius", null);
             if (!TextUtils.isEmpty(radiusString)) {
-                int radius = Integer.valueOf(radiusString);
-                Log.d("RADIUS", radiusString);
+                radius = Integer.valueOf(radiusString);
                 animals = (ArrayList) dbHelper.getAnimalsWithinRadius(cLocation, radius);
             }
+        } else {
+            //noinspection MissingPermission
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, AnimalList.this);
+            Toast.makeText(this.getContext(),
+                    getResources().getString(R.string.current_location_unavailable),
+                    Toast.LENGTH_SHORT).show();
         }
-        postAnimalInitialization();
+
+        if(this.getContext() != null) {
+            postAnimalInitialization();
+        }
     }
 
     @Override
@@ -299,7 +370,21 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
 
     @Override
     public void onDestroy() {
-        this.prefs.unregisterOnSharedPreferenceChangeListener(shareChangeListener);
         super.onDestroy();
+        this.prefs.unregisterOnSharedPreferenceChangeListener(shareChangeListener);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if(location != null) {
+            String radiusString = prefs.getString("animal_list_radius", null);
+            if (!TextUtils.isEmpty(radiusString)) {
+                radius = Integer.valueOf(radiusString);
+                animals = (ArrayList) dbHelper.getAnimalsWithinRadius(cLocation, radius);
+            }
+        }
+        if(AnimalList.this.getContext() != null) {
+            this.postAnimalInitialization();
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.creations.meister.jungleexplorer.domain;
 
+import android.location.Location;
+
 import java.util.ArrayList;
 
 /**
@@ -74,5 +76,18 @@ public class Animal extends Domain {
 
     public void setAnimalGroups(ArrayList<Group> animalGroups) {
         this.animalGroups = animalGroups;
+    }
+
+    public boolean isWithinRadius(Location center, int radius) {
+        boolean within = false;
+        if(center != null && this.latitude != null && this.longitude != null) {
+            Location animalLocation = new Location("");
+            animalLocation.setLatitude(this.latitude);
+            animalLocation.setLongitude(this.longitude);
+            if(center.distanceTo(animalLocation) <= radius) {
+                within = true;
+            }
+        }
+        return within;
     }
 }

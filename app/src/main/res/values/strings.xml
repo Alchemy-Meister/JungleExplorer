@@ -70,6 +70,10 @@
     <string name="map_default_title">Default continent</string>
     <string name="map_default_summary">Sets map\'s initial camera position.</string>
 
+    <string name="google_service_unavailable">Location service is unavailable try again later,
+        or disable filter from preferences.</string>
+    <string name="current_location_unavailable">Location seems to be unavailable try again later.</string>
+
     <string-array name="africa">
         <item name="name">Africa</item>
         <item name="lat"></item>
@@ -120,6 +124,5 @@
         <item>@array/europe</item>
         <item>@array/north_america</item>
         <item>@array/south_america</item>
-
     </array>
 </resources>
