@@ -343,6 +343,9 @@ public class DBHelper extends SQLiteOpenHelper {
                     aLocation.setLongitude(longitude);
                     float distance = location.distanceTo(aLocation);
 
+                    Log.d("DISTANCE", String.valueOf(distance));
+                    Log.d("RADIUS", String.valueOf(radius));
+
                     if(distance <= radius) {
                         returnAnimals.add(animal);
                     }

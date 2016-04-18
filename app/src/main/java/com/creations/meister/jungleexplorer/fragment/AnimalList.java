@@ -46,7 +46,6 @@ import lb.library.PinnedHeaderListView;
  * Created by meister on 3/27/16.
  */
 public class AnimalList extends ListFragment implements GoogleApiClient.ConnectionCallbacks {
-
     private final int NEW_ANIMAL_REQUEST = 0;
     private final int ANIMAL_EDIT_REQUEST = 1;
     private final String ANIMAL_KEY = "ANIMAL";
@@ -68,6 +67,22 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
     private GoogleApiClient mGoogleApiClient;
     private SharedPreferences prefs;
 
+    private SharedPreferences.OnSharedPreferenceChangeListener shareChangeListener
+            = new SharedPreferences.OnSharedPreferenceChangeListener()
+    {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            Log.d("CHANGE", "TRUE");
+            if(key.equals("filter_animal_list") || key.equals("animal_list_radius")) {
+                if(sharedPreferences.getBoolean("filter_animal_list", false)) {
+                    AnimalList.this.initializeFilterAnimals();
+                } else {
+                    AnimalList.this.initializeAllAnimals();
+                }
+            }
+        }
+    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.animal_list_fragment, container, false);
@@ -78,10 +93,19 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(
+                this.getActivity().getApplicationContext());
+
+        this.prefs.registerOnSharedPreferenceChangeListener(shareChangeListener);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        this.prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
 
         this.dbHelper = DBHelper.getHelper(this.getActivity());
         this.mListView = ((PinnedHeaderListView)this.getListView());
@@ -99,6 +123,29 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
             public void onClick(View v) {
                 Intent menuIntent = new Intent(AnimalList.this.getContext(), NewAnimal.class);
                 startActivityForResult(menuIntent, NEW_ANIMAL_REQUEST);
+            }
+        });
+
+        this.mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(mActionMode != null) {
+                    AnimalList.this.onListItemSelect(position);
+                } else {
+                    editPosition = position;
+                    Intent newAnimalIntent = new Intent(AnimalList.this.getContext(), NewAnimal.class);
+                    newAnimalIntent.putExtra(ANIMAL_KEY, animals.get(position));
+                    startActivityForResult(newAnimalIntent, ANIMAL_EDIT_REQUEST);
+                }
+            }
+        });
+
+        this.mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                view.setSelected(true);
+                onListItemSelect(position);
+                return true;
             }
         });
 
@@ -146,42 +193,6 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
             this.mAdapter.getFilter().filter(sv.getQuery());
             this.mAdapter.setHeaderViewVisible(TextUtils.isEmpty(sv.getQuery()));
         }
-
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(mActionMode != null) {
-                    AnimalList.this.onListItemSelect(position);
-                } else {
-                    editPosition = position;
-                    Intent newAnimalIntent = new Intent(AnimalList.this.getContext(), NewAnimal.class);
-                    newAnimalIntent.putExtra(ANIMAL_KEY, animals.get(position));
-                    startActivityForResult(newAnimalIntent, ANIMAL_EDIT_REQUEST);
-                }
-            }
-        });
-
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                view.setSelected(true);
-                onListItemSelect(position);
-                return true;
-            }
-        });
-
-        prefs.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if(key.equals("filter_animal_list")) {
-                    if(sharedPreferences.getBoolean("filter_animal_list", false)) {
-                        AnimalList.this.initializeFilterAnimals();
-                    } else {
-                        AnimalList.this.initializeAllAnimals();
-                    }
-                }
-            }
-        });
     }
 
     private void onListItemSelect(int position) {
@@ -274,6 +285,7 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
             String radiusString = prefs.getString("animal_list_radius", null);
             if (!TextUtils.isEmpty(radiusString)) {
                 int radius = Integer.valueOf(radiusString);
+                Log.d("RADIUS", radiusString);
                 animals = (ArrayList) dbHelper.getAnimalsWithinRadius(cLocation, radius);
             }
         }
@@ -283,5 +295,11 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
     @Override
     public void onConnectionSuspended(int i) {
         //Do nothing here.
+    }
+
+    @Override
+    public void onDestroy() {
+        this.prefs.unregisterOnSharedPreferenceChangeListener(shareChangeListener);
+        super.onDestroy();
     }
 }

@@ -64,7 +64,7 @@
     <string name="filter_animal_list_summary">Display animals based on their distance.</string>
 
     <string name="filter_distance">Distance</string>
-    <string name="filter_distance_summary">Sets the animal search radius.</string>
+    <string name="filter_distance_summary">Sets the animal search radius in meters.</string>
 
     <string name="map_preferences">Map preferences</string>
     <string name="map_default_title">Default continent</string>
