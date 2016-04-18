@@ -8,6 +8,7 @@ import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -82,6 +83,11 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
     private void filterFragment(String query) {
         expert.getAdapter().getFilter().filter(query);
         expert.getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
+        if(TextUtils.isEmpty(query)) {
+            expert.setFiltered(false);
+        } else {
+            expert.setFiltered(true);
+        }
     }
 
     @Override
@@ -338,5 +344,10 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
     public boolean onQueryTextChange(String newText) {
         filterFragment(newText);
         return true;
+    }
+
+    public void filterClean() {
+        MenuItemCompat.collapseActionView(searchItem);
+        this.getCurrentFocus().clearFocus();
     }
 }

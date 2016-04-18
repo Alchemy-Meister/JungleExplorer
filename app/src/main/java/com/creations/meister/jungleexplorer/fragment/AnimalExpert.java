@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.ActionMode;
@@ -32,6 +33,7 @@ import com.creations.meister.jungleexplorer.domain.Expert;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 
 import lb.library.PinnedHeaderListView;
 
@@ -51,7 +53,10 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
 
     private boolean editable = false;
     private boolean destroyActionMode = false;
+    private boolean isFiltered = false;
     private Animal animal;
+
+    private HashSet<Integer> filteredSeletedDomains;
 
     private ContactAdapter mAdapter;
     private DBHelper dbHelper;
@@ -123,7 +128,17 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if(mActionMode != null && editable) {
-                AnimalExpert.this.onListItemSelect(position);
+                if(isFiltered) {
+                    int expertId = ((ContactAdapter.ViewHolder) view.getTag()).id;
+                    for(int i = 0; i < experts.size(); i++) {
+                        if(experts.get(i).getId() == expertId) {
+                            onListItemSelect(i);
+                        }
+                    }
+
+                } else {
+                    AnimalExpert.this.onListItemSelect(position);
+                }
             }
             }
         });
@@ -132,8 +147,17 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 if(editable) {
-                    view.setSelected(true);
-                    onListItemSelect(position);
+                    if(isFiltered) {
+                        int expertId = ((ContactAdapter.ViewHolder) view.getTag()).id;
+                        for(int i = 0; i < experts.size(); i++) {
+                            if(experts.get(i).getId() == expertId) {
+                                onListItemSelect(i);
+                            }
+                        }
+
+                    } else {
+                        onListItemSelect(position);
+                    }
                     return true;
                 } else {
                     return false;
@@ -260,6 +284,7 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
                 }
             }
             mAdapter.notifyDataSetChanged();
+            ((NewAnimal) this.getActivity()).filterClean();
 
         }
         destroyActionMode = true;
@@ -277,5 +302,9 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
 
     public ContactAdapter getAdapter() {
         return this.mAdapter;
+    }
+
+    public void setFiltered(boolean isFiltered) {
+        this.isFiltered = isFiltered;
     }
 }
