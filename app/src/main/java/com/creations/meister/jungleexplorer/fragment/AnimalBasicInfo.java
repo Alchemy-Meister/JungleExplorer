@@ -29,6 +29,8 @@ import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.image_utils.ImageHelper;
 import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
+import com.creations.meister.jungleexplorer.utils.ImageCache;
+import com.creations.meister.jungleexplorer.utils.async_task_thread_pool.AsyncTaskEx;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -133,13 +135,41 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
                     @Override
                     public void onGlobalLayout() {
                         if(animalBitmap == null) {
-                            animalBitmap = ImageHelper.scaleImage(mImageView, animal.getPhotoId());
-                            mImageView.setImageBitmap(animalBitmap);
-                            mImageView.invalidate();
-                            if (Build.VERSION.SDK_INT < 16) {
-                                mImageView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            final Bitmap cachedBitmap = !TextUtils.isEmpty(animal.getPhotoId())
+                                    ? ImageCache.INSTANCE.getBitmapFromMemCache(animal.getPhotoId()
+                                    + "BIG") : null;
+                            if(cachedBitmap == null) {
+                                AsyncTaskEx<Void, Void, Bitmap> updateTask =
+                                        new AsyncTaskEx<Void, Void, Bitmap>()
+                                {
+                                    @Override
+                                    public Bitmap doInBackground(
+                                            @SuppressWarnings("unchecked") Void... params) {
+                                        if (mImageView != null && animal != null) {
+                                            animalBitmap = ImageHelper.scaleImage(mImageView,
+                                                    animal.getPhotoId());
+                                            return animalBitmap;
+                                        }
+                                        return null;
+                                    }
+
+                                    @Override
+                                    public void onPostExecute(Bitmap result) {
+                                        super.onPostExecute(result);
+                                        if (result == null)
+                                            return;
+                                        if (animal != null & mImageView != null) {
+                                            ImageCache.INSTANCE.addBitmapToCache(animal.getPhotoId()
+                                                    + "BIG", result);
+                                            mImageView.setImageBitmap(animalBitmap);
+                                            mImageView.invalidate();
+                                        }
+                                    }
+                                };
+                                updateTask.execute();
                             } else {
-                                mImageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                mImageView.setImageBitmap(animalBitmap);
+                                mImageView.invalidate();
                             }
                         }
                     }
