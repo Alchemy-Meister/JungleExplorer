@@ -229,12 +229,14 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
         mAdapter.toggleSelection(position);
         boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
 
-        if (hasCheckedItems && mActionMode == null)
+        if (hasCheckedItems && mActionMode == null) {
             // there are some selected items, start the actionMode
             mActionMode = this.getActivity().startActionMode(AnimalList.this);
-        else if (!hasCheckedItems && mActionMode != null)
+        } else if (!hasCheckedItems && mActionMode != null) {
             // there no selected items, finish the actionMode
+            destroyActionMode = true;
             mActionMode.finish();
+        }
 
         if (mActionMode != null)
             mActionMode.setTitle(String.valueOf(mAdapter

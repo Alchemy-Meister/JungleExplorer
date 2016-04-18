@@ -128,6 +128,7 @@ public class NewAnimal extends AppCompatActivity {
                             transaction.show(info);
                             transaction.hide(location);
                             transaction.hide(expert);
+                            expert.hideActionMode();
                         }
                         break;
                     case R.id.bb_menu_location:
@@ -136,6 +137,7 @@ public class NewAnimal extends AppCompatActivity {
                             transaction.hide(info);
                             transaction.hide(expert);
                             location.initializeMyLocationPermission();
+                            expert.hideActionMode();
                         }
                         break;
                     case R.id.bb_menu_new_animal_group:
@@ -146,6 +148,7 @@ public class NewAnimal extends AppCompatActivity {
                             transaction.show(expert);
                             transaction.hide(info);
                             transaction.hide(location);
+                            expert.showActionMode();
                         }
                         break;
                 }

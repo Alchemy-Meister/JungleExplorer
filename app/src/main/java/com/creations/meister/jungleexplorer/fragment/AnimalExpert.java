@@ -36,7 +36,7 @@ import lb.library.PinnedHeaderListView;
 /**
  * Created by meister on 4/15/16.
  */
-public class AnimalExpert extends ListFragment {
+public class AnimalExpert extends ListFragment implements ActionMode.Callback {
 
     private PinnedHeaderListView mListView;
     private FloatingActionButton fabAddExpert;
@@ -48,6 +48,7 @@ public class AnimalExpert extends ListFragment {
     private ArrayList<Domain> experts;
 
     private boolean editable = false;
+    private boolean destroyActionMode = false;
     private Animal animal;
 
     private ContactAdapter mAdapter;
@@ -131,45 +132,14 @@ public class AnimalExpert extends ListFragment {
         mAdapter.toggleSelection(position);
         boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
 
-        if (hasCheckedItems && mActionMode == null)
+        if (hasCheckedItems && mActionMode == null) {
             // there are some selected items, start the actionMode
-            mActionMode = this.getActivity().startActionMode(new ActionMode.Callback() {
-                @Override
-                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                    mode.getMenuInflater().inflate(R.menu.cab_menu, menu);
-                    return true;
-                }
-
-                @Override
-                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                    return false;
-                }
-
-                @Override
-                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                    if(item.getItemId() == R.id.action_delete) {
-                        SparseBooleanArray selectedIDs = mAdapter.getSelectedIds();
-                        for(int i = experts.size(); i >= 0; i--) {
-                            if(selectedIDs.get(i)){
-                                experts.remove(i);
-                            }
-                        }
-                        mAdapter.notifyDataSetChanged();
-
-                    }
-                    mActionMode.finish();
-                    return true;
-                }
-
-                @Override
-                public void onDestroyActionMode(ActionMode mode) {
-                    mAdapter.removeSelection();
-                    mActionMode = null;
-                }
-            });
-        else if (!hasCheckedItems && mActionMode != null)
+            mActionMode = this.getActivity().startActionMode(this);
+        } else if (!hasCheckedItems && mActionMode != null) {
             // there no selected items, finish the actionMode
+            destroyActionMode = true;
             mActionMode.finish();
+        }
 
         if (mActionMode != null)
             mActionMode.setTitle(String.valueOf(mAdapter
@@ -238,5 +208,56 @@ public class AnimalExpert extends ListFragment {
     public Animal setAnimalExperts(Animal newAnimal) {
         newAnimal.setAnimalExperts((ArrayList) experts);
         return newAnimal;
+    }
+
+    public void hideActionMode() {
+        if(mAdapter != null && mAdapter.getSelectedCount() > 0 && mActionMode != null) {
+            destroyActionMode = false;
+            mActionMode.finish();
+        }
+    }
+
+    public void showActionMode() {
+        if(mAdapter != null && mAdapter.getSelectedCount() > 0 && mActionMode != null) {
+            mActionMode = this.getActivity().startActionMode(this);
+            mActionMode.setTitle(String.valueOf(mAdapter
+                    .getSelectedCount()) + " selected");
+        }
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        mode.getMenuInflater().inflate(R.menu.cab_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        if(item.getItemId() == R.id.action_delete) {
+            SparseBooleanArray selectedIDs = mAdapter.getSelectedIds();
+            for(int i = experts.size(); i >= 0; i--) {
+                if(selectedIDs.get(i)){
+                    experts.remove(i);
+                }
+            }
+            mAdapter.notifyDataSetChanged();
+
+        }
+        destroyActionMode = true;
+        mActionMode.finish();
+        return true;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        if(destroyActionMode) {
+            mAdapter.removeSelection();
+            mActionMode = null;
+        }
     }
 }
