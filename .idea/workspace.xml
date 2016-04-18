@@ -44,11 +44,8 @@
   <component name="ChangeListManager">
     <list default="true" id="cf75f587-eb91-4faf-bd03-4d7a667a315b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bottom-bar/bottom-bar.iml" afterPath="$PROJECT_DIR$/bottom-bar/bottom-bar.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/library/library.iml" afterPath="$PROJECT_DIR$/library/library.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
     </list>
     <ignored path="JungleExplorer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -76,11 +73,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="AnimalList.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="AnimalList.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.35866985">
-              <caret line="388" column="30" selection-start-line="388" selection-start-column="30" selection-end-line="388" selection-end-column="30" />
+            <state vertical-scroll-proportion="-12.814815">
+              <caret line="389" column="47" selection-start-line="389" selection-start-column="47" selection-end-line="389" selection-end-column="47" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2769#4042#0" expanded="true" />
@@ -105,22 +102,38 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="strings.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <file leaf-file-name="AnimalLocation.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.29411766">
-              <caret line="74" column="97" selection-start-line="74" selection-start-column="97" selection-end-line="74" selection-end-column="97" />
+            <state vertical-scroll-proportion="0.9026128">
+              <caret line="310" column="28" selection-start-line="310" selection-start-column="28" selection-end-line="310" selection-end-column="28" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#9629#10664#0" expanded="true" />
+                <element signature="e#10663#10664#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="28" column="35" selection-start-line="28" selection-start-column="35" selection-end-line="28" selection-end-column="35" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AnimalNotification.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/service/AnimalNotification.java">
+      <file leaf-file-name="Preferences.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/Preferences.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="113" column="0" selection-start-line="99" selection-start-column="20" selection-end-line="113" selection-end-column="0" />
-              <folding />
+            <state vertical-scroll-proportion="-10.185185">
+              <caret line="102" column="21" selection-start-line="92" selection-start-column="8" selection-end-line="102" selection-end-column="21" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -130,7 +143,11 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
               <caret line="346" column="60" selection-start-line="346" selection-start-column="60" selection-end-line="346" selection-end-column="60" />
-              <folding />
+              <folding>
+                <element signature="imports" expanded="false" />
+                <element signature="e#3774#3775#0" expanded="false" />
+                <element signature="e#3843#3844#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -3684,7 +3701,6 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/new_animal.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/permission_utils/RuntimePermissionsHelper.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/NewGroup.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/domain/Expert.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/ExpertList.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/NewAnimal.java" />
@@ -3720,10 +3736,11 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalBasicInfo.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/Preferences.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/domain/Animal.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/db/DBHelper.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java" />
       </list>
     </option>
   </component>
@@ -3812,6 +3829,28 @@
               <option name="myItemId" value="app" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="xml" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JungleExplorer" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -3863,7 +3902,7 @@
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="service" />
+              <option name="myItemId" value="fragment" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -3875,18 +3914,6 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="app" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jungleexplorer" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="activity" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -4493,6 +4520,7 @@
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298272" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32939634" sideWeight="0.4973704" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -4515,7 +4543,6 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298272" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.328084" sideWeight="0.35161534" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -4541,13 +4568,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/expert_list_fragment.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-2.509434">
-          <caret line="32" column="43" selection-start-line="32" selection-start-column="26" selection-end-line="32" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/library/src/main/java/lb/library/PinnedHeaderListView.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334">
@@ -4785,13 +4805,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/xml/preferences.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.64705884">
-          <caret line="33" column="36" selection-start-line="33" selection-start-column="36" selection-end-line="33" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/google_api_utils/GoogleApiHelper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.43307087">
@@ -4820,13 +4833,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/Preferences.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33254156">
-          <caret line="126" column="17" selection-start-line="126" selection-start-column="16" selection-end-line="126" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/domain/Animal.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.39732143">
@@ -4845,7 +4851,11 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="346" column="60" selection-start-line="346" selection-start-column="60" selection-end-line="346" selection-end-column="60" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#3774#3775#0" expanded="false" />
+            <element signature="e#3843#3844#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -4853,22 +4863,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="130" column="25" selection-start-line="126" selection-start-column="24" selection-end-line="130" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6651786">
-          <caret line="27" column="36" selection-start-line="27" selection-start-column="36" selection-end-line="27" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/service/AnimalNotification.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="113" column="0" selection-start-line="99" selection-start-column="20" selection-end-line="113" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -4881,18 +4875,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/service/AnimalNotification.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.29411766">
-          <caret line="74" column="97" selection-start-line="74" selection-start-column="97" selection-end-line="74" selection-end-column="97" />
+        <state vertical-scroll-proportion="-0.37276787">
+          <caret line="121" column="54" selection-start-line="121" selection-start-column="54" selection-end-line="121" selection-end-column="54" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.35866985">
-          <caret line="388" column="30" selection-start-line="388" selection-start-column="30" selection-end-line="388" selection-end-column="30" />
+        <state vertical-scroll-proportion="-12.814815">
+          <caret line="389" column="47" selection-start-line="389" selection-start-column="47" selection-end-line="389" selection-end-column="47" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2769#4042#0" expanded="true" />
@@ -4912,6 +4906,52 @@
             <element signature="e#13807#13808#0" expanded="true" />
             <element signature="e#13843#13844#0" expanded="true" />
             <element signature="e#14816#14879#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.5882354">
+          <caret line="111" column="0" selection-start-line="111" selection-start-column="0" selection-end-line="111" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/xml/preferences.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-11.458333">
+          <caret line="32" column="46" selection-start-line="32" selection-start-column="25" selection-end-line="32" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/Preferences.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-10.185185">
+          <caret line="102" column="21" selection-start-line="92" selection-start-column="8" selection-end-line="102" selection-end-column="21" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="28" column="35" selection-start-line="28" selection-start-column="35" selection-end-line="28" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.9026128">
+          <caret line="310" column="28" selection-start-line="310" selection-start-column="28" selection-end-line="310" selection-end-column="28" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#9629#10664#0" expanded="true" />
+            <element signature="e#10663#10664#0" expanded="true" />
           </folding>
         </state>
       </provider>

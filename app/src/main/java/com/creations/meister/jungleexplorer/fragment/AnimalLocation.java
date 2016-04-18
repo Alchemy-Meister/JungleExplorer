@@ -4,7 +4,10 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -17,7 +20,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +40,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -66,6 +72,10 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
     private final String ANIMAL_KEY = "ANIMAL";
     private Animal mAnimal;
 
+    private String[][] continents;
+
+
+    private SharedPreferences pref;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -87,11 +97,28 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        pref = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+
+        Resources res = getResources();
+        TypedArray ta = res.obtainTypedArray(R.array.continents);
+        int n = ta.length();
+        continents = new String[n][];
+        for (int i = 0; i < n; ++i) {
+            int id = ta.getResourceId(i, 0);
+            if (id > 0) {
+                continents[i] = res.getStringArray(id);
+            }
+        }
+        ta.recycle();
+
         if(savedInstanceState == null) {
             Bundle bundle = this.getActivity().getIntent().getExtras();
             if(bundle != null) {
                 mAnimal = (Animal) bundle.get(ANIMAL_KEY);
-                if(mAnimal.getLatitude() != null && mAnimal.getLongitude() != null) {
+                if(mAnimal != null && mAnimal.getLatitude() != null
+                        && mAnimal.getLongitude() != null)
+                {
                     mLatLng = new LatLng(mAnimal.getLatitude(), mAnimal.getLongitude());
                 }
             } else {
@@ -112,11 +139,19 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
 
         this.setEditable(editable);
 
+        String continentIndexString = pref.getString("map_default_continent", null);
+        int continentIndex = Integer.valueOf(continentIndexString);
+
         initializeMyLocation();
 
         if(mLatLng != null) {
             initializeMarker(mLatLng);
             mMap.animateCamera(CameraUpdateFactory.newLatLng(mMarker.getPosition()));
+        } else {
+            LatLng continentLatLng = this.getLocationFromAddress(continents[continentIndex][0]);
+            if(continentLatLng != null) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(continentLatLng, 3));
+            }
         }
     }
 
@@ -273,7 +308,7 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
                             getContext().getResources().getString(R.string.location_unavailable));
                 }
 
-                return true;
+                return false;
             }
         });
     }
@@ -389,5 +424,19 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
                 mMarker.setDraggable(false);
             }
         }
+    }
+
+    public LatLng getLocationFromAddress(String strAddress) {
+        LatLng addressLatng = null;
+        Geocoder coder = new Geocoder(this.getContext());
+        try {
+            List<Address> addresses = (ArrayList<Address>) coder.getFromLocationName(strAddress, 1);
+            for (Address add : addresses) {
+                addressLatng = new LatLng(add.getLatitude(), add.getLongitude());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return addressLatng;
     }
 }

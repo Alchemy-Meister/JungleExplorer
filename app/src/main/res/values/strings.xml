@@ -106,8 +106,8 @@
 
     <string-array name="north_america">
         <item name="name">North America</item>
-        <item name="lat"></item>
-        <item name="lng"></item>
+        <item name="lat">54.5259610</item>
+        <item name="lng">15.2551190</item>
     </string-array>
 
     <string-array name="south_america">
