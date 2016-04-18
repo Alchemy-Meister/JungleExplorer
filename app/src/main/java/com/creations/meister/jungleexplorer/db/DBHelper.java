@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
 import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -308,9 +307,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if(c.moveToFirst()) {
             do {
-                Log.d("EXPERT ID", String.valueOf(c.getLong(c.getColumnIndex(KEY_EXPERT_ID))));
-                Log.d("ANIMAL ID", String.valueOf(c.getLong(c.getColumnIndex(KEY_ANIMAL_ID))));
-                Log.d("ACTUAL ID", String.valueOf(animal.getId()));
                 Expert expert = this.getExpert(c.getLong(c.getColumnIndex(KEY_EXPERT_ID)));
                 if(expert != null) {
                     experts.add(expert);
@@ -334,7 +330,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 Animal animal = new Animal();
                 animal.setId(c.getInt(c.getColumnIndex(KEY_ID)));
                 animal.setName(c.getString(c.getColumnIndex(KEY_NAME)));
-                animal.setPhotoId(c.getColumnName(c.getColumnIndex(KEY_PHOTO_ID)));
+                animal.setPhotoId(c.getString(c.getColumnIndex(KEY_PHOTO_ID)));
                 animal.setLocationText(c.getString(c.getColumnIndex(KEY_LOCATION_TEXT)));
                 animal.setDescription(c.getString(c.getColumnIndex(KEY_DESCRIPTION)));
                 animal.setFavorite(c.getInt(c.getColumnIndex(KEY_FAVORITE)));
@@ -346,6 +342,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     aLocation.setLatitude(latitude);
                     aLocation.setLongitude(longitude);
                     float distance = location.distanceTo(aLocation);
+
                     if(distance <= radius) {
                         returnAnimals.add(animal);
                     }
@@ -370,7 +367,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 Animal animal = new Animal();
                 animal.setId(c.getInt(c.getColumnIndex(KEY_ID)));
                 animal.setName(c.getString(c.getColumnIndex(KEY_NAME)));
-                animal.setPhotoId(c.getColumnName(c.getColumnIndex(KEY_PHOTO_ID)));
+                animal.setPhotoId(c.getString(c.getColumnIndex(KEY_PHOTO_ID)));
                 animal.setLocationText(c.getString(c.getColumnIndex(KEY_LOCATION_TEXT)));
                 animal.setDescription(c.getString(c.getColumnIndex(KEY_DESCRIPTION)));
                 animal.setFavorite(c.getInt(c.getColumnIndex(KEY_FAVORITE)));

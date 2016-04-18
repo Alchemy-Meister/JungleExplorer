@@ -105,23 +105,30 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
         if(prefs.getBoolean("filter_animal_list", false)
                 && GoogleApiHelper.isAPIAvailable(this.getContext()))
         {
-            mGoogleApiClient =  new GoogleApiClient.Builder(this.getContext())
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                        @Override
-                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                            // Nothing to do here.
-                        }
-                    })
-                    .addApi(LocationServices.API)
-                    .build();
-
-            // And connect!
-            mGoogleApiClient.connect();
+            this.initializeFilterAnimals();
         } else {
-            animals = (ArrayList) dbHelper.getAllAnimals();
-            postAnimalInitialization();
+            this.initializeAllAnimals();
         }
+    }
+
+    private void initializeFilterAnimals() {
+        mGoogleApiClient =  new GoogleApiClient.Builder(this.getContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        // Nothing to do here.
+                    }
+                })
+                .addApi(LocationServices.API)
+                .build();
+
+        mGoogleApiClient.connect();
+    }
+
+    private void initializeAllAnimals() {
+        animals = (ArrayList) dbHelper.getAllAnimals();
+        postAnimalInitialization();
     }
 
     private void postAnimalInitialization() {
@@ -160,6 +167,19 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
                 view.setSelected(true);
                 onListItemSelect(position);
                 return true;
+            }
+        });
+
+        prefs.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                if(key.equals("filter_animal_list")) {
+                    if(sharedPreferences.getBoolean("filter_animal_list", false)) {
+                        AnimalList.this.initializeFilterAnimals();
+                    } else {
+                        AnimalList.this.initializeAllAnimals();
+                    }
+                }
             }
         });
     }
@@ -247,13 +267,15 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        animals = new ArrayList<>();
         //noinspection MissingPermission
         Location cLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        String radiusString =  prefs.getString("animal_list_radius", null);
-        animals = new ArrayList<>();
-        if(!TextUtils.isEmpty(radiusString)) {
-            int radius = Integer.valueOf(radiusString);
-            animals = (ArrayList) dbHelper.getAnimalsWithinRadius(cLocation, radius);
+        if(cLocation != null) {
+            String radiusString = prefs.getString("animal_list_radius", null);
+            if (!TextUtils.isEmpty(radiusString)) {
+                int radius = Integer.valueOf(radiusString);
+                animals = (ArrayList) dbHelper.getAnimalsWithinRadius(cLocation, radius);
+            }
         }
         postAnimalInitialization();
     }
