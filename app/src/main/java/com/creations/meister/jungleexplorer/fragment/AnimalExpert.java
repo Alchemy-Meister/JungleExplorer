@@ -32,7 +32,6 @@ import com.creations.meister.jungleexplorer.domain.Expert;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 
 import lb.library.PinnedHeaderListView;
 
@@ -55,8 +54,6 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
     private boolean destroyActionMode = false;
     private boolean isFiltered = false;
     private Animal animal;
-
-    private HashSet<Integer> filteredSeletedDomains;
 
     private ContactAdapter mAdapter;
     private DBHelper dbHelper;
@@ -134,7 +131,6 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
                             onListItemSelect(i);
                         }
                     }
-
                 } else {
                     AnimalExpert.this.onListItemSelect(position);
                 }

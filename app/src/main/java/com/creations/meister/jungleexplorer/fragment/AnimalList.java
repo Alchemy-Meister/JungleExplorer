@@ -158,7 +158,16 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(mActionMode != null) {
-                    AnimalList.this.onListItemSelect(position);
+                    if(isFiltered) {
+                        int expertId = ((DomainAdapter.ViewHolder) view.getTag()).id;
+                        for(int i = 0; i < animals.size(); i++) {
+                            if(animals.get(i).getId() == expertId) {
+                                onListItemSelect(i);
+                            }
+                        }
+                    } else {
+                        AnimalList.this.onListItemSelect(position);
+                    }
                 } else {
                     editPosition = position;
                     Intent newAnimalIntent = new Intent(AnimalList.this.getContext(), NewAnimal.class);
@@ -171,8 +180,16 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
         this.mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                view.setSelected(true);
-                onListItemSelect(position);
+                if(isFiltered) {
+                    int expertId = ((DomainAdapter.ViewHolder) view.getTag()).id;
+                    for(int i = 0; i < animals.size(); i++) {
+                        if(animals.get(i).getId() == expertId) {
+                            onListItemSelect(i);
+                        }
+                    }
+                } else {
+                    onListItemSelect(position);
+                }
                 return true;
             }
         });
@@ -406,6 +423,7 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
                 }
             }
             mAdapter.notifyDataSetChanged();
+            ((MainActivity) this.getActivity()).filterClean();
 
         }
         destroyActionMode = true;

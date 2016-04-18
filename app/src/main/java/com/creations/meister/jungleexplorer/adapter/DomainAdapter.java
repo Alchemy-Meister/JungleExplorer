@@ -86,7 +86,9 @@ public class DomainAdapter extends SearchablePinnedHeaderListViewAdapter<Domain>
         }
         final Domain domain = getItem(position);
         final String displayName = domain.getName();
+        final int domainID = domain.getId();
         holder.friendName.setText(displayName);
+        holder.id = domainID;
         boolean hasPhoto = !TextUtils.isEmpty(domain.getPhotoId());
         if (holder.updateTask != null && !holder.updateTask.isCancelled())
             holder.updateTask.cancel(true);
@@ -192,9 +194,10 @@ public class DomainAdapter extends SearchablePinnedHeaderListViewAdapter<Domain>
     // /////////////////////////////////////////////////////////////////////////////////////
     // ViewHolder //
     // /////////////
-    private static class ViewHolder {
+    public static class ViewHolder {
         public CircularView animalProfileCircularView;
         TextView friendName, headerView;
+        public int id;
         public AsyncTaskEx<Void, Void, Bitmap> updateTask;
     }
 }

@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.activity.ContactList;
 import com.creations.meister.jungleexplorer.activity.MainActivity;
+import com.creations.meister.jungleexplorer.adapter.ContactAdapter;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Domain;
@@ -45,7 +46,7 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
 
     private boolean isFiltered = false;
 
-    private DomainAdapter mAdapter;
+    private ContactAdapter mAdapter;
     private DBHelper dbHelper;
 
     @Override
@@ -71,7 +72,7 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
         mListView.setPinnedHeaderView(mInflater.inflate(
                 R.layout.pinned_header_listview_side_header, mListView, false));
 
-        mAdapter = new DomainAdapter(this.getContext(), experts);
+        mAdapter = new ContactAdapter(this.getContext(), experts);
         int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
                 this.getActivity(),android.R.attr.colorBackground));
         mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
@@ -128,7 +129,7 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
         Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
     }
 
-    public DomainAdapter getAdapter() {
+    public ContactAdapter getAdapter() {
         return this.mAdapter;
     }
 
