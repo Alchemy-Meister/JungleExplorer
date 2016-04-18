@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                             transaction.hide(mAnimalList);
                             transaction.hide(mFavoriteList);
                             transaction.hide(mExpertList);
+                            mAnimalList.hideActionMode();
                         }
                         break;
                     case R.id.bb_menu_animals:
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                             transaction.hide(mGroupList);
                             transaction.hide(mFavoriteList);
                             transaction.hide(mExpertList);
+                            mAnimalList.showActionMode();
                         }
                         break;
                     case R.id.bb_menu_favorites:
@@ -109,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
                             transaction.hide(mGroupList);
                             transaction.hide(mAnimalList);
                             transaction.hide(mExpertList);
+                            mAnimalList.hideActionMode();
                         }
                         break;
                     case R.id.bb_menu_experts:
@@ -117,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                             transaction.hide(mGroupList);
                             transaction.hide(mAnimalList);
                             transaction.hide(mFavoriteList);
+                            mAnimalList.hideActionMode();
                         }
                         break;
                 }

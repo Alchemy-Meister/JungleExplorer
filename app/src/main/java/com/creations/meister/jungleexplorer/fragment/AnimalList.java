@@ -47,7 +47,7 @@ import lb.library.PinnedHeaderListView;
  * Created by meister on 3/27/16.
  */
 public class AnimalList extends ListFragment implements GoogleApiClient.ConnectionCallbacks,
-        LocationListener
+        LocationListener, ActionMode.Callback
 {
     private final int NEW_ANIMAL_REQUEST = 0;
     private final int ANIMAL_EDIT_REQUEST = 1;
@@ -72,6 +72,7 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
     private Location cLocation = null;
     private Integer radius = null;
     private boolean filterEnabled = false;
+    private boolean destroyActionMode = true;
 
     private LocationRequest mLocationRequest;
 
@@ -230,41 +231,7 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
 
         if (hasCheckedItems && mActionMode == null)
             // there are some selected items, start the actionMode
-            mActionMode = this.getActivity().startActionMode(new ActionMode.Callback() {
-                @Override
-                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                    mode.getMenuInflater().inflate(R.menu.cab_menu, menu);
-                    return true;
-                }
-
-                @Override
-                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                    return false;
-                }
-
-                @Override
-                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                    if(item.getItemId() == R.id.action_delete) {
-                        SparseBooleanArray selectedIDs = mAdapter.getSelectedIds();
-                        for(int i = animals.size(); i >= 0; i--) {
-                            if(selectedIDs.get(i)){
-                                dbHelper.removeAnimal((Animal) animals.get(i));
-                                animals.remove(i);
-                            }
-                        }
-                        mAdapter.notifyDataSetChanged();
-
-                    }
-                    mActionMode.finish();
-                    return true;
-                }
-
-                @Override
-                public void onDestroyActionMode(ActionMode mode) {
-                    mAdapter.removeSelection();
-                    mActionMode = null;
-                }
-            });
+            mActionMode = this.getActivity().startActionMode(AnimalList.this);
         else if (!hasCheckedItems && mActionMode != null)
             // there no selected items, finish the actionMode
             mActionMode.finish();
@@ -395,6 +362,58 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
         }
         if(AnimalList.this.getContext() != null) {
             this.postAnimalInitialization();
+        }
+    }
+
+    public void hideActionMode() {
+        if(mAdapter != null && mAdapter.getSelectedCount() > 0 && mActionMode != null) {
+            destroyActionMode = false;
+            mActionMode.finish();
+        }
+    }
+
+    public void showActionMode() {
+        if(mAdapter != null && mAdapter.getSelectedCount() > 0 && mActionMode != null) {
+            mActionMode = this.getActivity().startActionMode(this);
+            mActionMode.setTitle(String.valueOf(mAdapter
+                    .getSelectedCount()) + " selected");
+        }
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        mode.getMenuInflater().inflate(R.menu.cab_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        if(item.getItemId() == R.id.action_delete) {
+            SparseBooleanArray selectedIDs = mAdapter.getSelectedIds();
+            for(int i = animals.size(); i >= 0; i--) {
+                if(selectedIDs.get(i)){
+                    dbHelper.removeAnimal((Animal) animals.get(i));
+                    animals.remove(i);
+                }
+            }
+            mAdapter.notifyDataSetChanged();
+
+        }
+        destroyActionMode = true;
+        mActionMode.finish();
+        return true;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        if(destroyActionMode) {
+            mAdapter.removeSelection();
+            mActionMode = null;
         }
     }
 }
