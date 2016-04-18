@@ -43,6 +43,8 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
     private final static int EXPERT_REQUEST = 0;
     private ArrayList<Domain> experts;
 
+    private boolean isFiltered = false;
+
     private DomainAdapter mAdapter;
     private DBHelper dbHelper;
 
@@ -128,5 +130,9 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
 
     public DomainAdapter getAdapter() {
         return this.mAdapter;
+    }
+
+    public void setFiltered(boolean isFiltered) {
+        this.isFiltered = isFiltered;
     }
 }

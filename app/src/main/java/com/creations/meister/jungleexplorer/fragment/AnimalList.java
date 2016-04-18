@@ -71,8 +71,10 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
 
     private Location cLocation = null;
     private Integer radius = null;
+
     private boolean filterEnabled = false;
     private boolean destroyActionMode = true;
+    private boolean isFiltered = false;
 
     private LocationRequest mLocationRequest;
 
@@ -417,5 +419,9 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
             mAdapter.removeSelection();
             mActionMode = null;
         }
+    }
+
+    public void setFiltered(boolean isFiltered) {
+        this.isFiltered = isFiltered;
     }
 }

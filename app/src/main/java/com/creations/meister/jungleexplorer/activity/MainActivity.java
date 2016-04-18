@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
@@ -23,7 +23,7 @@ import com.creations.meister.jungleexplorer.R;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private static final String GROUP_KEY = "GROUP";
     private static final String ANIMAL_KEY = "ANIMAL";
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private ExpertList mExpertList;
 
     private SearchView searchView;
+    private MenuItem searchItem;
 
     private boolean showAnimals = false;
     private static final String SHOW_ANIMALS = "SHOW_ANIMALS";
@@ -153,26 +154,14 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main_menu, menu);
 
-        MenuItem searchItem = menu.findItem(R.id.searchView);
+        searchItem = menu.findItem(R.id.searchView);
         searchView = (SearchView) searchItem.getActionView();
         searchView.setQueryHint(getResources().getString(R.string.hint));
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                filterFragment(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                filterFragment(newText);
-                return true;
-            }
-        });
+        searchView.setOnQueryTextListener(this);
 
         return true;
     }
@@ -188,19 +177,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void filterFragment(String query) {
-        Fragment myFragment = mFragmentManager.findFragmentById(R.id.contentFragment);
-        if(myFragment instanceof GroupList) {
-            ((GroupList) myFragment).getAdapter().getFilter().filter(query);
-            ((GroupList) myFragment).getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
-        } else if(myFragment instanceof AnimalList) {
-            ((AnimalList) myFragment).getAdapter().getFilter().filter(query);
-            ((AnimalList) myFragment).getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
-        } else if(myFragment instanceof FavoriteList) {
-            ((FavoriteList) myFragment).getAdapter().getFilter().filter(query);
-            ((FavoriteList) myFragment).getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
-        } else if(myFragment instanceof ExpertList) {
-            ((ExpertList) myFragment).getAdapter().getFilter().filter(query);
-            ((ExpertList) myFragment).getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
+        mGroupList.getAdapter().getFilter().filter(query);
+        mGroupList.getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
+        mAnimalList.getAdapter().getFilter().filter(query);
+        mAnimalList.getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
+        mFavoriteList.getAdapter().getFilter().filter(query);
+        mFavoriteList.getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
+        mExpertList.getAdapter().getFilter().filter(query);
+        mExpertList.getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
+        if(TextUtils.isEmpty(query)) {
+            mGroupList.setFiltered(false);
+            mAnimalList.setFiltered(false);
+            mFavoriteList.setFiltered(false);
+            mExpertList.setFiltered(false);
+        } else {
+            mGroupList.setFiltered(true);
+            mAnimalList.setFiltered(true);
+            mFavoriteList.setFiltered(true);
+            mExpertList.setFiltered(true);
         }
     }
 
@@ -218,5 +212,21 @@ public class MainActivity extends AppCompatActivity {
 
     public SearchView getSearchView() {
         return this.searchView;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        filterFragment(query);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        filterFragment(newText);
+        return true;
+    }
+
+    public void filterClean() {
+        MenuItemCompat.collapseActionView(searchItem);
     }
 }

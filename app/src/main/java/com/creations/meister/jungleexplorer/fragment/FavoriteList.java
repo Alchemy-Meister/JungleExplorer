@@ -33,6 +33,8 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
     private PinnedHeaderListView mListView;
     private LayoutInflater mInflater;
 
+    private boolean isFiltered = false;
+
     private DomainAdapter mAdapter;
     private DBHelper dbHelper;
 
@@ -94,5 +96,9 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
 
     public DomainAdapter getAdapter() {
         return this.mAdapter;
+    }
+
+    public void setFiltered(boolean isFiltered) {
+        this.isFiltered = isFiltered;
     }
 }

@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.ActionMode;
@@ -48,6 +47,7 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
     private ActionMode mActionMode;
 
     private final static String ANIMAL_KEY = "ANIMAL";
+    private final static String EXPERT_KEY = "EXPERT";
     private final static int EXPERT_REQUEST = 0;
     private ArrayList<Domain> experts;
 
@@ -84,6 +84,9 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
                 animal = (Animal) bundle.get(ANIMAL_KEY);
             } else {
                 editable = true;
+                experts = new ArrayList<>();
+                AppCompatTextView et = (AppCompatTextView) this.getActivity().findViewById(android.R.id.empty);
+                et.setText(this.getResources().getString(R.string.no_experts_animal));
             }
         }
 
@@ -92,10 +95,6 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
         if(experts == null && animal != null) {
             experts = (ArrayList) dbHelper.getAllAnimalExperts(animal);
             Collections.sort(experts);
-        } else {
-            experts = new ArrayList<>();
-            AppCompatTextView et = (AppCompatTextView) this.getActivity().findViewById(android.R.id.empty);
-            et.setText(this.getResources().getString(R.string.no_experts_animal));
         }
 
         this.mListView = ((PinnedHeaderListView)this.getListView());

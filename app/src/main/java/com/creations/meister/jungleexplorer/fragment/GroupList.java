@@ -39,6 +39,8 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
     private FloatingActionButton fabAddGroup;
     private LayoutInflater mInflater;
 
+    private boolean isFiltered = false;
+
     private DomainAdapter mAdapter;
     private DBHelper dbHelper;
 
@@ -109,5 +111,9 @@ public class GroupList extends ListFragment implements AdapterView.OnItemClickLi
 
     public DomainAdapter getAdapter() {
         return this.mAdapter;
+    }
+
+    public void setFiltered(boolean isFiltered) {
+        this.isFiltered = isFiltered;
     }
 }

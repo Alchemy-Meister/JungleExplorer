@@ -348,6 +348,5 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
 
     public void filterClean() {
         MenuItemCompat.collapseActionView(searchItem);
-        this.getCurrentFocus().clearFocus();
     }
 }
