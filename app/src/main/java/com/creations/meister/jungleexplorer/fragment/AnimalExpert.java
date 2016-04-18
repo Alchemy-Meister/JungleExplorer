@@ -8,6 +8,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.ActionMode;
@@ -20,9 +22,9 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
+import com.creations.meister.jungleexplorer.activity.NewAnimal;
 import com.creations.meister.jungleexplorer.activity.NewAnimalExpertList;
 import com.creations.meister.jungleexplorer.adapter.ContactAdapter;
-import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.domain.Domain;
@@ -117,13 +119,34 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
             }
         });
 
+        this.mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if(mActionMode != null && editable) {
+                AnimalExpert.this.onListItemSelect(position);
+            }
+            }
+        });
 
-        /*SearchView sv = ((MainActivity) this.getActivity()).getSearchView();
+        this.mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if(editable) {
+                    view.setSelected(true);
+                    onListItemSelect(position);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        SearchView sv = ((NewAnimal) this.getActivity()).getSearchView();
 
         if(sv != null) {
             this.mAdapter.getFilter().filter(sv.getQuery());
             this.mAdapter.setHeaderViewVisible(TextUtils.isEmpty(sv.getQuery()));
-        }*/
+        }
 
         this.setEditable(editable);
     }
@@ -191,17 +214,8 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
         this.editable = editable;
         if(editable) {
             this.fabAddExpert.setVisibility(View.VISIBLE);
-            this.mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    view.setSelected(true);
-                    onListItemSelect(position);
-                    return true;
-                }
-            });
         } else {
             this.fabAddExpert.setVisibility(View.INVISIBLE);
-            this.mListView.setOnItemLongClickListener(null);
         }
     }
 
@@ -259,5 +273,9 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
             mAdapter.removeSelection();
             mActionMode = null;
         }
+    }
+
+    public ContactAdapter getAdapter() {
+        return this.mAdapter;
     }
 }

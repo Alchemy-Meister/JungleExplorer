@@ -1,5 +1,7 @@
 package com.creations.meister.jungleexplorer.activity;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -8,10 +10,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
@@ -26,7 +30,7 @@ import com.roughike.bottombar.OnMenuTabClickListener;
 /**
  * Created by meister on 4/1/16.
  */
-public class NewAnimal extends AppCompatActivity {
+public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private static final String INFO_KEY = "INFO";
     private static final String LOCATION_KEY = "LOCATION";
@@ -46,6 +50,9 @@ public class NewAnimal extends AppCompatActivity {
     private AnimalExpert expert;
     private Animal animal;
 
+    private SearchView searchView;
+    private MenuItem searchItem;
+
     private DBHelper dbHelper;
 
     @Override
@@ -60,7 +67,21 @@ public class NewAnimal extends AppCompatActivity {
             menuInflater.inflate(R.menu.view_animal_menu, menu);
         }
 
+        searchItem = menu.findItem(R.id.searchView);
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setQueryHint(getResources().getString(R.string.hint));
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(this);
+
         return true;
+    }
+
+    private void filterFragment(String query) {
+        expert.getAdapter().getFilter().filter(query);
+        expert.getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
     }
 
     @Override
@@ -129,6 +150,7 @@ public class NewAnimal extends AppCompatActivity {
                             transaction.hide(location);
                             transaction.hide(expert);
                             expert.hideActionMode();
+                            setVisibleSearchMenuItem(false);
                         }
                         break;
                     case R.id.bb_menu_location:
@@ -138,6 +160,7 @@ public class NewAnimal extends AppCompatActivity {
                             transaction.hide(expert);
                             location.initializeMyLocationPermission();
                             expert.hideActionMode();
+                            setVisibleSearchMenuItem(false);
                         }
                         break;
                     case R.id.bb_menu_new_animal_group:
@@ -149,6 +172,7 @@ public class NewAnimal extends AppCompatActivity {
                             transaction.hide(info);
                             transaction.hide(location);
                             expert.showActionMode();
+                            setVisibleSearchMenuItem(true);
                         }
                         break;
                 }
@@ -213,6 +237,16 @@ public class NewAnimal extends AppCompatActivity {
                     actionBar.setTitle(getResources().getString(R.string.view_animal));
                     this.menu.clear();
                     this.getMenuInflater().inflate(R.menu.view_animal_menu, menu);
+
+                    searchItem = this.menu.findItem(R.id.searchView);
+                    searchView = (SearchView) searchItem.getActionView();
+                    searchView.setQueryHint(getResources().getString(R.string.hint));
+                    searchView.setOnQueryTextListener(this);
+
+                    if(this.expert.isVisible()) {
+                        this.setVisibleSearchMenuItem(true);
+                    }
+
                     this.editMode = false;
                     this.info.setEditable(editMode);
                     this.location.setEditable(editMode);
@@ -227,6 +261,19 @@ public class NewAnimal extends AppCompatActivity {
             actionBar.setTitle(getResources().getString(R.string.edit_animal));
             this.menu.clear();
             this.getMenuInflater().inflate(R.menu.new_animal_menu, menu);
+
+            MenuItem done = menu.findItem(R.id.done);
+            done.setTitle(this.getResources().getString(R.string.save_changes));
+
+            searchItem = this.menu.findItem(R.id.searchView);
+            searchView = (SearchView) searchItem.getActionView();
+            searchView.setQueryHint(getResources().getString(R.string.hint));
+            searchView.setOnQueryTextListener(this);
+
+            if(this.expert.isVisible()) {
+                this.setVisibleSearchMenuItem(true);
+            }
+
             this.editMode = true;
             this.info.setEditable(editMode);
             this.location.setEditable(editMode);
@@ -261,5 +308,35 @@ public class NewAnimal extends AppCompatActivity {
         if(animal != null)
             sendEditRequest();
         super.onBackPressed();
+    }
+
+    public SearchView getSearchView() {
+        return this.searchView;
+    }
+
+    private void setVisibleSearchMenuItem(boolean visible) {
+        if(visible) {
+            if(this.searchItem != null) {
+                this.searchView.setVisibility(View.VISIBLE);
+                this.searchItem.setVisible(true);
+            }
+        } else {
+            if (this.searchItem != null) {
+                this.searchView.setVisibility(View.INVISIBLE);
+                this.searchItem.setVisible(false);
+            }
+        }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        filterFragment(query);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        filterFragment(newText);
+        return true;
     }
 }

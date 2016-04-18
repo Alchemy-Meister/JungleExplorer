@@ -11,6 +11,7 @@
 
 
     <string name="add_animal">Add new animal</string>
+    <string name="save_changes">Save changes</string>
     <string name="view_animal">View animal</string>
     <string name="edit_animal">Edit animal</string>
     <string name="add_group">Add new group</string>
@@ -76,44 +77,30 @@
 
     <string-array name="africa">
         <item name="name">Africa</item>
-        <item name="lat"></item>
-        <item name="lng"></item>
     </string-array>
 
     <string-array name="antarctica">
         <item name="name">Antarctica</item>
-        <item name="lat"></item>
-        <item name="lng"></item>
     </string-array>
 
     <string-array name="asia">
         <item name="name">Asia</item>
-        <item name="lat"></item>
-        <item name="lng"></item>
     </string-array>
 
     <string-array name="australia">
         <item name="name">Australia</item>
-        <item name="lat"></item>
-        <item name="lng"></item>
     </string-array>
 
     <string-array name="europe">
         <item name="name">Europe</item>
-        <item name="lat"></item>
-        <item name="lng"></item>
     </string-array>
 
     <string-array name="north_america">
         <item name="name">North America</item>
-        <item name="lat">54.5259610</item>
-        <item name="lng">15.2551190</item>
     </string-array>
 
     <string-array name="south_america">
         <item name="name">South America</item>
-        <item name="lat"></item>
-        <item name="lng"></item>
     </string-array>
 
     <array name="continents">
