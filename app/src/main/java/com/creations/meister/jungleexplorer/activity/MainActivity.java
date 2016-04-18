@@ -137,7 +137,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(showAnimals) {
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
-            transaction.replace(R.id.contentFragment, mAnimalList, "ANIMAL");
+            transaction.show(mAnimalList);
+            transaction.hide(mGroupList);
             transaction.commit();
             mBottomBar.selectTabAtPosition(1, false);
         }

@@ -83,6 +83,7 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
             if(key.equals("filter_animal_list") || key.equals("animal_list_radius")) {
                 filterEnabled = sharedPreferences.getBoolean("filter_animal_list", false);
                 if(sharedPreferences.getBoolean("filter_animal_list", false)) {
+
                     AnimalList.this.initializeFilterAnimals();
                     if(key.equals("animal_list_radius")) {
                         String radiusString = prefs.getString("animal_list_radius", null);
@@ -92,6 +93,11 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
                     }
                 } else {
                     AnimalList.this.initializeAllAnimals();
+                    if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,
+                                AnimalList.this);
+                        mGoogleApiClient.disconnect();
+                    }
                 }
             }
         }
@@ -117,7 +123,7 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
 
         this.mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
+                .setInterval(5 * 1000)        // 5 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
     }
 
@@ -271,13 +277,15 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
     @Override
     public void onResume() {
         super.onResume();
-        mGoogleApiClient.connect();
+        if (mGoogleApiClient != null && filterEnabled) {
+            mGoogleApiClient.connect();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
@@ -344,6 +352,8 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
         animals = new ArrayList<>();
         //noinspection MissingPermission
         cLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        //noinspection MissingPermission
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, AnimalList.this);
         if(cLocation != null) {
             String radiusString = prefs.getString("animal_list_radius", null);
             if (!TextUtils.isEmpty(radiusString)) {
