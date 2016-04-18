@@ -2,12 +2,18 @@ package com.creations.meister.jungleexplorer.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.ActionMode;
@@ -26,6 +32,10 @@ import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.domain.Domain;
+import com.creations.meister.jungleexplorer.google_api_utils.GoogleApiHelper;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +45,7 @@ import lb.library.PinnedHeaderListView;
 /**
  * Created by meister on 3/27/16.
  */
-public class AnimalList extends ListFragment {
+public class AnimalList extends ListFragment implements GoogleApiClient.ConnectionCallbacks {
 
     private final int NEW_ANIMAL_REQUEST = 0;
     private final int ANIMAL_EDIT_REQUEST = 1;
@@ -50,8 +60,13 @@ public class AnimalList extends ListFragment {
     private DBHelper dbHelper;
 
     private int editPosition;
+    private int pinnedHeaderBackgroundColor;
 
     private ActionMode mActionMode;
+    private SearchView sv;
+
+    private GoogleApiClient mGoogleApiClient;
+    private SharedPreferences prefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,32 +81,19 @@ public class AnimalList extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        dbHelper = DBHelper.getHelper(this.getActivity());
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
 
-        animals = (ArrayList) dbHelper.getAllAnimals();
-        Collections.sort(animals);
-
+        this.dbHelper = DBHelper.getHelper(this.getActivity());
         this.mListView = ((PinnedHeaderListView)this.getListView());
-        this.mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
-            }
-        });
-        mListView.setPinnedHeaderView(mInflater.inflate(
+        this.fabAddAnimal = (FloatingActionButton) this.getActivity().findViewById(R.id.animalFAB);
+        this.sv = ((MainActivity) this.getActivity()).getSearchView();
+
+        this.mListView.setPinnedHeaderView(mInflater.inflate(
                 R.layout.pinned_header_listview_side_header, mListView, false));
 
-        mAdapter = new DomainAdapter(this.getContext(), animals);
-        int pinnedHeaderBackgroundColor=getResources().getColor(AnimalList.getResIdFromAttribute(
+        this.pinnedHeaderBackgroundColor = getResources().getColor(AnimalList.getResIdFromAttribute(
                 this.getActivity(), android.R.attr.colorBackground));
-        mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
-        mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
 
-        mListView.setAdapter(mAdapter);
-        mListView.setOnScrollListener(mAdapter);
-        mListView.setEnableHeaderTransparencyChanges(false);
-
-        this.fabAddAnimal = (FloatingActionButton) this.getActivity().findViewById(R.id.animalFAB);
         this.fabAddAnimal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,7 +102,38 @@ public class AnimalList extends ListFragment {
             }
         });
 
-        SearchView sv = ((MainActivity) this.getActivity()).getSearchView();
+        if(prefs.getBoolean("filter_animal_list", false)
+                && GoogleApiHelper.isAPIAvailable(this.getContext()))
+        {
+            mGoogleApiClient =  new GoogleApiClient.Builder(this.getContext())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                            // Nothing to do here.
+                        }
+                    })
+                    .addApi(LocationServices.API)
+                    .build();
+
+            // And connect!
+            mGoogleApiClient.connect();
+        } else {
+            animals = (ArrayList) dbHelper.getAllAnimals();
+            postAnimalInitialization();
+        }
+    }
+
+    private void postAnimalInitialization() {
+        Collections.sort(animals);
+
+        mAdapter = new DomainAdapter(AnimalList.this.getContext(), animals);
+        mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
+        mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
+
+        mListView.setAdapter(mAdapter);
+        mListView.setOnScrollListener(mAdapter);
+        mListView.setEnableHeaderTransparencyChanges(false);
 
         if(sv != null) {
             this.mAdapter.getFilter().filter(sv.getQuery());
@@ -111,7 +144,7 @@ public class AnimalList extends ListFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(mActionMode != null) {
-                    onListItemSelect(position);
+                    AnimalList.this.onListItemSelect(position);
                 } else {
                     editPosition = position;
                     Intent newAnimalIntent = new Intent(AnimalList.this.getContext(), NewAnimal.class);
@@ -129,7 +162,6 @@ public class AnimalList extends ListFragment {
                 return true;
             }
         });
-
     }
 
     private void onListItemSelect(int position) {
@@ -211,5 +243,23 @@ public class AnimalList extends ListFragment {
 
     public DomainAdapter getAdapter() {
         return this.mAdapter;
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        //noinspection MissingPermission
+        Location cLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        String radiusString =  prefs.getString("animal_list_radius", null);
+        animals = new ArrayList<>();
+        if(!TextUtils.isEmpty(radiusString)) {
+            int radius = Integer.valueOf(radiusString);
+            animals = (ArrayList) dbHelper.getAnimalsWithinRadius(cLocation, radius);
+        }
+        postAnimalInitialization();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        //Do nothing here.
     }
 }

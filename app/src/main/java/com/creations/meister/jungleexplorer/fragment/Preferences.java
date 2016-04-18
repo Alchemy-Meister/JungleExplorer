@@ -36,6 +36,8 @@ public class Preferences extends PreferenceFragmentCompatFix {
     public void onCreatePreferences(Bundle bundle, String s) {
         addPreferencesFromResource(R.xml.preferences);
 
+        alarmService = AlarmService.getInstance(this.getContext());
+
         backgroundService = (SwitchPreference) findPreference("background_service");
         backgroundService.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -71,11 +73,20 @@ public class Preferences extends PreferenceFragmentCompatFix {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if((boolean) newValue) {
+                    int hasLocationPermission = ContextCompat.checkSelfPermission(
+                            Preferences.this.getContext(),
+                            requiredPermissions[0]);
+                    if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
+                        Preferences.this.requestPermissions(requiredPermissions, REQUEST_LOCATION);
+                        return false;
+                    }
+
                     distanceRadius.setEnabled(true);
+                    return true;
                 } else {
                     distanceRadius.setEnabled(false);
+                    return true;
                 }
-                return true;
             }
         });
 
@@ -101,26 +112,26 @@ public class Preferences extends PreferenceFragmentCompatFix {
         ListPreference continents = (ListPreference) findPreference("map_default_continent");
         continents.setEntries(continentNames);
         continents.setEntryValues(values);
-    }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        alarmService = AlarmService.getInstance(this.getContext());
+        int hasLocationPermission = ContextCompat.checkSelfPermission(
+                Preferences.this.getContext(),
+                requiredPermissions[0]);
+        if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
+            backgroundService.setChecked(false);
+            alarmService.stop();
+            animalFilter.setChecked(false);
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_LOCATION:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    backgroundService.setChecked(true);
-                    alarmService.start();
-                } else {
+                if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     RuntimePermissionsHelper.showMessageOKCancel(getResources().getString(
                             R.string.location_permission_message,
                             getResources().getString(R.string.app_name)), Preferences.this.getContext());
+
                 }
                 break;
             default:

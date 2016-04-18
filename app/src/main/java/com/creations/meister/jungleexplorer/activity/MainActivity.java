@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.fragment.AnimalList;
 import com.creations.meister.jungleexplorer.fragment.ExpertList;
 import com.creations.meister.jungleexplorer.fragment.FavoriteList;
@@ -25,6 +24,11 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String GROUP_KEY = "GROUP";
+    private static final String ANIMAL_KEY = "ANIMAL";
+    private static final String FAVORITE_KEY = "FAVORITE";
+    private static final String EXPERT_KEY = "EXPERT";
 
     private BottomBar mBottomBar;
     private FragmentManager mFragmentManager;
@@ -44,20 +48,39 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mFragmentManager = this.getSupportFragmentManager();
+        mBottomBar = BottomBar.attach(this, savedInstanceState);
+
         if(savedInstanceState == null) {
             Bundle bundle = this.getIntent().getExtras();
             if(bundle != null) {
                 showAnimals = bundle.getBoolean(SHOW_ANIMALS);
             }
+
+            mGroupList = new GroupList();
+            mAnimalList = new AnimalList();
+            mFavoriteList = new FavoriteList();
+            mExpertList = new ExpertList();
+
+            FragmentTransaction transaction = mFragmentManager.beginTransaction();
+            transaction.add(R.id.contentFragment, mExpertList, MainActivity.EXPERT_KEY);
+            transaction.hide(mExpertList);
+            transaction.add(R.id.contentFragment, mFavoriteList, MainActivity.FAVORITE_KEY);
+            transaction.hide(mFavoriteList);
+            transaction.add(R.id.contentFragment, mAnimalList, MainActivity.ANIMAL_KEY);
+            transaction.hide(mAnimalList);
+            transaction.add(R.id.contentFragment, mGroupList, MainActivity.GROUP_KEY);
+            transaction.commit();
+        } else {
+            mGroupList = (GroupList) mFragmentManager.getFragment(
+                    savedInstanceState, MainActivity.GROUP_KEY);
+            mAnimalList = (AnimalList) mFragmentManager.getFragment(
+                    savedInstanceState, MainActivity.ANIMAL_KEY);
+            mFavoriteList = (FavoriteList) mFragmentManager.getFragment(
+                    savedInstanceState, MainActivity.FAVORITE_KEY);
+            mExpertList = (ExpertList) mFragmentManager.getFragment(
+                    savedInstanceState, MainActivity.EXPERT_KEY);
         }
-
-        mFragmentManager = this.getSupportFragmentManager();
-        mBottomBar = BottomBar.attach(this, savedInstanceState);
-
-        mGroupList = new GroupList();
-        mAnimalList = new AnimalList();
-        mFavoriteList = new FavoriteList();
-        mExpertList = new ExpertList();
 
         mBottomBar.setItemsFromMenu(R.menu.bottombar_menu, new OnMenuTabClickListener() {
             @Override
@@ -65,16 +88,36 @@ public class MainActivity extends AppCompatActivity {
                 FragmentTransaction transaction = mFragmentManager.beginTransaction();
                 switch (menuItemId) {
                     case R.id.bb_menu_animal_group:
-                        transaction.replace(R.id.contentFragment, mGroupList, "GROUP");
+                        if(!mGroupList.isVisible()) {
+                            transaction.show(mGroupList);
+                            transaction.hide(mAnimalList);
+                            transaction.hide(mFavoriteList);
+                            transaction.hide(mExpertList);
+                        }
                         break;
                     case R.id.bb_menu_animals:
-                        transaction.replace(R.id.contentFragment, mAnimalList, "ANIMAL");
+                        if(!mAnimalList.isVisible()) {
+                            transaction.show(mAnimalList);
+                            transaction.hide(mGroupList);
+                            transaction.hide(mFavoriteList);
+                            transaction.hide(mExpertList);
+                        }
                         break;
                     case R.id.bb_menu_favorites:
-                        transaction.replace(R.id.contentFragment, mFavoriteList, "FAV");
+                        if(!mFavoriteList.isVisible()) {
+                            transaction.show(mFavoriteList);
+                            transaction.hide(mGroupList);
+                            transaction.hide(mAnimalList);
+                            transaction.hide(mExpertList);
+                        }
                         break;
                     case R.id.bb_menu_experts:
-                        transaction.replace(R.id.contentFragment, mExpertList, "EXPERT");
+                        if(!mExpertList.isVisible()) {
+                            transaction.show(mExpertList);
+                            transaction.hide(mGroupList);
+                            transaction.hide(mAnimalList);
+                            transaction.hide(mFavoriteList);
+                        }
                         break;
                 }
 
@@ -160,8 +203,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        // Necessary to restore the BottomBar's state, otherwise we would
-        // lose the current tab on orientation change.
+        mFragmentManager.putFragment(outState, MainActivity.GROUP_KEY, mGroupList);
+        mFragmentManager.putFragment(outState, MainActivity.ANIMAL_KEY,  mAnimalList);
+        mFragmentManager.putFragment(outState, MainActivity.FAVORITE_KEY, mFavoriteList);
+        mFragmentManager.putFragment(outState, MainActivity.EXPERT_KEY,  mExpertList);
+
         mBottomBar.onSaveInstanceState(outState);
     }
 

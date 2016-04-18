@@ -321,6 +321,41 @@ public class DBHelper extends SQLiteOpenHelper {
         return experts;
     }
 
+    public ArrayList<Animal> getAnimalsWithinRadius(Location location, int radius) {
+        ArrayList<Animal> returnAnimals = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_ANIMAL;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+        if(c.moveToFirst()) {
+            do {
+                Double latitude = c.getDouble(c.getColumnIndex(KEY_LATITUDE));
+                Double longitude = c.getDouble(c.getColumnIndex(KEY_LONGITUDE));
+
+                Animal animal = new Animal();
+                animal.setId(c.getInt(c.getColumnIndex(KEY_ID)));
+                animal.setName(c.getString(c.getColumnIndex(KEY_NAME)));
+                animal.setPhotoId(c.getColumnName(c.getColumnIndex(KEY_PHOTO_ID)));
+                animal.setLocationText(c.getString(c.getColumnIndex(KEY_LOCATION_TEXT)));
+                animal.setDescription(c.getString(c.getColumnIndex(KEY_DESCRIPTION)));
+                animal.setFavorite(c.getInt(c.getColumnIndex(KEY_FAVORITE)));
+                animal.setLatitude(latitude);
+                animal.setLongitude(longitude);
+
+                if(latitude != null & longitude != null) {
+                    Location aLocation = new Location("");
+                    aLocation.setLatitude(latitude);
+                    aLocation.setLongitude(longitude);
+                    float distance = location.distanceTo(aLocation);
+                    if(distance <= radius) {
+                        returnAnimals.add(animal);
+                    }
+                }
+
+            }while(c.moveToNext());
+        }
+        return returnAnimals;
+    }
+
     public Animal getNearestAnimal(Location location) {
         Float minDistance = null;
         Animal returnAnimal = null;

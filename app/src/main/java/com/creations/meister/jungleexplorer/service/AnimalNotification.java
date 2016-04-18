@@ -23,6 +23,7 @@ import com.creations.meister.jungleexplorer.activity.MainActivity;
 import com.creations.meister.jungleexplorer.activity.NewAnimal;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
+import com.creations.meister.jungleexplorer.google_api_utils.GoogleApiHelper;
 import com.creations.meister.jungleexplorer.widget.AnimalWidget;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -53,9 +54,7 @@ public class AnimalNotification extends BroadcastReceiver implements GoogleApiCl
             } else if (intent.getAction() != null
                     && intent.getAction().equals(AlarmService.ACTION))
             {
-                GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-                int result = googleAPI.isGooglePlayServicesAvailable(context);
-                if(result == ConnectionResult.SUCCESS) {
+                if(GoogleApiHelper.isAPIAvailable(context)) {
                     mGoogleApiClient =  new GoogleApiClient.Builder(context)
                             .addConnectionCallbacks(this)
                             .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
@@ -81,50 +80,52 @@ public class AnimalNotification extends BroadcastReceiver implements GoogleApiCl
         //noinspection MissingPermission
         Location cLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-        SharedPreferences.Editor sharedEditor = prefs.edit();
-        sharedEditor.putString("current_latitude", String.valueOf(cLocation.getLatitude()));
-        sharedEditor.putString("current_longitude", String.valueOf(cLocation.getLongitude()));
-        sharedEditor.commit();
+        if(cLocation != null) {
+            SharedPreferences.Editor sharedEditor = prefs.edit();
+            sharedEditor.putString("current_latitude", String.valueOf(cLocation.getLatitude()));
+            sharedEditor.putString("current_longitude", String.valueOf(cLocation.getLongitude()));
+            sharedEditor.commit();
 
-        DBHelper dbHelper = DBHelper.getHelper(this.context);
-        Animal animal = dbHelper.getNearestAnimal(cLocation);
-        if(animal != null) {
-            SharedPreferences sharedPref = context.getApplicationContext()
-                    .getSharedPreferences("notification_animal", Context.MODE_PRIVATE);
-            String previousAnimalID = sharedPref.getString("previous_animal", null);
-            if ((previousAnimalID != null && !String.valueOf(animal.getId()).equals(previousAnimalID))
-                    || previousAnimalID == null) {
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("previous_animal", String.valueOf(animal.getId()));
+            DBHelper dbHelper = DBHelper.getHelper(this.context);
+            Animal animal = dbHelper.getNearestAnimal(cLocation);
+            if (animal != null) {
+                SharedPreferences sharedPref = context.getApplicationContext()
+                        .getSharedPreferences("notification_animal", Context.MODE_PRIVATE);
+                String previousAnimalID = sharedPref.getString("previous_animal", null);
+                if ((previousAnimalID != null && !String.valueOf(animal.getId()).equals(previousAnimalID))
+                        || previousAnimalID == null) {
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("previous_animal", String.valueOf(animal.getId()));
 
-                Intent resultIntent = new Intent(context, NewAnimal.class);
-                resultIntent.putExtra("ANIMAL", animal);
+                    Intent resultIntent = new Intent(context, NewAnimal.class);
+                    resultIntent.putExtra("ANIMAL", animal);
 
-                Intent parentIntent = new Intent(context, MainActivity.class);
-                parentIntent.putExtra("SHOW_ANIMALS", true);
+                    Intent parentIntent = new Intent(context, MainActivity.class);
+                    parentIntent.putExtra("SHOW_ANIMALS", true);
 
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-                stackBuilder.addNextIntent(parentIntent);
-                stackBuilder.addNextIntent(resultIntent);
+                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+                    stackBuilder.addNextIntent(parentIntent);
+                    stackBuilder.addNextIntent(resultIntent);
 
-                PendingIntent pIntent = stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
+                    PendingIntent pIntent = stackBuilder.getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
 
-                ComponentName thisWidget = new ComponentName(context, AnimalWidget.class);
-                AppWidgetManager manager = AppWidgetManager.getInstance(context);
-                RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
-                        R.layout.animal_widget);
+                    ComponentName thisWidget = new ComponentName(context, AnimalWidget.class);
+                    AppWidgetManager manager = AppWidgetManager.getInstance(context);
+                    RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
+                            R.layout.animal_widget);
 
-                remoteViews.setTextViewText(R.id.textView,
-                        context.getString(R.string.nearest_animal, animal.getName()));
-                remoteViews.setOnClickPendingIntent(R.id.widget, pIntent);
+                    remoteViews.setTextViewText(R.id.textView,
+                            context.getString(R.string.nearest_animal, animal.getName()));
+                    remoteViews.setOnClickPendingIntent(R.id.widget, pIntent);
 
-                manager.updateAppWidget(thisWidget, remoteViews);
+                    manager.updateAppWidget(thisWidget, remoteViews);
 
-                editor.commit();
-                this.showNotification(animal, pIntent);
+                    editor.commit();
+                    this.showNotification(animal, pIntent);
+                }
             }
         }
         mGoogleApiClient.disconnect();
