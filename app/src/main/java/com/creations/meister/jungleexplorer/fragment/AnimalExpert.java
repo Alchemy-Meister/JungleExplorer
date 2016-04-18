@@ -8,8 +8,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.SparseBooleanArray;
 import android.util.TypedValue;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,6 +21,7 @@ import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.activity.NewAnimalExpertList;
+import com.creations.meister.jungleexplorer.adapter.ContactAdapter;
 import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
@@ -31,11 +36,12 @@ import lb.library.PinnedHeaderListView;
 /**
  * Created by meister on 4/15/16.
  */
-public class AnimalExpert extends ListFragment implements AdapterView.OnItemClickListener {
+public class AnimalExpert extends ListFragment {
 
     private PinnedHeaderListView mListView;
     private FloatingActionButton fabAddExpert;
     private LayoutInflater mInflater;
+    private ActionMode mActionMode;
 
     private final static String ANIMAL_KEY = "ANIMAL";
     private final static int EXPERT_REQUEST = 0;
@@ -44,7 +50,7 @@ public class AnimalExpert extends ListFragment implements AdapterView.OnItemClic
     private boolean editable = false;
     private Animal animal;
 
-    private DomainAdapter mAdapter;
+    private ContactAdapter mAdapter;
     private DBHelper dbHelper;
 
     @Override
@@ -85,11 +91,10 @@ public class AnimalExpert extends ListFragment implements AdapterView.OnItemClic
         }
 
         this.mListView = ((PinnedHeaderListView)this.getListView());
-        this.mListView.setOnItemClickListener(this);
         mListView.setPinnedHeaderView(mInflater.inflate(
                 R.layout.pinned_header_listview_side_header, mListView, false));
 
-        mAdapter = new DomainAdapter(this.getContext(), experts);
+        mAdapter = new ContactAdapter(this.getContext(), experts);
         int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
                 this.getActivity(),android.R.attr.colorBackground));
         mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
@@ -111,6 +116,7 @@ public class AnimalExpert extends ListFragment implements AdapterView.OnItemClic
             }
         });
 
+
         /*SearchView sv = ((MainActivity) this.getActivity()).getSearchView();
 
         if(sv != null) {
@@ -119,6 +125,55 @@ public class AnimalExpert extends ListFragment implements AdapterView.OnItemClic
         }*/
 
         this.setEditable(editable);
+    }
+
+    private void onListItemSelect(int position) {
+        mAdapter.toggleSelection(position);
+        boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
+
+        if (hasCheckedItems && mActionMode == null)
+            // there are some selected items, start the actionMode
+            mActionMode = this.getActivity().startActionMode(new ActionMode.Callback() {
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    mode.getMenuInflater().inflate(R.menu.cab_menu, menu);
+                    return true;
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return false;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    if(item.getItemId() == R.id.action_delete) {
+                        SparseBooleanArray selectedIDs = mAdapter.getSelectedIds();
+                        for(int i = experts.size(); i >= 0; i--) {
+                            if(selectedIDs.get(i)){
+                                experts.remove(i);
+                            }
+                        }
+                        mAdapter.notifyDataSetChanged();
+
+                    }
+                    mActionMode.finish();
+                    return true;
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+                    mAdapter.removeSelection();
+                    mActionMode = null;
+                }
+            });
+        else if (!hasCheckedItems && mActionMode != null)
+            // there no selected items, finish the actionMode
+            mActionMode.finish();
+
+        if (mActionMode != null)
+            mActionMode.setTitle(String.valueOf(mAdapter
+                    .getSelectedCount()) + " selected");
     }
 
     @Override
@@ -155,11 +210,6 @@ public class AnimalExpert extends ListFragment implements AdapterView.OnItemClic
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("editable", editable);
@@ -171,8 +221,17 @@ public class AnimalExpert extends ListFragment implements AdapterView.OnItemClic
         this.editable = editable;
         if(editable) {
             this.fabAddExpert.setVisibility(View.VISIBLE);
+            this.mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    view.setSelected(true);
+                    onListItemSelect(position);
+                    return true;
+                }
+            });
         } else {
             this.fabAddExpert.setVisibility(View.INVISIBLE);
+            this.mListView.setOnItemLongClickListener(null);
         }
     }
 

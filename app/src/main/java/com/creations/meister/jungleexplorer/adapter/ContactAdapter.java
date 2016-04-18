@@ -33,6 +33,7 @@ public class ContactAdapter extends SearchablePinnedHeaderListViewAdapter<Domain
     private LayoutInflater mInflater;
     private Context context;
     private ArrayList<Domain> mDomain;
+    private SparseBooleanArray mSelectedItemsIds;
     private final int CONTACT_PHOTO_IMAGE_SIZE;
     private final int[] PHOTO_TEXT_BACKGROUND_COLORS;
     private final AsyncTaskThreadPool mAsyncTaskThreadPool=new AsyncTaskThreadPool(1,2,10);
@@ -40,6 +41,7 @@ public class ContactAdapter extends SearchablePinnedHeaderListViewAdapter<Domain
     public ContactAdapter(Context context, final ArrayList<Domain> domain) {
         this.context = context;
         this.setData(domain);
+        this.mSelectedItemsIds = new SparseBooleanArray();
         PHOTO_TEXT_BACKGROUND_COLORS = context.getResources().getIntArray(R.array.contacts_text_background_colors);
         CONTACT_PHOTO_IMAGE_SIZE = context.getResources().getDimensionPixelSize(
                 R.dimen.list_item__contact_imageview_size);
@@ -136,6 +138,32 @@ public class ContactAdapter extends SearchablePinnedHeaderListViewAdapter<Domain
         final String displayName=item.getName();
         return !TextUtils.isEmpty(displayName)&&displayName.toLowerCase(Locale.getDefault())
                 .contains(constraint.toString().toLowerCase(Locale.getDefault()));
+    }
+
+    public void removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedCount() {
+        return mSelectedItemsIds.size();
+    }
+
+    public SparseBooleanArray getSelectedIds() {
+        return mSelectedItemsIds;
+    }
+
+    public void toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+    public void selectView(int position, boolean value) {
+        if (value)
+            mSelectedItemsIds.put(position, value);
+        else
+            mSelectedItemsIds.delete(position);
+
+        notifyDataSetChanged();
     }
 
     @Override
