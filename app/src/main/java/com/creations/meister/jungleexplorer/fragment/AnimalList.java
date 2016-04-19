@@ -34,6 +34,7 @@ import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.domain.Domain;
+import com.creations.meister.jungleexplorer.domain.Expert;
 import com.creations.meister.jungleexplorer.google_api_utils.GoogleApiHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -295,6 +296,8 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
         if (requestCode == NEW_ANIMAL_REQUEST
                 && resultCode == AppCompatActivity.RESULT_OK) {
             Domain newAnimal = (Domain) data.getExtras().getSerializable("newAnimal");
+            DBHelper.getHelper(this.getContext()).createAnimal((Animal) newAnimal);
+            ((Animal) newAnimal).setAnimalExperts(new ArrayList<Expert>());
             if (filterEnabled) {
                 if (newAnimal != null && cLocation != null && radius != null) {
                     if (((Animal) newAnimal).isWithinRadius(cLocation, radius)) {

@@ -219,7 +219,6 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
                     }
                 }
                 if(!TextUtils.isEmpty(newAnimal.getName())) {
-                    DBHelper.getHelper(NewAnimal.this).createAnimal(newAnimal);
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("newAnimal", newAnimal);
                     this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
