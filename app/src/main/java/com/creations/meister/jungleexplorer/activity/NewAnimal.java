@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -44,7 +45,7 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
     private Menu menu;
 
     private boolean editMode = false;
-    private boolean creation;
+    private boolean creation = false;
 
     private AnimalBasicInfo info;
     private AnimalLocation location;
@@ -121,14 +122,13 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
         } else {
             animal = (Animal)  savedInstanceState.getSerializable("animal");
             editMode = savedInstanceState.getBoolean("editable");
+            creation = savedInstanceState.getBoolean("creation");
             info = (AnimalBasicInfo) mFragmentManager.getFragment(
                     savedInstanceState, NewAnimal.INFO_KEY);
             location = (AnimalLocation) mFragmentManager.getFragment(
                     savedInstanceState, NewAnimal.LOCATION_KEY);
             expert = (AnimalExpert) mFragmentManager.getFragment(
                     savedInstanceState, NewAnimal.EXPERT_KEY);
-
-            creation = false;
         }
 
         if (actionBar != null) {
@@ -201,6 +201,7 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
+        Log.d("WORKING", "TRUE");
         if(menuItem.getItemId() == android.R.id.home) {
             if(animal == null) {
                 this.finish();
@@ -298,6 +299,7 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
         mFragmentManager.putFragment(outState, NewAnimal.EXPERT_KEY, expert);
 
         mBottomBar.onSaveInstanceState(outState);
+        outState.putBoolean("creation", creation);
         outState.putSerializable("animal", animal);
         outState.putBoolean("editable", editMode);
     }
