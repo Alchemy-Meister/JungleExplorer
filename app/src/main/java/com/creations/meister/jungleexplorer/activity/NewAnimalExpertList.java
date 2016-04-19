@@ -38,6 +38,7 @@ public class NewAnimalExpertList extends AppCompatActivity implements AdapterVie
     private SearchView searchView;
 
     private ArrayList<Domain> contacts;
+    private boolean isFiltered;
 
     private DBHelper dbHelper;
 
@@ -60,6 +61,11 @@ public class NewAnimalExpertList extends AppCompatActivity implements AdapterVie
                 // this is your adapter that will be filtered
                 mAdapter.getFilter().filter(newText);
                 mAdapter.setHeaderViewVisible(TextUtils.isEmpty(newText));
+                if(TextUtils.isEmpty(newText)) {
+                    isFiltered = false;
+                } else {
+                    isFiltered = true;
+                }
                 return true;
             }
 
@@ -68,6 +74,11 @@ public class NewAnimalExpertList extends AppCompatActivity implements AdapterVie
                 // this is your adapter that will be filtered
                 mAdapter.getFilter().filter(query);
                 mAdapter.setHeaderViewVisible(TextUtils.isEmpty(query));
+                if(TextUtils.isEmpty(query)) {
+                    isFiltered = false;
+                } else {
+                    isFiltered = true;
+                }
                 return true;
             }
         });
@@ -142,7 +153,17 @@ public class NewAnimalExpertList extends AppCompatActivity implements AdapterVie
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("newAnimalExpert", contacts.get(position));
+        if(isFiltered) {
+            int expertId = ((ContactAdapter.ViewHolder) view.getTag()).id;
+            for (int i = 0; i < contacts.size(); i++) {
+                if (contacts.get(i).getId() == expertId) {
+                    resultIntent.putExtra("newAnimalExpert", contacts.get(i));
+                }
+            }
+        } else {
+            resultIntent.putExtra("newAnimalExpert", contacts.get(position));
+        }
+
         this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
         finish();
     }
