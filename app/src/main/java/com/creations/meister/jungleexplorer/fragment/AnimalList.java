@@ -3,6 +3,7 @@ package com.creations.meister.jungleexplorer.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -158,6 +159,7 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(mActionMode != null) {
+                    view.setSelected(true);
                     if(isFiltered) {
                         int expertId = ((DomainAdapter.ViewHolder) view.getTag()).id;
                         for(int i = 0; i < animals.size(); i++) {

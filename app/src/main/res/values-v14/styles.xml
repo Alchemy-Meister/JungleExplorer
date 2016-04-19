@@ -9,6 +9,7 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
         <item name="actionModeBackground">@color/colorPrimary </item>
         <item name="android:actionModeBackground">@color/colorPrimary </item>
+        <item name="colorControlHighlight">@color/ripple_material_dark</item>
 
     </style>
 

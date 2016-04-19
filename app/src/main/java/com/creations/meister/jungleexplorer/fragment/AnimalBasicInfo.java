@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,6 +130,8 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
             mLocationText.setText(animal.getLocationText());
             mDescription.setText(animal.getDescription());
 
+            Log.d("WTF?", String.valueOf(animal.getName()));
+
             if(!TextUtils.isEmpty(animal.getPhotoId())) {
                 ViewTreeObserver vto = mImageView.getViewTreeObserver();
                 vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -146,9 +149,8 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
                                     public Bitmap doInBackground(
                                             @SuppressWarnings("unchecked") Void... params) {
                                         if (mImageView != null && animal != null) {
-                                            animalBitmap = ImageHelper.scaleImage(mImageView,
+                                            return ImageHelper.scaleImage(mImageView,
                                                     animal.getPhotoId());
-                                            return animalBitmap;
                                         }
                                         return null;
                                     }
@@ -159,6 +161,7 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
                                         if (result == null)
                                             return;
                                         if (animal != null & mImageView != null) {
+                                            animalBitmap = result;
                                             ImageCache.INSTANCE.addBitmapToCache(animal.getPhotoId()
                                                     + "BIG", result);
                                             mImageView.setImageBitmap(animalBitmap);
@@ -168,7 +171,8 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
                                 };
                                 updateTask.execute();
                             } else {
-                                mImageView.setImageBitmap(animalBitmap);
+                                animalBitmap = cachedBitmap;
+                                mImageView.setImageBitmap(cachedBitmap);
                                 mImageView.invalidate();
                             }
                         }
@@ -245,7 +249,8 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
                     mImageView.setImageBitmap(bitmap);
                     mImageView.invalidate();
 
-                    mCurrentPhotoPath = ImageHelper.getRealPathFromURI(this.getContext(), uri);
+                    mCurrentPhotoPath = ImageHelper.getPath(this.getContext(), uri);
+                    Log.d("PATH", mCurrentPhotoPath);
 
                 } catch (FileNotFoundException e) {
                     // Error opening the image

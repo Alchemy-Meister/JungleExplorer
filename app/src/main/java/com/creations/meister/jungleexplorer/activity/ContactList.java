@@ -179,6 +179,8 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
                     RuntimePermissionsHelper.showMessageOKCancel(getResources().getString(
                             R.string.contact_permission_message,
                             getResources().getString(R.string.app_name)), ContactList.this);
+                    contacts = new ArrayList<>();
+                    this.initializeAdapter();
                 }
                 break;
             default:
