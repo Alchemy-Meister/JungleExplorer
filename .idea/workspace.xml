@@ -44,7 +44,7 @@
   <component name="ChangeListManager">
     <list default="true" id="cf75f587-eb91-4faf-bd03-4d7a667a315b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java" />
     </list>
     <ignored path="JungleExplorer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -72,24 +72,24 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="AnimalList.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="AnimalList.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="183" column="101" selection-start-line="183" selection-start-column="101" selection-end-line="183" selection-end-column="101" />
+            <state vertical-scroll-proportion="0.359375">
+              <caret line="359" column="9" selection-start-line="359" selection-start-column="9" selection-end-line="359" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#7373#8023#0" expanded="true" />
-                <element signature="e#8022#8023#0" expanded="true" />
+                <element signature="e#7490#8143#0" expanded="true" />
+                <element signature="e#8142#8143#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AnimalLocation.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="AnimalLocation.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.29910713">
+            <state vertical-scroll-proportion="0.0">
               <caret line="140" column="80" selection-start-line="140" selection-start-column="80" selection-end-line="140" selection-end-column="80" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -3722,9 +3722,9 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/animal_list_fragment.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable-v21/listview_ripple_background_selector.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/values-v14/styles.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/ContactList.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java" />
       </list>
     </option>
   </component>
@@ -4881,19 +4881,7 @@
         <state vertical-scroll-proportion="0.33254156">
           <caret line="90" column="117" selection-start-line="90" selection-start-column="8" selection-end-line="90" selection-end-column="117" />
           <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="183" column="101" selection-start-line="183" selection-start-column="101" selection-end-line="183" selection-end-column="101" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#7373#8023#0" expanded="true" />
-            <element signature="e#8022#8023#0" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -4948,10 +4936,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.29910713">
+        <state vertical-scroll-proportion="0.0">
           <caret line="140" column="80" selection-start-line="140" selection-start-column="80" selection-end-line="140" selection-end-column="80" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.359375">
+          <caret line="359" column="9" selection-start-line="359" selection-start-column="9" selection-end-line="359" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#7490#8143#0" expanded="true" />
+            <element signature="e#8142#8143#0" expanded="true" />
           </folding>
         </state>
       </provider>
