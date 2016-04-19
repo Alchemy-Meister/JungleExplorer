@@ -44,14 +44,7 @@
   <component name="ChangeListManager">
     <list default="true" id="cf75f587-eb91-4faf-bd03-4d7a667a315b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/ContactList.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/ContactList.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalBasicInfo.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalBasicInfo.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/image_utils/ImageHelper.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/image_utils/ImageHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/utils/async_task_thread_pool/AsyncTaskEx.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/utils/async_task_thread_pool/AsyncTaskEx.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values-v14/styles.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values-v14/styles.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bottom-bar/bottom-bar.iml" afterPath="$PROJECT_DIR$/bottom-bar/bottom-bar.iml" />
     </list>
     <ignored path="JungleExplorer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -93,11 +86,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AnimalLocation.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="AnimalLocation.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="136" column="55" selection-start-line="136" selection-start-column="55" selection-end-line="136" selection-end-column="55" />
+            <state vertical-scroll-proportion="0.29910713">
+              <caret line="140" column="80" selection-start-line="140" selection-start-column="80" selection-end-line="140" selection-end-column="80" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -125,16 +118,6 @@
           </provider>
           <provider editor-type-id="android-designer">
             <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ContactList.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/ContactList.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6026786">
-              <caret line="182" column="45" selection-start-line="182" selection-start-column="45" selection-end-line="182" selection-end-column="45" />
-              <folding />
-            </state>
           </provider>
         </entry>
       </file>
@@ -3740,8 +3723,8 @@
         <option value="$PROJECT_DIR$/app/src/main/res/drawable-v21/listview_ripple_background_selector.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/values-v14/styles.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/ContactList.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java" />
       </list>
     </option>
   </component>
@@ -4110,7 +4093,7 @@
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="ENU5T15B10000905" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Nexus_4_API_23" />
     <property name="dynamic.classpath" value="false" />
-    <property name="device.picker.selection" value="ENU5T15B10000905" />
+    <property name="device.picker.selection" value="Nexus_6P_API_23" />
     <property name="android.project.structure.last.selected" value="app" />
     <property name="android.project.structure.proportion" value="0.15" />
   </component>
@@ -4483,7 +4466,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32939634" sideWeight="0.4973704" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Monitor" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3753281" sideWeight="0.49436513" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3753281" sideWeight="0.49436513" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39895013" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.328084" sideWeight="0.6483847" order="10" side_tool="false" content_ui="tabs" />
@@ -4944,13 +4927,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/ContactList.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="136" column="55" selection-start-line="136" selection-start-column="55" selection-end-line="136" selection-end-column="55" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.6026786">
+          <caret line="182" column="45" selection-start-line="182" selection-start-column="45" selection-end-line="182" selection-end-column="45" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4965,11 +4946,13 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/ContactList.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6026786">
-          <caret line="182" column="45" selection-start-line="182" selection-start-column="45" selection-end-line="182" selection-end-column="45" />
-          <folding />
+        <state vertical-scroll-proportion="0.29910713">
+          <caret line="140" column="80" selection-start-line="140" selection-start-column="80" selection-end-line="140" selection-end-column="80" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

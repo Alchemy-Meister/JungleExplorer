@@ -138,7 +138,7 @@ public class AnimalLocation extends Fragment implements GoogleMap.OnMapClickList
 
         this.setEditable(editable);
 
-        String continentIndexString = pref.getString("map_default_continent", "4-");
+        String continentIndexString = pref.getString("map_default_continent", "4");
         int continentIndex = Integer.valueOf(continentIndexString);
 
         initializeMyLocation();
