@@ -13,7 +13,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -201,7 +200,6 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
-        Log.d("WORKING", "TRUE");
         if(menuItem.getItemId() == android.R.id.home) {
             if(animal == null) {
                 this.finish();
