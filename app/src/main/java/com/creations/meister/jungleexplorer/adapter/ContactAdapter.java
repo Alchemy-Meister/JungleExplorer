@@ -30,6 +30,8 @@ import lb.library.StringArrayAlphabetIndexer;
  */
 public class ContactAdapter extends SearchablePinnedHeaderListViewAdapter<Domain> {
 
+    private boolean loadImages = true;
+
     private LayoutInflater mInflater;
     private Context context;
     private ArrayList<Domain> mDomain;
@@ -101,7 +103,7 @@ public class ContactAdapter extends SearchablePinnedHeaderListViewAdapter<Domain
                 final String characterToShow = TextUtils.isEmpty(displayName) ? "" : displayName.substring(0, 1).toUpperCase(Locale.getDefault());
                 holder.animalProfileCircularView.setTextAndBackgroundColor(characterToShow, backgroundColorToUse);
             }
-            if (hasPhoto) {
+            if (hasPhoto && loadImages) {
                 holder.updateTask = new AsyncTaskEx<Void, Void, Bitmap>() {
 
                     @Override
@@ -166,6 +168,10 @@ public class ContactAdapter extends SearchablePinnedHeaderListViewAdapter<Domain
             mSelectedItemsIds.delete(position);
 
         notifyDataSetChanged();
+    }
+
+    public void loadImages(boolean loadImages) {
+        this.loadImages = loadImages;
     }
 
     @Override

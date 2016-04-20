@@ -1,5 +1,6 @@
 package com.creations.meister.jungleexplorer.fragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,6 +25,7 @@ import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Domain;
 import com.creations.meister.jungleexplorer.domain.Expert;
+import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,6 +75,13 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
                 R.layout.pinned_header_listview_side_header, mListView, false));
 
         mAdapter = new ContactAdapter(this.getContext(), experts);
+
+        if(!RuntimePermissionsHelper.hasPermissions(this.getContext(),
+                    Manifest.permission.READ_CONTACTS))
+        {
+            mAdapter.loadImages(false);
+        }
+
         int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
                 this.getActivity(),android.R.attr.colorBackground));
         mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
