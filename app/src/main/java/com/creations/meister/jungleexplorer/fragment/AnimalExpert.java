@@ -1,5 +1,6 @@
 package com.creations.meister.jungleexplorer.fragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -29,6 +30,7 @@ import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.domain.Domain;
 import com.creations.meister.jungleexplorer.domain.Expert;
+import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -103,6 +105,12 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
                 this.getActivity(),android.R.attr.colorBackground));
         mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
         mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
+
+        if(!RuntimePermissionsHelper.hasPermissions(this.getContext(),
+                Manifest.permission.READ_CONTACTS))
+        {
+            mAdapter.loadImages(false);
+        }
 
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(mAdapter);
@@ -219,6 +227,20 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
         final TypedValue typedValue=new TypedValue();
         activity.getTheme().resolveAttribute(attr, typedValue, true);
         return typedValue.resourceId;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(mAdapter != null && mListView != null) {
+            if (RuntimePermissionsHelper.hasPermissions(this.getContext(),
+                    Manifest.permission.READ_CONTACTS)) {
+                mAdapter.loadImages(true);
+            } else {
+                mAdapter.loadImages(false);
+            }
+            mListView.setAdapter(mAdapter);
+        }
     }
 
     @Override

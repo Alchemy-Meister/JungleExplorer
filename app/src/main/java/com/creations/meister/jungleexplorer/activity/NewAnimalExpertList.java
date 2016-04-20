@@ -1,5 +1,6 @@
 package com.creations.meister.jungleexplorer.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
@@ -21,6 +22,7 @@ import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.adapter.ContactAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Domain;
+import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -120,6 +122,12 @@ public class NewAnimalExpertList extends AppCompatActivity implements AdapterVie
         mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
         mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
 
+        if(!RuntimePermissionsHelper.hasPermissions(this,
+                Manifest.permission.READ_CONTACTS))
+        {
+            mAdapter.loadImages(false);
+        }
+
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(mAdapter);
     }
@@ -148,6 +156,20 @@ public class NewAnimalExpertList extends AppCompatActivity implements AdapterVie
         final TypedValue typedValue=new TypedValue();
         activity.getTheme().resolveAttribute(attr, typedValue, true);
         return typedValue.resourceId;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(mAdapter != null && mListView != null) {
+            if (RuntimePermissionsHelper.hasPermissions(this,
+                    Manifest.permission.READ_CONTACTS)) {
+                mAdapter.loadImages(true);
+            } else {
+                mAdapter.loadImages(false);
+            }
+            mListView.setAdapter(mAdapter);
+        }
     }
 
     @Override
