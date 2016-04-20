@@ -109,6 +109,20 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(mAdapter != null && mListView != null) {
+            if (RuntimePermissionsHelper.hasPermissions(this.getContext(),
+                    Manifest.permission.READ_CONTACTS)) {
+                mAdapter.loadImages(true);
+            } else {
+                mAdapter.loadImages(false);
+            }
+            mListView.setAdapter(mAdapter);
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
