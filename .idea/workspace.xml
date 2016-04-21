@@ -44,7 +44,10 @@
   <component name="ChangeListManager">
     <list default="true" id="cf75f587-eb91-4faf-bd03-4d7a667a315b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/FavoriteList.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/FavoriteList.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/ContactList.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/ContactList.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/MainActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/db/DBHelper.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/db/DBHelper.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/ExpertList.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/ExpertList.java" />
     </list>
     <ignored path="JungleExplorer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -85,10 +88,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="FavoriteList.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="FavoriteList.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/FavoriteList.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5344418">
+            <state vertical-scroll-proportion="-8.333333">
               <caret line="116" column="69" selection-start-line="116" selection-start-column="69" selection-end-line="116" selection-end-column="69" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -99,31 +102,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/MainActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.0">
-              <caret line="0" column="41" selection-start-line="0" selection-start-column="39" selection-end-line="0" selection-end-column="41" />
-              <folding>
-                <element signature="e#7113#7152#0" expanded="true" />
-                <element signature="e#9345#9346#0" expanded="true" />
-                <element signature="e#9383#9384#0" expanded="true" />
-                <element signature="e#9672#9673#0" expanded="true" />
-                <element signature="e#9733#9734#0" expanded="true" />
-                <element signature="e#9801#9802#0" expanded="true" />
-                <element signature="e#9849#9850#0" expanded="true" />
-                <element signature="e#9913#9914#0" expanded="true" />
-                <element signature="e#9965#9966#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="AnimalList.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-13.518518">
-              <caret line="195" column="11" selection-start-line="173" selection-start-column="7" selection-end-line="195" selection-end-column="11" />
+            <state vertical-scroll-proportion="-10.185185">
+              <caret line="421" column="5" selection-start-line="408" selection-start-column="3" selection-end-line="421" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#6807#7918#0" expanded="true" />
@@ -134,6 +117,47 @@
                 <element signature="e#13247#13294#0" expanded="true" />
                 <element signature="e#15396#15459#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ExpertList.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/ExpertList.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-0.0">
+              <caret line="0" column="41" selection-start-line="0" selection-start-column="39" selection-end-line="0" selection-end-column="41" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#3563#3844#0" expanded="true" />
+                <element signature="e#3843#3844#0" expanded="true" />
+                <element signature="e#4151#4925#0" expanded="true" />
+                <element signature="e#4924#4925#0" expanded="true" />
+                <element signature="e#4979#5633#0" expanded="true" />
+                <element signature="e#5632#5633#0" expanded="true" />
+                <element signature="e#7325#7372#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DBHelper.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/db/DBHelper.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-0.6650831">
+              <caret line="362" column="0" selection-start-line="362" selection-start-column="0" selection-end-line="362" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/MainActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="101" column="57" selection-start-line="101" selection-start-column="57" selection-end-line="101" selection-end-column="57" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -3698,10 +3722,8 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/animal_list_fragment.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable-v21/listview_ripple_background_selector.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/values-v14/styles.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/ContactList.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalLocation.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/adapter/ContactAdapter.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/ExpertList.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/NewAnimalExpertList.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/expert_list_fragment.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalExpert.java" />
@@ -3712,11 +3734,13 @@
         <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/menu/view_animal_menu.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalBasicInfo.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/db/DBHelper.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/NewAnimal.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/FavoriteList.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/ExpertList.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/ContactList.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/db/DBHelper.java" />
       </list>
     </option>
   </component>
@@ -3829,28 +3853,6 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="jungleexplorer" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="JungleExplorer" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jungleexplorer" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fragment" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -4509,7 +4511,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="22" width="1373" height="878" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -4691,13 +4693,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/utils/async_task_thread_pool/AsyncTaskEx.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.7339667">
-          <caret line="185" column="18" selection-start-line="185" selection-start-column="13" selection-end-line="185" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/pinned_header_listview_side_header.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -4744,25 +4739,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/ContactList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6026786">
-          <caret line="182" column="45" selection-start-line="182" selection-start-column="45" selection-end-line="182" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/adapter/ContactAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.16741072">
           <caret line="28" column="28" selection-start-line="28" selection-start-column="28" selection-end-line="28" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/ExpertList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="78" column="40" selection-start-line="78" selection-start-column="40" selection-end-line="78" selection-end-column="40" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4837,14 +4817,14 @@
         <state vertical-scroll-proportion="0.9026128">
           <caret line="91" column="31" selection-start-line="91" selection-start-column="27" selection-end-line="91" selection-end-column="31" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#3133#3189#0" expanded="true" />
-            <element signature="e#4481#4793#0" expanded="true" />
-            <element signature="e#4792#4793#0" expanded="true" />
-            <element signature="e#4843#5578#0" expanded="true" />
-            <element signature="e#5577#5578#0" expanded="true" />
-            <element signature="e#5632#6431#0" expanded="true" />
-            <element signature="e#6430#6431#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#3133#3189#0" expanded="false" />
+            <element signature="e#4481#4793#0" expanded="false" />
+            <element signature="e#4792#4793#0" expanded="false" />
+            <element signature="e#4843#5578#0" expanded="false" />
+            <element signature="e#5577#5578#0" expanded="false" />
+            <element signature="e#5632#6431#0" expanded="false" />
+            <element signature="e#6430#6431#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -4896,17 +4876,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/image_utils/ImageHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.19642857">
-          <caret line="167" column="5" selection-start-line="167" selection-start-column="5" selection-end-line="167" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/permission_utils/RuntimePermissionsHelper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.234375">
           <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4926,19 +4900,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalBasicInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3392857">
-          <caret line="129" column="12" selection-start-line="129" selection-start-column="12" selection-end-line="129" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalExpert.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.3325893">
           <caret line="41" column="13" selection-start-line="41" selection-start-column="13" selection-end-line="41" selection-end-column="13" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -4951,36 +4918,48 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/db/DBHelper.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/utils/async_task_thread_pool/AsyncTaskEx.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.924107">
-          <caret line="66" column="56" selection-start-line="66" selection-start-column="46" selection-end-line="66" selection-end-column="56" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="230" column="0" selection-start-line="230" selection-start-column="0" selection-end-line="230" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/MainActivity.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/image_utils/ImageHelper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.0">
-          <caret line="0" column="41" selection-start-line="0" selection-start-column="39" selection-end-line="0" selection-end-column="41" />
+        <state vertical-scroll-proportion="0.73214287">
+          <caret line="198" column="0" selection-start-line="198" selection-start-column="0" selection-end-line="198" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalBasicInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3325893">
+          <caret line="142" column="0" selection-start-line="142" selection-start-column="0" selection-end-line="142" selection-end-column="0" />
           <folding>
-            <element signature="e#7113#7152#0" expanded="true" />
-            <element signature="e#9345#9346#0" expanded="true" />
-            <element signature="e#9383#9384#0" expanded="true" />
-            <element signature="e#9672#9673#0" expanded="true" />
-            <element signature="e#9733#9734#0" expanded="true" />
-            <element signature="e#9801#9802#0" expanded="true" />
-            <element signature="e#9849#9850#0" expanded="true" />
-            <element signature="e#9913#9914#0" expanded="true" />
-            <element signature="e#9965#9966#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/FavoriteList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-8.333333">
+          <caret line="116" column="69" selection-start-line="116" selection-start-column="69" selection-end-line="116" selection-end-column="69" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3542#4318#0" expanded="true" />
+            <element signature="e#4317#4318#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/AnimalList.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-13.518518">
-          <caret line="195" column="11" selection-start-line="173" selection-start-column="7" selection-end-line="195" selection-end-column="11" />
+        <state vertical-scroll-proportion="-10.185185">
+          <caret line="421" column="5" selection-start-line="408" selection-start-column="3" selection-end-line="421" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#6807#7918#0" expanded="true" />
@@ -4994,14 +4973,45 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/FavoriteList.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5344418">
-          <caret line="116" column="69" selection-start-line="116" selection-start-column="69" selection-end-line="116" selection-end-column="69" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="101" column="57" selection-start-line="101" selection-start-column="57" selection-end-line="101" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/activity/ContactList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.49881235">
+          <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/fragment/ExpertList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.0">
+          <caret line="0" column="41" selection-start-line="0" selection-start-column="39" selection-end-line="0" selection-end-column="41" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3542#4318#0" expanded="true" />
-            <element signature="e#4317#4318#0" expanded="true" />
+            <element signature="e#3563#3844#0" expanded="true" />
+            <element signature="e#3843#3844#0" expanded="true" />
+            <element signature="e#4151#4925#0" expanded="true" />
+            <element signature="e#4924#4925#0" expanded="true" />
+            <element signature="e#4979#5633#0" expanded="true" />
+            <element signature="e#5632#5633#0" expanded="true" />
+            <element signature="e#7325#7372#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/creations/meister/jungleexplorer/db/DBHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.6650831">
+          <caret line="362" column="0" selection-start-line="362" selection-start-column="0" selection-end-line="362" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

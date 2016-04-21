@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             transaction.hide(mExpertList);
                             mAnimalList.hideActionMode();
                             mFavoriteList.hideActionMode();
+                            mExpertList.hideActionMode();
                         }
                         break;
                     case R.id.bb_menu_animals:
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             transaction.hide(mExpertList);
                             mAnimalList.showActionMode();
                             mFavoriteList.hideActionMode();
+                            mExpertList.hideActionMode();
                         }
                         break;
                     case R.id.bb_menu_favorites:
@@ -119,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             transaction.hide(mExpertList);
                             mAnimalList.hideActionMode();
                             mFavoriteList.showActionMode();
+                            mExpertList.hideActionMode();
                         }
                         break;
                     case R.id.bb_menu_experts:
@@ -127,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             transaction.hide(mGroupList);
                             transaction.hide(mAnimalList);
                             transaction.hide(mFavoriteList);
+                            mExpertList.showActionMode();
                             mAnimalList.hideActionMode();
                             mFavoriteList.hideActionMode();
                         }

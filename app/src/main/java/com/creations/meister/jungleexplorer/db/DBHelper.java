@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.domain.Expert;
@@ -362,9 +361,6 @@ public class DBHelper extends SQLiteOpenHelper {
                     aLocation.setLongitude(longitude);
                     float distance = location.distanceTo(aLocation);
 
-                    Log.d("DISTANCE", String.valueOf(distance));
-                    Log.d("RADIUS", String.valueOf(radius));
-
                     if(distance <= radius) {
                         returnAnimals.add(animal);
                     }
@@ -481,8 +477,21 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(TABLE_ANIMAL, KEY_ID + "=" + animal.getId(), null);
     }
 
+    public void removeExpert(@NonNull Expert expert) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        this.removeAnimalExperts(expert);
+
+        db.delete(TABLE_EXPERT, KEY_ID + "=" + expert.getId(), null);
+    }
+
     public void removeAnimalExperts(@NonNull Animal animal) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_ANIMAL_EXPERT, KEY_ANIMAL_ID + "=" + animal.getId(), null);
+    }
+
+    public void removeAnimalExperts(@NonNull Expert expert) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_ANIMAL_EXPERT, KEY_EXPERT_ID + "=" + expert.getId(), null);
     }
 }

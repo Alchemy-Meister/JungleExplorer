@@ -3,15 +3,18 @@ package com.creations.meister.jungleexplorer.fragment;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.SparseBooleanArray;
 import android.util.TypedValue;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,15 +32,13 @@ import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsH
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Random;
 
 import lb.library.PinnedHeaderListView;
 
 /**
  * Created by meister on 4/1/16.
  */
-public class ExpertList extends ListFragment implements AdapterView.OnItemClickListener {
+public class ExpertList extends ListFragment implements ActionMode.Callback {
 
     private PinnedHeaderListView mListView;
     private FloatingActionButton fabAddExpert;
@@ -47,9 +48,12 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
     private ArrayList<Domain> experts;
 
     private boolean isFiltered = false;
+    private boolean destroyActionMode = true;
 
     private ContactAdapter mAdapter;
     private DBHelper dbHelper;
+
+    private ActionMode mActionMode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,7 +74,6 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
         Collections.sort(experts);
 
         this.mListView = ((PinnedHeaderListView)this.getListView());
-        this.mListView.setOnItemClickListener(this);
         mListView.setPinnedHeaderView(mInflater.inflate(
                 R.layout.pinned_header_listview_side_header, mListView, false));
 
@@ -106,6 +109,60 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
             this.mAdapter.getFilter().filter(sv.getQuery());
             this.mAdapter.setHeaderViewVisible(TextUtils.isEmpty(sv.getQuery()));
         }
+
+        this.mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (mActionMode != null) {
+                    view.setSelected(true);
+                    if (isFiltered) {
+                        int expertId = ((DomainAdapter.ViewHolder) view.getTag()).id;
+                        for (int i = 0; i < experts.size(); i++) {
+                            if (experts.get(i).getId() == expertId) {
+                                onListItemSelect(i);
+                            }
+                        }
+                    } else {
+                        ExpertList.this.onListItemSelect(position);
+                    }
+                }
+            }
+        });
+
+        this.mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (isFiltered) {
+                    int expertId = ((ContactAdapter.ViewHolder) view.getTag()).id;
+                    for (int i = 0; i < experts.size(); i++) {
+                        if (experts.get(i).getId() == expertId) {
+                            onListItemSelect(i);
+                        }
+                    }
+                } else {
+                    onListItemSelect(position);
+                }
+                return true;
+            }
+        });
+    }
+
+    private void onListItemSelect(int position) {
+        mAdapter.toggleSelection(position);
+        boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
+
+        if (hasCheckedItems && mActionMode == null) {
+            // there are some selected items, start the actionMode
+            mActionMode = this.getActivity().startActionMode(ExpertList.this);
+        } else if (!hasCheckedItems && mActionMode != null) {
+            // there no selected items, finish the actionMode
+            destroyActionMode = true;
+            mActionMode.finish();
+        }
+
+        if (mActionMode != null)
+            mActionMode.setTitle(String.valueOf(mAdapter
+                    .getSelectedCount()) + " selected");
     }
 
     @Override
@@ -147,16 +204,64 @@ public class ExpertList extends ListFragment implements AdapterView.OnItemClickL
         return typedValue.resourceId;
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
-    }
-
     public ContactAdapter getAdapter() {
         return this.mAdapter;
     }
 
     public void setFiltered(boolean isFiltered) {
         this.isFiltered = isFiltered;
+    }
+
+    public void hideActionMode() {
+        if(mAdapter != null && mAdapter.getSelectedCount() > 0 && mActionMode != null) {
+            destroyActionMode = false;
+            mActionMode.finish();
+        }
+    }
+
+    public void showActionMode() {
+        if(mAdapter != null && mAdapter.getSelectedCount() > 0 && mActionMode != null) {
+            mActionMode = this.getActivity().startActionMode(this);
+            mActionMode.setTitle(String.valueOf(mAdapter
+                    .getSelectedCount()) + " selected");
+        }
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        mode.getMenuInflater().inflate(R.menu.cab_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        if(item.getItemId() == R.id.action_delete) {
+            SparseBooleanArray selectedIDs = mAdapter.getSelectedIds();
+            for(int i = experts.size(); i >= 0; i--) {
+                if(selectedIDs.get(i)){
+                    dbHelper.removeExpert((Expert) experts.get(i));
+                    experts.remove(i);
+                }
+            }
+            mAdapter.notifyDataSetChanged();
+            ((MainActivity) this.getActivity()).filterClean();
+
+        }
+        destroyActionMode = true;
+        mActionMode.finish();
+        return true;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        if(destroyActionMode) {
+            mAdapter.removeSelection();
+            mActionMode = null;
+        }
     }
 }

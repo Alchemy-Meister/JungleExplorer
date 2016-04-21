@@ -17,14 +17,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.adapter.ContactAdapter;
@@ -36,7 +34,6 @@ import com.creations.meister.jungleexplorer.utils.ContactsQuery;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import lb.library.PinnedHeaderListView;
 
@@ -156,12 +153,11 @@ public class ContactList extends AppCompatActivity implements AdapterView.OnItem
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent resultIntent = new Intent();
         if(!dbHelper.expertExists((Expert) contacts.get(position))) {
-            Log.d("Exist", "FALSE");
-            dbHelper.createExpert((Expert) contacts.get(position));
+            long expertID = dbHelper.createExpert((Expert) contacts.get(position));
+            contacts.get(position).setId((int) expertID);
             resultIntent.putExtra("newContact", contacts.get(position));
             this.setResult(AppCompatActivity.RESULT_OK, resultIntent);
         } else {
-            Log.d("Exists", "TRUE");
             this.setResult(AppCompatActivity.RESULT_CANCELED);
         }
         finish();
