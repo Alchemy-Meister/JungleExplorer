@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.fragment.AnimalList;
 import com.creations.meister.jungleexplorer.fragment.ExpertList;
 import com.creations.meister.jungleexplorer.fragment.FavoriteList;
@@ -23,7 +24,9 @@ import com.creations.meister.jungleexplorer.R;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener,
+        FavoriteList.AnimalListListener, AnimalList.AnimalListListener
+{
 
     private static final String GROUP_KEY = "GROUP";
     private static final String ANIMAL_KEY = "ANIMAL";
@@ -95,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             transaction.hide(mFavoriteList);
                             transaction.hide(mExpertList);
                             mAnimalList.hideActionMode();
+                            mFavoriteList.hideActionMode();
                         }
                         break;
                     case R.id.bb_menu_animals:
@@ -104,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             transaction.hide(mFavoriteList);
                             transaction.hide(mExpertList);
                             mAnimalList.showActionMode();
+                            mFavoriteList.hideActionMode();
                         }
                         break;
                     case R.id.bb_menu_favorites:
@@ -113,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             transaction.hide(mAnimalList);
                             transaction.hide(mExpertList);
                             mAnimalList.hideActionMode();
+                            mFavoriteList.showActionMode();
                         }
                         break;
                     case R.id.bb_menu_experts:
@@ -122,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             transaction.hide(mAnimalList);
                             transaction.hide(mFavoriteList);
                             mAnimalList.hideActionMode();
+                            mFavoriteList.hideActionMode();
                         }
                         break;
                 }
@@ -228,5 +235,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     public void filterClean() {
         MenuItemCompat.collapseActionView(searchItem);
+    }
+
+    @Override
+    public void onAnimalListChanged(Animal animal) {
+        mAnimalList.updateAnimal(animal);
+    }
+
+
+    @Override
+    public void onAnimalRemove(Animal animal) {
+        mFavoriteList.removeFavorite(animal);
     }
 }

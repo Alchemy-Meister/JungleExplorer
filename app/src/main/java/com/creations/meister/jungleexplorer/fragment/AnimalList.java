@@ -2,6 +2,7 @@ package com.creations.meister.jungleexplorer.fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -81,6 +82,8 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
 
     private LocationRequest mLocationRequest;
 
+    private AnimalListListener animalListListener;
+
     private SharedPreferences.OnSharedPreferenceChangeListener shareChangeListener
             = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
@@ -107,6 +110,18 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
             }
         }
     };
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            animalListListener = (AnimalListListener) this.getActivity();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(this.getActivity().toString()
+                    + " must implement AnimalListListener");
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -424,6 +439,7 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
             for(int i = animals.size(); i >= 0; i--) {
                 if(selectedIDs.get(i)){
                     dbHelper.removeAnimal((Animal) animals.get(i));
+                    animalListListener.onAnimalRemove((Animal) animals.get(i));
                     animals.remove(i);
                 }
             }
@@ -446,5 +462,20 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
 
     public void setFiltered(boolean isFiltered) {
         this.isFiltered = isFiltered;
+    }
+
+    public void updateAnimal(Animal animal) {
+        if(animal != null) {
+            for(int i = 0; i < animals.size(); i++) {
+                if(animals.get(i).getId() == animal.getId()) {
+                    animal.setFavorite(0);
+                    animals.set(i, animal);
+                }
+            }
+        }
+    }
+
+    public interface AnimalListListener {
+        public void onAnimalRemove(Animal animal);
     }
 }
