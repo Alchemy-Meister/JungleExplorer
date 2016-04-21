@@ -33,7 +33,7 @@ import lb.library.PinnedHeaderListView;
 /**
  * Created by meister on 4/2/16.
  */
-public class FavoriteList extends ListFragment implements AdapterView.OnItemClickListener, android.view.ActionMode.Callback {
+public class FavoriteList extends ListFragment implements android.view.ActionMode.Callback {
 
     private PinnedHeaderListView mListView;
     private LayoutInflater mInflater;
@@ -81,7 +81,6 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
         Collections.sort(animals);
 
         this.mListView = ((PinnedHeaderListView)this.getListView());
-        this.mListView.setOnItemClickListener(this);
         mListView.setPinnedHeaderView(mInflater.inflate(
                 R.layout.pinned_header_listview_side_header, mListView, false));
 
@@ -101,6 +100,25 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
             this.mAdapter.getFilter().filter(sv.getQuery());
             this.mAdapter.setHeaderViewVisible(TextUtils.isEmpty(sv.getQuery()));
         }
+
+        this.mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (mActionMode != null) {
+                    view.setSelected(true);
+                    if (isFiltered) {
+                        int expertId = ((DomainAdapter.ViewHolder) view.getTag()).id;
+                        for (int i = 0; i < animals.size(); i++) {
+                            if (animals.get(i).getId() == expertId) {
+                                onListItemSelect(i);
+                            }
+                        }
+                    } else {
+                        FavoriteList.this.onListItemSelect(position);
+                    }
+                }
+            }
+        });
 
         this.mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -156,11 +174,6 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
         final TypedValue typedValue=new TypedValue();
         activity.getTheme().resolveAttribute(attr, typedValue, true);
         return typedValue.resourceId;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
     }
 
     public DomainAdapter getAdapter() {
