@@ -11,6 +11,12 @@
         android:visible="false"/>
 
     <item
+        android:id="@+id/favorite"
+        android:icon="@drawable/ic_border_heart"
+        app:showAsAction="ifRoom|collapseActionView"
+        android:title="@string/like" />
+
+    <item
         android:id="@+id/edit"
         android:icon="@drawable/ic_edit_mode"
         app:showAsAction="ifRoom|collapseActionView"

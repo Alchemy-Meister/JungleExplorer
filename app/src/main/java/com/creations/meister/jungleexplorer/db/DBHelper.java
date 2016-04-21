@@ -440,7 +440,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return expert;
     }
 
-    public void  updateAnimal(@NonNull Animal animal) {
+    public void updateAnimal(@NonNull Animal animal) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_NAME, animal.getName());
         cv.put(KEY_PHOTO_ID, animal.getPhotoId());
@@ -464,6 +464,14 @@ public class DBHelper extends SQLiteOpenHelper {
         for(Expert expert : animal.getAnimalExperts()) {
             this.createAnimalExpert(animal, expert);
         }
+    }
+
+    public void updateAnimalFavorite(@NonNull Animal animal) {
+        ContentValues cv = new ContentValues();
+        cv.put(KEY_FAVORITE, animal.getFavorite());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.update(TABLE_ANIMAL, cv,KEY_ID + "=" + animal.getId(), null);
     }
 
     public void removeAnimal(@NonNull  Animal animal) {

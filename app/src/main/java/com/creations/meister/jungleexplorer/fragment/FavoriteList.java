@@ -35,6 +35,8 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
 
     private boolean isFiltered = false;
 
+    private ArrayList<Domain> animals;
+
     private DomainAdapter mAdapter;
     private DBHelper dbHelper;
 
@@ -54,7 +56,7 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
 
         dbHelper = DBHelper.getHelper(this.getActivity());
 
-        final ArrayList<Domain> animals = (ArrayList) dbHelper.getFavorites();
+        animals = (ArrayList) dbHelper.getFavorites();
         Collections.sort(animals);
 
         this.mListView = ((PinnedHeaderListView)this.getListView());
@@ -80,7 +82,18 @@ public class FavoriteList extends ListFragment implements AdapterView.OnItemClic
         }
     }
 
-    public static int getResIdFromAttribute(final Activity activity,final int attr)
+    @Override
+    public void onResume() {
+        super.onResume();
+        animals = (ArrayList) dbHelper.getFavorites();
+        Collections.sort(animals);
+        if(mAdapter != null && mListView != null) {
+            mAdapter.setData(animals);
+            mListView.setAdapter(mAdapter);
+        }
+    }
+
+    public static int getResIdFromAttribute(final Activity activity, final int attr)
     {
         if(attr==0)
             return 0;

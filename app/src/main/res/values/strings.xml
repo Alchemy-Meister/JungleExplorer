@@ -14,6 +14,8 @@
     <string name="save_changes">Save changes</string>
     <string name="view_animal">View animal</string>
     <string name="edit_animal">Edit animal</string>
+    <string name="like">Like</string>
+    <string name="unlike">Unlike</string>
     <string name="add_group">Add new group</string>
 
     <string name="no_animals">No animals saved</string>

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -17,7 +16,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,8 +127,6 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
             mAnimalName.setText(animal.getName());
             mLocationText.setText(animal.getLocationText());
             mDescription.setText(animal.getDescription());
-
-            Log.d("WTF?", String.valueOf(animal.getName()));
 
             if(!TextUtils.isEmpty(animal.getPhotoId())) {
                 ViewTreeObserver vto = mImageView.getViewTreeObserver();
@@ -250,8 +246,6 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
                     mImageView.invalidate();
 
                     mCurrentPhotoPath = ImageHelper.getPath(this.getContext(), uri);
-                    Log.d("PATH", mCurrentPhotoPath);
-
                 } catch (FileNotFoundException e) {
                     // Error opening the image
                 } catch (IOException e) {

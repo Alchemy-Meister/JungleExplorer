@@ -47,6 +47,7 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
 
     private boolean editMode = false;
     private boolean creation = false;
+    private boolean favorite = false;
 
     private AnimalBasicInfo info;
     private AnimalLocation location;
@@ -56,6 +57,7 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
 
     private SearchView searchView;
     private MenuItem searchItem;
+    private MenuItem favoriteItem;
 
     private DBHelper dbHelper;
 
@@ -69,6 +71,10 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
             menuInflater.inflate(R.menu.new_animal_menu, menu);
         } else {
             menuInflater.inflate(R.menu.view_animal_menu, menu);
+            favoriteItem = menu.findItem(R.id.favorite);
+            if(this.favorite) {
+                favoriteItem.setIcon(this.getResources().getDrawable(R.drawable.ic_full_heart));
+            }
         }
 
         searchItem = menu.findItem(R.id.searchView);
@@ -111,6 +117,9 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
             Bundle bundle = getIntent().getExtras();
             if(bundle != null) {
                 animal = (Animal) bundle.get(ANIMAL_KEY);
+                if(animal != null && animal.getFavorite() == 1) {
+                    this.favorite = true;
+                }
             } else {
                 creation = true;
             }
@@ -130,6 +139,7 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
             transaction.commit();
         } else {
             animal = (Animal)  savedInstanceState.getSerializable("animal");
+            favorite = savedInstanceState.getBoolean("favorite");
             editMode = savedInstanceState.getBoolean("editable");
             creation = savedInstanceState.getBoolean("creation");
             info = (AnimalBasicInfo) mFragmentManager.getFragment(
@@ -246,6 +256,7 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
                         newAnimal = ((AnimalExpert) fragment).setAnimalExperts(newAnimal);
                     }
                 }
+
                 if(!TextUtils.isEmpty(newAnimal.getName())) {
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("newAnimal", newAnimal);
@@ -264,11 +275,17 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
                         animal = ((AnimalExpert) fragment).setAnimalExperts(animal);
                     }
                 }
+
                 if(!TextUtils.isEmpty(animal.getName())) {
                     dbHelper.updateAnimal(animal);
                     actionBar.setTitle(getResources().getString(R.string.view_animal));
                     this.menu.clear();
                     this.getMenuInflater().inflate(R.menu.view_animal_menu, menu);
+
+                    favoriteItem = this.menu.findItem(R.id.favorite);
+                    if(this.favorite) {
+                        favoriteItem.setIcon(this.getResources().getDrawable(R.drawable.ic_full_heart));
+                    }
 
                     searchItem = this.menu.findItem(R.id.searchView);
                     searchView = (SearchView) searchItem.getActionView();
@@ -310,6 +327,19 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
             this.info.setEditable(editMode);
             this.location.setEditable(editMode);
             this.expert.setEditable(editMode);
+        } else if(menuItem.getItemId() == R.id.favorite && favoriteItem != null) {
+            if(this.favorite) {
+                this.favorite = false;
+                favoriteItem.setIcon(this.getResources().getDrawable(R.drawable.ic_border_heart));
+                animal.setFavorite(0);
+                dbHelper.updateAnimalFavorite(animal);
+
+            } else {
+                this.favorite = true;
+                favoriteItem.setIcon(this.getResources().getDrawable(R.drawable.ic_full_heart));
+                animal.setFavorite(1);
+                dbHelper.updateAnimalFavorite(animal);
+            }
         }
 
         return super.onOptionsItemSelected(menuItem);
@@ -325,6 +355,7 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
         mFragmentManager.putFragment(outState, NewAnimal.EXPERT_KEY, expert);
 
         mBottomBar.onSaveInstanceState(outState);
+        outState.putBoolean("favorite", favorite);
         outState.putBoolean("creation", creation);
         outState.putSerializable("animal", animal);
         outState.putBoolean("editable", editMode);
