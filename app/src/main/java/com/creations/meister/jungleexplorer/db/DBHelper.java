@@ -298,6 +298,25 @@ public class DBHelper extends SQLiteOpenHelper {
         return experts;
     }
 
+    public ArrayList<Group> getAllAnimalGroups(@NonNull Animal animal) {
+        ArrayList<Group> groups = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_ANIMAL_GROUP + " WHERE "
+                + KEY_ANIMAL_ID + "=" + animal.getId();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if(c.moveToFirst()) {
+            do {
+                Group group = this.getGroup(c.getLong(c.getColumnIndex(KEY_GROUP_ID)));
+                if(group != null) {
+                    groups.add(group);
+                }
+            } while(c.moveToNext());
+        }
+        c.close();
+        return groups;
+    }
+
     public ArrayList<Expert> getAllAnimalExperts(@NonNull  Animal animal) {
         ArrayList<Expert> experts = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + TABLE_ANIMAL_EXPERT + " WHERE "
@@ -390,6 +409,20 @@ public class DBHelper extends SQLiteOpenHelper {
             } while(c.moveToNext());
         }
         return returnAnimal;
+    }
+
+    public Group getGroup(Long id) {
+        Group group = null;
+        String selectQuery = "SELECT * FROM " + TABLE_GROUP + " WHERE " + KEY_ID + "=?";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, new String[] {String.valueOf(id)});
+        if(c.moveToFirst()) {
+            group = new Group();
+            group.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+            group.setName(c.getString(c.getColumnIndex(KEY_NAME)));
+            group.setPhotoId(c.getString(c.getColumnIndex(KEY_PHOTO_ID)));
+        }
+        return group;
     }
 
     public Expert getExpert(Long id) {

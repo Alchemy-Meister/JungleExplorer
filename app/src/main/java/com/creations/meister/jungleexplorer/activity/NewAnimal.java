@@ -24,6 +24,7 @@ import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.fragment.AnimalBasicInfo;
 import com.creations.meister.jungleexplorer.fragment.AnimalExpert;
+import com.creations.meister.jungleexplorer.fragment.AnimalGroup;
 import com.creations.meister.jungleexplorer.fragment.AnimalLocation;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
@@ -35,6 +36,7 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
 
     private static final String INFO_KEY = "INFO";
     private static final String LOCATION_KEY = "LOCATION";
+    private static final String GROUP_KEY = "GROUP";
     private static final String EXPERT_KEY = "EXPERT";
     private static final String ANIMAL_KEY = "ANIMAL";
 
@@ -48,6 +50,7 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
 
     private AnimalBasicInfo info;
     private AnimalLocation location;
+    private AnimalGroup group;
     private AnimalExpert expert;
     private Animal animal;
 
@@ -83,9 +86,13 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
     private void filterFragment(String query) {
         expert.getAdapter().getFilter().filter(query);
         expert.getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
+        group.getAdapter().getFilter().filter(query);
+        group.getAdapter().setHeaderViewVisible(TextUtils.isEmpty(query));
         if(TextUtils.isEmpty(query)) {
+            group.setFiltered(false);
             expert.setFiltered(false);
         } else {
+            group.setFiltered(true);
             expert.setFiltered(true);
         }
     }
@@ -110,10 +117,13 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
 
             info = new AnimalBasicInfo();
             location = new AnimalLocation();
+            group = new AnimalGroup();
             expert = new AnimalExpert();
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
             transaction.add(R.id.contentFragment, expert, NewAnimal.EXPERT_KEY);
             transaction.hide(expert);
+            transaction.add(R.id.contentFragment, group, NewAnimal.GROUP_KEY);
+            transaction.hide(group);
             transaction.add(R.id.contentFragment, location, NewAnimal.LOCATION_KEY);
             transaction.hide(location);
             transaction.add(R.id.contentFragment, info, NewAnimal.INFO_KEY);
@@ -126,6 +136,8 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
                     savedInstanceState, NewAnimal.INFO_KEY);
             location = (AnimalLocation) mFragmentManager.getFragment(
                     savedInstanceState, NewAnimal.LOCATION_KEY);
+            group = (AnimalGroup) mFragmentManager.getFragment(
+                    savedInstanceState, NewAnimal.GROUP_KEY);
             expert = (AnimalExpert) mFragmentManager.getFragment(
                     savedInstanceState, NewAnimal.EXPERT_KEY);
         }
@@ -153,7 +165,9 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
                         if(!info.isVisible()) {
                             transaction.show(info);
                             transaction.hide(location);
+                            transaction.hide(group);
                             transaction.hide(expert);
+                            group.hideActionMode();
                             expert.hideActionMode();
                             setVisibleSearchMenuItem(false);
                         }
@@ -162,21 +176,33 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
                         if(!location.isVisible()) {
                             transaction.show(location);
                             transaction.hide(info);
+                            transaction.hide(group);
                             transaction.hide(expert);
                             location.initializeMyLocationPermission();
+                            group.hideActionMode();
                             expert.hideActionMode();
                             setVisibleSearchMenuItem(false);
                         }
                         break;
                     case R.id.bb_menu_new_animal_group:
-                        transaction.replace(R.id.contentFragment, null, "GROUP");
+                        if(!group.isVisible()) {
+                            transaction.show(group);
+                            transaction.hide(info);
+                            transaction.hide(location);
+                            transaction.hide(expert);
+                            group.showActionMode();
+                            expert.hideActionMode();
+                            setVisibleSearchMenuItem(true);
+                        }
                         break;
                     case R.id.bb_menu_new_animal_experts:
                         if(!expert.isVisible()) {
                             transaction.show(expert);
                             transaction.hide(info);
                             transaction.hide(location);
+                            transaction.hide(group);
                             expert.showActionMode();
+                            group.hideActionMode();
                             setVisibleSearchMenuItem(true);
                         }
                         break;
@@ -214,6 +240,8 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
                        newAnimal = ((AnimalBasicInfo) fragment).setAnimalBasicInfo(newAnimal);
                     } else if(fragment instanceof AnimalLocation) {
                         newAnimal = ((AnimalLocation) fragment).setAnimalLocation(newAnimal);
+                    } else if(fragment instanceof  AnimalGroup) {
+                        newAnimal = ((AnimalGroup) fragment).setAnimalGroups(newAnimal);
                     } else if(fragment instanceof  AnimalExpert) {
                         newAnimal = ((AnimalExpert) fragment).setAnimalExperts(newAnimal);
                     }
@@ -293,6 +321,7 @@ public class NewAnimal extends AppCompatActivity implements SearchView.OnQueryTe
 
         mFragmentManager.putFragment(outState, NewAnimal.INFO_KEY, info);
         mFragmentManager.putFragment(outState, NewAnimal.LOCATION_KEY, location);
+        mFragmentManager.putFragment(outState, NewAnimal.GROUP_KEY, group);
         mFragmentManager.putFragment(outState, NewAnimal.EXPERT_KEY, expert);
 
         mBottomBar.onSaveInstanceState(outState);

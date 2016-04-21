@@ -1,6 +1,5 @@
 package com.creations.meister.jungleexplorer.fragment;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -23,13 +22,12 @@ import android.widget.AdapterView;
 
 import com.creations.meister.jungleexplorer.R;
 import com.creations.meister.jungleexplorer.activity.NewAnimal;
-import com.creations.meister.jungleexplorer.activity.NewAnimalExpertList;
-import com.creations.meister.jungleexplorer.adapter.ContactAdapter;
+import com.creations.meister.jungleexplorer.activity.NewAnimalGroupList;
+import com.creations.meister.jungleexplorer.adapter.DomainAdapter;
 import com.creations.meister.jungleexplorer.db.DBHelper;
 import com.creations.meister.jungleexplorer.domain.Animal;
 import com.creations.meister.jungleexplorer.domain.Domain;
-import com.creations.meister.jungleexplorer.domain.Expert;
-import com.creations.meister.jungleexplorer.permission_utils.RuntimePermissionsHelper;
+import com.creations.meister.jungleexplorer.domain.Group;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,29 +37,29 @@ import lb.library.PinnedHeaderListView;
 /**
  * Created by meister on 4/15/16.
  */
-public class AnimalExpert extends ListFragment implements ActionMode.Callback {
+public class AnimalGroup extends ListFragment implements ActionMode.Callback {
 
     private PinnedHeaderListView mListView;
-    private FloatingActionButton fabAddExpert;
+    private FloatingActionButton fabAddGroup;
     private LayoutInflater mInflater;
     private ActionMode mActionMode;
 
     private final static String ANIMAL_KEY = "ANIMAL";
-    private final static String EXPERT_KEY = "EXPERT";
-    private final static int EXPERT_REQUEST = 0;
-    private ArrayList<Domain> experts;
+    private final static String GROUP_KEY = "GROUP";
+    private final static int GROUP_REQUEST = 0;
+    private ArrayList<Domain> groups;
 
     private boolean editable = false;
     private boolean destroyActionMode = false;
     private boolean isFiltered = false;
     private Animal animal;
 
-    private ContactAdapter mAdapter;
+    private DomainAdapter mAdapter;
     private DBHelper dbHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.expert_list_fragment, container, false);
+        View view = inflater.inflate(R.layout.group_list_fragment, container, false);
 
         mInflater = inflater;
 
@@ -75,73 +73,67 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
         if(savedInstanceState != null) {
             editable = savedInstanceState.getBoolean("editable");
             animal = (Animal) savedInstanceState.getSerializable("animal");
-            experts = (ArrayList<Domain>) savedInstanceState.getSerializable("experts");
+            groups = (ArrayList<Domain>) savedInstanceState.getSerializable(AnimalGroup.GROUP_KEY);
         } else {
             Bundle bundle = this.getActivity().getIntent().getExtras();
             if(bundle != null) {
                 animal = (Animal) bundle.get(ANIMAL_KEY);
             } else {
                 editable = true;
-                experts = new ArrayList<>();
+                groups = new ArrayList<>();
                 AppCompatTextView et = (AppCompatTextView) this.getView().findViewById(android.R.id.empty);
-                et.setText(this.getResources().getString(R.string.no_experts_animal));
+                et.setText(this.getResources().getString(R.string.no_groups_animal));
             }
         }
 
         dbHelper = DBHelper.getHelper(this.getActivity());
 
-        if(experts == null && animal != null) {
-            experts = (ArrayList) dbHelper.getAllAnimalExperts(animal);
-            Collections.sort(experts);
+        if(groups == null && animal != null) {
+            groups = (ArrayList) dbHelper.getAllAnimalGroups(animal);
+            Collections.sort(groups);
         }
 
         this.mListView = ((PinnedHeaderListView)this.getListView());
         mListView.setPinnedHeaderView(mInflater.inflate(
                 R.layout.pinned_header_listview_side_header, mListView, false));
 
-        mAdapter = new ContactAdapter(this.getContext(), experts);
+        mAdapter = new DomainAdapter(this.getContext(), groups);
         int pinnedHeaderBackgroundColor=getResources().getColor(this.getResIdFromAttribute(
                 this.getActivity(),android.R.attr.colorBackground));
         mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
         mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
 
-        if(!RuntimePermissionsHelper.hasPermissions(this.getContext(),
-                Manifest.permission.READ_CONTACTS))
-        {
-            mAdapter.loadImages(false);
-        }
-
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(mAdapter);
         mListView.setEnableHeaderTransparencyChanges(false);
 
-        this.fabAddExpert = (FloatingActionButton) this.getView().findViewById(R.id.expertFAB);
-        this.fabAddExpert.setBackgroundTintList(ColorStateList.valueOf(
+        this.fabAddGroup = (FloatingActionButton) this.getView().findViewById(R.id.groupFAB);
+        this.fabAddGroup.setBackgroundTintList(ColorStateList.valueOf(
                 this.getResources().getColor(R.color.colorAnimal)));
-        this.fabAddExpert.setOnClickListener(new View.OnClickListener() {
+        this.fabAddGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent menuIntent = new Intent(AnimalExpert.this.getContext(),
-                        NewAnimalExpertList.class);
-                startActivityForResult(menuIntent, EXPERT_REQUEST);
+                Intent menuIntent = new Intent(AnimalGroup.this.getContext(),
+                        NewAnimalGroupList.class);
+                startActivityForResult(menuIntent, GROUP_REQUEST);
             }
         });
 
         this.mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if(mActionMode != null && editable) {
-                if(isFiltered) {
-                    int expertId = ((ContactAdapter.ViewHolder) view.getTag()).id;
-                    for(int i = 0; i < experts.size(); i++) {
-                        if(experts.get(i).getId() == expertId) {
-                            onListItemSelect(i);
+                if(mActionMode != null && editable) {
+                    if(isFiltered) {
+                        int groupId = ((DomainAdapter.ViewHolder) view.getTag()).id;
+                        for(int i = 0; i < groups.size(); i++) {
+                            if(groups.get(i).getId() == groupId) {
+                                onListItemSelect(i);
+                            }
                         }
+                    } else {
+                        AnimalGroup.this.onListItemSelect(position);
                     }
-                } else {
-                    AnimalExpert.this.onListItemSelect(position);
                 }
-            }
             }
         });
 
@@ -150,9 +142,9 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 if(editable) {
                     if(isFiltered) {
-                        int expertId = ((ContactAdapter.ViewHolder) view.getTag()).id;
-                        for(int i = 0; i < experts.size(); i++) {
-                            if(experts.get(i).getId() == expertId) {
+                        int groupId = ((DomainAdapter.ViewHolder) view.getTag()).id;
+                        for(int i = 0; i < groups.size(); i++) {
+                            if(groups.get(i).getId() == groupId) {
                                 onListItemSelect(i);
                             }
                         }
@@ -199,20 +191,20 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == EXPERT_REQUEST
+        if(requestCode == GROUP_REQUEST
                 && resultCode == AppCompatActivity.RESULT_OK)
         {
             boolean exists = false;
-            Expert newExpert = (Expert) data.getExtras().getSerializable("newAnimalExpert");
-            for(Domain searchExpert : experts) {
-                if(newExpert.getContactUri().equals(((Expert)searchExpert).getContactUri())) {
+            Group newGroup = (Group) data.getExtras().getSerializable("newAnimalGroup");
+            for(Domain searchGroup : groups) {
+                if(newGroup.getId() == (searchGroup).getId()) {
                     exists = true;
                 }
             }
             if(!exists) {
-                experts.add(newExpert);
-                Collections.sort(experts);
-                mAdapter.setData(experts);
+                groups.add(newGroup);
+                Collections.sort(groups);
+                mAdapter.setData(groups);
                 mListView.setAdapter(mAdapter);
             }
         }
@@ -228,38 +220,24 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if(mAdapter != null && mListView != null) {
-            if (RuntimePermissionsHelper.hasPermissions(this.getContext(),
-                    Manifest.permission.READ_CONTACTS)) {
-                mAdapter.loadImages(true);
-            } else {
-                mAdapter.loadImages(false);
-            }
-            mListView.setAdapter(mAdapter);
-        }
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("editable", editable);
         outState.putSerializable("animal", animal);
-        outState.putSerializable("experts", experts);
+        outState.putSerializable(AnimalGroup.GROUP_KEY, groups);
     }
 
     public void setEditable(boolean editable) {
         this.editable = editable;
         if(editable) {
-            this.fabAddExpert.setVisibility(View.VISIBLE);
+            this.fabAddGroup.setVisibility(View.VISIBLE);
         } else {
-            this.fabAddExpert.setVisibility(View.INVISIBLE);
+            this.fabAddGroup.setVisibility(View.INVISIBLE);
         }
     }
 
-    public Animal setAnimalExperts(Animal newAnimal) {
-        newAnimal.setAnimalExperts((ArrayList) experts);
+    public Animal setAnimalGroups(Animal newAnimal) {
+        newAnimal.setAnimalGroups((ArrayList) groups);
         return newAnimal;
     }
 
@@ -293,9 +271,9 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         if(item.getItemId() == R.id.action_delete) {
             SparseBooleanArray selectedIDs = mAdapter.getSelectedIds();
-            for(int i = experts.size(); i >= 0; i--) {
+            for(int i = groups.size(); i >= 0; i--) {
                 if(selectedIDs.get(i)){
-                    experts.remove(i);
+                    groups.remove(i);
                 }
             }
             mAdapter.notifyDataSetChanged();
@@ -315,7 +293,7 @@ public class AnimalExpert extends ListFragment implements ActionMode.Callback {
         }
     }
 
-    public ContactAdapter getAdapter() {
+    public DomainAdapter getAdapter() {
         return this.mAdapter;
     }
 
