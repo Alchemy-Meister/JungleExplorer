@@ -41,12 +41,14 @@ import java.io.IOException;
 public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
 
     private String mCurrentPhotoPath;
-    private Bitmap animalBitmap;
     private ImageView mImageView;
+    private Bitmap animalBitmap;
     private TextInputLayout mNameTextLayout;
     private EditText mAnimalName;
     private EditText mLocationText;
     private EditText mDescription;
+
+    private AsyncTaskEx<Void, Void, Bitmap> updateTask;
 
     private final String ANIMAL_KEY = "ANIMAL";
     private Animal animal;
@@ -73,7 +75,7 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
 
         if(savedInstanceState != null) {
-            animalBitmap = savedInstanceState.getParcelable("animalImage");
+            mCurrentPhotoPath = savedInstanceState.getString("animalImagePath");
             animal = (Animal) savedInstanceState.getSerializable("animal");
             editable = savedInstanceState.getBoolean("editable");
         } else {
@@ -92,9 +94,16 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
 
         mImageView = (ImageView) this.getActivity().findViewById(R.id.animalImage);
 
-        if (animalBitmap != null) {
-            mImageView.setImageBitmap(animalBitmap);
-            mImageView.invalidate();
+        if (mCurrentPhotoPath != null) {
+            if(!TextUtils.isEmpty(mCurrentPhotoPath)) {
+                ViewTreeObserver vto = mImageView.getViewTreeObserver();
+                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        asyncImageLoader(mCurrentPhotoPath);
+                    }
+                });
+            }
         }
 
         mNameTextLayout = (TextInputLayout)
@@ -128,52 +137,18 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
             mLocationText.setText(animal.getLocationText());
             mDescription.setText(animal.getDescription());
 
-            if(!TextUtils.isEmpty(animal.getPhotoId())) {
-                ViewTreeObserver vto = mImageView.getViewTreeObserver();
-                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        if(animalBitmap == null) {
-                            final Bitmap cachedBitmap = !TextUtils.isEmpty(animal.getPhotoId())
-                                    ? ImageCache.INSTANCE.getBitmapFromMemCache(animal.getPhotoId()
-                                    + "BIG") : null;
-                            if(cachedBitmap == null) {
-                                AsyncTaskEx<Void, Void, Bitmap> updateTask =
-                                        new AsyncTaskEx<Void, Void, Bitmap>()
-                                {
-                                    @Override
-                                    public Bitmap doInBackground(
-                                            @SuppressWarnings("unchecked") Void... params) {
-                                        if (mImageView != null && animal != null) {
-                                            return ImageHelper.scaleImage(mImageView,
-                                                    animal.getPhotoId());
-                                        }
-                                        return null;
-                                    }
-
-                                    @Override
-                                    public void onPostExecute(Bitmap result) {
-                                        super.onPostExecute(result);
-                                        if (result == null)
-                                            return;
-                                        if (animal != null & mImageView != null) {
-                                            animalBitmap = result;
-                                            ImageCache.INSTANCE.addBitmapToCache(animal.getPhotoId()
-                                                    + "BIG", result);
-                                            mImageView.setImageBitmap(animalBitmap);
-                                            mImageView.invalidate();
-                                        }
-                                    }
-                                };
-                                updateTask.execute();
-                            } else {
-                                animalBitmap = cachedBitmap;
-                                mImageView.setImageBitmap(cachedBitmap);
-                                mImageView.invalidate();
+            if(updateTask == null) {
+                if (!TextUtils.isEmpty(animal.getPhotoId())) {
+                    ViewTreeObserver vto = mImageView.getViewTreeObserver();
+                    vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            if(animal != null) {
+                                asyncImageLoader(animal.getPhotoId());
                             }
                         }
-                    }
-                });
+                    });
+                }
             }
         }
 
@@ -338,8 +313,50 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("animalImage", animalBitmap);
+        outState.putString("animalImagePath", mCurrentPhotoPath);
         outState.putSerializable("animal", animal);
         outState.putBoolean("editable", editable);
+    }
+
+    private void asyncImageLoader(final String path) {
+        if(animalBitmap == null) {
+            final Bitmap cachedBitmap = !TextUtils.isEmpty(path)
+                    ? ImageCache.INSTANCE.getBitmapFromMemCache(path
+                    + "BIG") : null;
+            if(cachedBitmap == null) {
+                updateTask =
+                        new AsyncTaskEx<Void, Void, Bitmap>()
+                        {
+                            @Override
+                            public Bitmap doInBackground(
+                                    @SuppressWarnings("unchecked") Void... params) {
+                                if (mImageView != null && path != null) {
+                                    return ImageHelper.scaleImage(mImageView,
+                                            path);
+                                }
+                                return null;
+                            }
+
+                            @Override
+                            public void onPostExecute(Bitmap result) {
+                                super.onPostExecute(result);
+                                if (result == null)
+                                    return;
+                                if (path != null & mImageView != null) {
+                                    animalBitmap = result;
+                                    ImageCache.INSTANCE.addBitmapToCache(path
+                                            + "BIG", result);
+                                    mImageView.setImageBitmap(animalBitmap);
+                                    mImageView.invalidate();
+                                }
+                            }
+                        };
+                updateTask.execute();
+            } else {
+                animalBitmap = cachedBitmap;
+                mImageView.setImageBitmap(cachedBitmap);
+                mImageView.invalidate();
+            }
+        }
     }
 }
