@@ -331,8 +331,13 @@ public class AnimalBasicInfo extends Fragment implements View.OnClickListener {
                             public Bitmap doInBackground(
                                     @SuppressWarnings("unchecked") Void... params) {
                                 if (mImageView != null && path != null) {
-                                    return ImageHelper.scaleImage(mImageView,
-                                            path);
+                                    try {
+                                        Bitmap bitmap = ImageHelper.scaleImage(mImageView,
+                                                path);
+                                        return bitmap;
+                                    } catch (OutOfMemoryError e) {
+                                        return null;
+                                    }
                                 }
                                 return null;
                             }

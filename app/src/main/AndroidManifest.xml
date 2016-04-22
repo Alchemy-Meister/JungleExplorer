@@ -17,7 +17,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MyTheme">
+        android:theme="@style/Theme.MyTheme"
+        android:largeHeap="true">
         <activity
             android:name=".activity.MainActivity"
             android:launchMode="singleTop">
