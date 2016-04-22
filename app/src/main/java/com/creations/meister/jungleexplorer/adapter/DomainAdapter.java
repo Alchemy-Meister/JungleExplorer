@@ -118,9 +118,25 @@ public class DomainAdapter extends SearchablePinnedHeaderListViewAdapter<Domain>
                         Bitmap imageBitmap = null;
 
                         try {
-                            FileInputStream fis = new FileInputStream(domain.getPhotoId());
-                            imageBitmap = BitmapFactory.decodeStream(fis);
-                            imageBitmap = Bitmap.createScaledBitmap(imageBitmap, THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
+                            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+                            bmOptions.inJustDecodeBounds = true;
+                            BitmapFactory.decodeStream(new FileInputStream(domain.getPhotoId()),
+                                    null, bmOptions);
+                            int photoH = bmOptions.outHeight;
+
+                            // Determine how much to scale down the image
+                            int scaleFactor = photoH/THUMBNAIL_SIZE;
+
+                            // Decode the image file into a Bitmap sized to fill the View
+                            bmOptions.inJustDecodeBounds = false;
+
+                            bmOptions.inSampleSize = scaleFactor;
+                            bmOptions.inPurgeable = true;
+
+                            imageBitmap = BitmapFactory.decodeStream(
+                                    new FileInputStream(domain.getPhotoId()), null, bmOptions);
+                            imageBitmap = Bitmap.createScaledBitmap(imageBitmap, THUMBNAIL_SIZE,
+                                    THUMBNAIL_SIZE, false);
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
