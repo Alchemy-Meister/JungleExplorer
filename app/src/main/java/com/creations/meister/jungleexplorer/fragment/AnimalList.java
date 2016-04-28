@@ -247,13 +247,31 @@ public class AnimalList extends ListFragment implements GoogleApiClient.Connecti
     private void postAnimalInitialization() {
         Collections.sort(animals);
 
+        SparseBooleanArray selectedIDs = null;
+
+        if(mAdapter != null) {
+            selectedIDs = mAdapter.getSelectedIds();
+        }
+
         mAdapter = new DomainAdapter(AnimalList.this.getContext(), animals);
         mAdapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
         mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.pinned_header_text));
 
+        if(selectedIDs != null) {
+            for(int i = 0; i < animals.size(); i++) {
+                if(selectedIDs.get(i)) {
+                    mAdapter.toggleSelection(i);
+                }
+            }
+        }
+
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(mAdapter);
         mListView.setEnableHeaderTransparencyChanges(false);
+
+        if(this.getAdapter() != null) {
+            this.sv = ((MainActivity) this.getActivity()).getSearchView();
+        }
 
         if (sv != null) {
             this.mAdapter.getFilter().filter(sv.getQuery());
